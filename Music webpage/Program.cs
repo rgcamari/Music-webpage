@@ -16,6 +16,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
+// github testing
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
