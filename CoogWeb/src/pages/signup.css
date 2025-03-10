@@ -1,0 +1,118 @@
+.SignUp-Page {
+    width: 100%;
+    height: 100vh;
+    background-image: url('./purple_image.png');
+    background-size: cover;
+    background-position: center center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+
+  .SignUp-Text {
+    width: 800px;
+    height: 500px;
+    background-color: rgb(122, 118, 118);
+    margin: 50px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .SignUp-title {
+    font-size: 50px;
+    font-weight: bold;
+    margin: 20px;
+    font-family: 'Montserrat';
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)
+  }
+
+  .SignUp-description {
+    font-size: 18px;
+    margin: 18px;
+    font-family: 'Montserrat';
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)
+  }
+
+  .User-Button {
+    background-color: #a237dc;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 10px;
+    margin: 10px;
+    text-decoration: none;
+    font-family: 'Montserrat';
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.User-Button:hover {
+    background-color: #60108b;
+    color: white;
+}
+
+.Artist-Button {
+    background-color: #b174d2;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 10px;
+    margin: 10px;
+    text-decoration: none;
+    font-family: 'Montserrat';
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.Artist-Button:hover {
+    background-color: #7f3ca2;
+    color: white;
+}
+
+.Input-Type {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 10px;
+    margin: 0px;
+    text-decoration: none;
+    font-family: 'Montserrat';
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.Input-Box {
+    width: 400px;
+    height: 20px;
+    font-size: 20px;
+    padding: 5px 15px;
+    border-radius: 10px;
+    margin: 0px;
+    text-decoration: none;
+    font-family: 'Montserrat';
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.Input-Button {
+    background-color: #c89be1;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 10px;
+    margin: 10px;
+    text-decoration: none;
+    font-family: 'Montserrat';
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.Input-Button:hover {
+    background-color: #c277ea;
+    color: white;
+}
