@@ -65,8 +65,38 @@ export const ArtistCard = ({ artist }) => {
     );
 };
 
+export const AlbumList = () => {
+    const [albums] = useState([
+        { id: 1, name: "Mayhem", photo: purple_image },
+        { id: 2, name: "Harlequin", photo: purple_image },
+        { id: 3, name: "Love for Sale", photo: purple_image },
+        { id: 4, name: "Dawn of Chromatica", photo: purple_image },
+        { id: 5, name: "Joanne", photo: purple_image },
+        { id: 6, name: "Cheek to Cheek", photo: purple_image },
+        { id: 7, name: "Born this way", photo: purple_image },
+        { id: 8, name: "The Fame", photo: purple_image },
+        { id: 9, name: "Abracadabra", photo: purple_image }
+    ]);
 
-export const AlbumList = () => <div>Album List</div>;
+    return (
+        <div className="album-list">
+            {albums.map((album) => (
+                <AlbumCard key={album.id} album={album} />
+            ))}
+        </div>
+    );
+}
+
+export const AlbumCard = ({ album }) => {
+    return (
+        <div className="album-card">
+            <img src={album.photo} alt={album.name} className="album-image" />
+            <h3 className="album-name">{album.name}</h3>
+        </div>
+    );
+};
+
+
 export const Profile = () => <div>Profile</div>;
 export const TopTrending = () => <div>Top Trending</div>;
 export const CougarWrapUp = () => <div>Cougar Wrap-Up</div>;
