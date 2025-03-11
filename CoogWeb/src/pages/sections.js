@@ -34,9 +34,38 @@ export const SongCard = ({ song }) => {
     );
 };
 
+export const ArtistList = () => {
+    const [artists] = useState([
+        { id: 1, name: "Ariana Grande", photo: purple_image },
+        { id: 2, name: "The Beatles", photo: purple_image },
+        { id: 3, name: "Zutomayo", photo: purple_image },
+        { id: 4, name: "Lady Gaga", photo: purple_image },
+        { id: 5, name: "Nightcore @ 25", photo: purple_image },
+        { id: 6, name: "Taylor Swift", photo: purple_image },
+        { id: 7, name: "Rick Montgomery", photo: purple_image },
+        { id: 8, name: "Doechii", photo: purple_image },
+        { id: 9, name: "Deco*27", photo: purple_image }
+    ]);
+
+    return (
+        <div className="artist-list">
+            {artists.map((artist) => (
+                <ArtistCard key={artist.id} artist={artist} />
+            ))}
+        </div>
+    );
+}
+
+export const ArtistCard = ({ artist }) => {
+    return (
+        <div className="artist-card">
+            <img src={artist.photo} alt={artist.name} className="artist-image" />
+            <h3 className="artist-name">{artist.name}</h3>
+        </div>
+    );
+};
 
 
-export const ArtistList = () => <div>Artist List</div>;
 export const AlbumList = () => <div>Album List</div>;
 export const Profile = () => <div>Profile</div>;
 export const TopTrending = () => <div>Top Trending</div>;
