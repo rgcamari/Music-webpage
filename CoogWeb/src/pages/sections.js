@@ -97,10 +97,6 @@ export const AlbumCard = ({ album }) => {
 };
 
 
-export const Profile = () => <div>Profile</div>;
-export const TopTrending = () => <div>Top Trending</div>;
-export const CougarWrapUp = () => <div>Cougar Wrap-Up</div>;
-
 
 
 /*
