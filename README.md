@@ -1,3 +1,7 @@
 # Music webpage
 
-Hello!!!
+## Steps to Start Web App:
+
+cd CoogWeb
+npm install
+npm start
