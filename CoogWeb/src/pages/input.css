@@ -31,3 +31,18 @@
     font-weight: bold;
     text-align: left;
   }
+
+  .Basic-Stats {
+    display: flex; /* Use Flexbox to align items in a row */
+    text-align: center;
+    gap: 100px; /* Add spacing between items */
+    width: 100%;
+  }
+  
+  .basic-stats-text {
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+  }
