@@ -1,7 +1,10 @@
+
+
 .profile-section {
     padding: 20px;
     background: linear-gradient(to bottom, #6a4a7d, #2D1E33); /* Light gray to lavender gradient */
     border-radius: 10px;
+    
   }
 
   .profile-section:hover {
@@ -46,3 +49,150 @@
     margin: 0;
     text-align: center;
   }
+
+.everything {
+    max-height: 400px; /* Keep within viewport */
+    overflow-y: auto; /* Enable scrolling */
+    scrollbar-color: #B200FF #2D1E33;
+}
+
+.everything::-webkit-scrollbar {
+    width: 8px;
+    display: block; /* Ensure it is visible */
+}
+
+.everything::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+}
+
+.everything::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+}
+
+.playlist-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0; /* Remove padding to allow full-width header */
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 400px;
+    overflow: hidden; /* Prevents the header from being affected by padding */
+    display: flex;
+    flex-direction: column;
+}
+
+.playlist-header {
+    background-color: #303030;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    
+    /* Make it take up the full width */
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    gap: 100px;
+    font-size: 24px;
+}
+
+.playlist-list {
+    max-height: 400px; 
+    overflow-y: auto; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: grid;
+    gap: 10px; 
+    padding: 10px;
+    border: 1px solid #180F1C; 
+    border-radius: 5px; 
+    background-color: #180F1C; 
+}
+
+.create-playlist-button {
+    background-color: #000000;
+  color: white;
+  font-size: 20px;
+  font-family: 'Montserrat';
+  font-weight: bold;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 200px;
+  height: 40px; /* Set a fixed height */
+  position: relative;
+  top: 50%; /* Move down by 50% of the parent's height */
+  transform: translateY(-50%); /* Adjust to center vertically */
+  padding: 0 10px; /* Add padding for content */
+  border-radius: 20px;
+}
+
+.create-playlist-button:hover {
+  background-color: #1F1426;
+  box-shadow: 0 0 15px #B200FF;
+}
+
+.playlist-card {
+    background: #000000;
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: space-between; 
+    height: 200px; 
+    font-family: 'Montserrat';
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.playlist-card:hover {
+    transform: scale(1.05);
+}
+
+.playlist-image {
+    width: 125px; 
+    height: 125px; 
+    object-fit: cover;
+    border-radius: 10%; 
+    margin-top: 5px; 
+}
+
+.playlist-name {
+    
+    font-size: 20px;
+    text-align: center;
+}
+
+.playlist-list::-webkit-scrollbar {
+    width: 8px; 
+}
+
+.playlist-list::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+}
+
+.playlist-list::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+}
+
+.playlist-list::-webkit-scrollbar-thumb:hover {
+    background: #B200FF; 
+}
+
+.playlist-list {
+    scrollbar-color: #B200FF #2D1E33; 
+    direction: rtl;
+}
