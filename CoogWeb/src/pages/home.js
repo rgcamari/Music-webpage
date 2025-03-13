@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
-import { SongList, ArtistList, AlbumList} from './sections';
+import { SongList, ArtistList, AlbumList, UserList} from './sections';
 import {Profile} from './input';
 import {TopTrending} from './wrap';
 import { CougarWrapUp } from './userWrap';
@@ -12,8 +12,8 @@ const TopBar = () => {
 
   return (
     <div className="top-bar">
-      <div className="user-info">
-        <img src={userImage} alt={username} className="user-image" />
+      <div className="user-infos">
+        <img src={userImage} alt={username} className="user-images" />
         <span className="username">{username}</span>
       </div>
       <div className="top-bar-buttons">
@@ -35,6 +35,7 @@ const SideBar = ({ onButtonClick }) => {
       <button className="side-bar-button" onClick={() => onButtonClick('song-list')}>Song List</button>
       <button className="side-bar-button" onClick={() => onButtonClick('artist-list')}>Artist List</button>
       <button className="side-bar-button" onClick={() => onButtonClick('album-list')}>Album List</button>
+      <button className="side-bar-button" onClick={() => onButtonClick('user-lists')}>User List</button>
       <button className="side-bar-button" onClick={() => onButtonClick('profile')}>Profile</button>
       <button className="side-bar-button" onClick={() => onButtonClick('top-trending')}>Top Trending</button>
       <button className="side-bar-button" onClick={() => onButtonClick('cougar-wrap-up')}>Cougar Wrap-Up</button>
@@ -82,6 +83,8 @@ const Home = () => {
         return <TopTrending />;
       case 'cougar-wrap-up':
         return <CougarWrapUp />;
+      case 'user-lists':
+        return <UserList />;
       default:
         return <SongList />;
     }

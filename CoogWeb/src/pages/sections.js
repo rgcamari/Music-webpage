@@ -96,7 +96,36 @@ export const AlbumCard = ({ album }) => {
     );
 };
 
+export const UserList = () => {
+    const [users] = useState([
+        { id: 1, name: "Ariana Grande", photo: purple_image },
+        { id: 2, name: "The Beatles", photo: purple_image },
+        { id: 3, name: "Zutomayo", photo: purple_image },
+        { id: 4, name: "Lady Gaga", photo: purple_image },
+        { id: 5, name: "Nightcore @ 25", photo: purple_image },
+        { id: 6, name: "Taylor Swift", photo: purple_image },
+        { id: 7, name: "Rick Montgomery", photo: purple_image },
+        { id: 8, name: "Doechii", photo: purple_image },
+        { id: 9, name: "Deco*27", photo: purple_image }
+    ]);
 
+    return (
+        <div className="user-list">
+            {users.map((user) => (
+                <UserCard key={user.id} user={user} />
+            ))}
+        </div>
+    );
+}
+
+export const UserCard = ({ user }) => {
+    return (
+        <div className="user-card">
+            <img src={user.photo} alt={user.name} className="user-image" />
+            <h3 className="user-name">{user.name}</h3>
+        </div>
+    );
+};
 
 
 /*
