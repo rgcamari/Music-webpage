@@ -202,9 +202,6 @@ artist-list::-webkit-scrollbar {
     align-items: center; 
     justify-content: space-between; 
     height: 200px; 
-    font-family: 'Montserrat';
-    font-weight: bold;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .album-card:hover {
@@ -212,17 +209,22 @@ artist-list::-webkit-scrollbar {
 }
 
 .album-image {
-    width: 125px; 
-    height: 125px; 
+    width: 100px; 
+    height: 100px; 
     object-fit: cover;
     border-radius: 10%; 
     margin-top: 5px; 
 }
 
 .album-name {
-    
     font-size: 20px;
     text-align: center;
+    margin: 10px 0 0px 0; /* Adjust margin for spacing */
+}
+
+.album-artist {
+    font-size: 14px;
+    margin: 0 0 10px 0; /* Adjust margin for spacing */
 }
 
 album-list::-webkit-scrollbar {

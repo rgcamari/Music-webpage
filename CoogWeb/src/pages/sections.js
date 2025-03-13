@@ -85,15 +85,15 @@ export const ArtistCard = ({ artist }) => {
 
 export const AlbumList = () => {
     const [albums] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image },
-        { id: 2, name: "Harlequin", photo: purple_image },
-        { id: 3, name: "Love for Sale", photo: purple_image },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image },
-        { id: 5, name: "Joanne", photo: purple_image },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image },
-        { id: 7, name: "Born this way", photo: purple_image },
-        { id: 8, name: "The Fame", photo: purple_image },
-        { id: 9, name: "Abracadabra", photo: purple_image }
+        { id: 1, name: "Mayhem", photo: purple_image,artist: "Lady Gaga" },
+        { id: 2, name: "Harlequin", photo: purple_image,artist: "Lady Gaga" },
+        { id: 3, name: "Love for Sale", photo: purple_image,artist: "Lady Gaga" },
+        { id: 4, name: "Dawn of Chromatica", photo: purple_image,artist: "Lady Gaga" },
+        { id: 5, name: "Joanne", photo: purple_image,artist: "Lady Gaga" },
+        { id: 6, name: "Cheek to Cheek", photo: purple_image,artist: "Lady Gaga" },
+        { id: 7, name: "Born this way", photo: purple_image,artist: "Lady Gaga" },
+        { id: 8, name: "The Fame", photo: purple_image,artist: "Lady Gaga" },
+        { id: 9, name: "Abracadabra", photo: purple_image,artist: "Lady Gaga" }
     ]);
 
     return (
@@ -106,10 +106,24 @@ export const AlbumList = () => {
 }
 
 export const AlbumCard = ({ album }) => {
+    const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
+
+    const handleHeartClick = () => {
+        setIsLiked(!isLiked); // Toggle the liked state
+    };
     return (
         <div className="album-card">
             <img src={album.photo} alt={album.name} className="album-image" />
             <h3 className="album-name">{album.name}</h3>
+            <h3 className="album-artist">{album.artist}</h3>
+            <div className="bottom-section">
+                <img
+                    src={heart} // Use the same heart image
+                    alt="heart"
+                    className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
+                    onClick={handleHeartClick} // Handle click event
+                />
+                </div>
         </div>
     );
 };
@@ -137,6 +151,7 @@ export const UserList = () => {
 }
 
 export const UserCard = ({ user }) => {
+    
     return (
         <div className="user-card">
             <img src={user.photo} alt={user.name} className="user-image" />
