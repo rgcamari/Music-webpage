@@ -30,17 +30,59 @@
 }
 
 .song-image {
-    width: 125px; 
-    height: 125px; 
+    width: 100px; 
+    height: 100px; 
     object-fit: cover;
     border-radius: 10%; 
     margin-top: 5px; 
 }
 
 .song-name {
-    
     font-size: 20px;
     text-align: center;
+    margin: 10px 0 0px 0; /* Adjust margin for spacing */
+}
+
+.song-artist {
+    font-size: 14px;
+    margin: 0 0 10px 0; /* Adjust margin for spacing */
+}
+
+.bottom-section {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Space between like and play buttons */
+    align-items: center; /* Vertically center the buttons */
+}
+
+.heart-image {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    cursor: pointer; /* Show pointer cursor on hover */
+    filter: brightness(0) invert(1); /* Make the heart icon white */
+    transition: filter 0.3s ease; /* Smooth transition for hover effect */
+}
+.heart-image:active {
+    transform: scale(1.2); /* Slightly enlarge the heart when clicked */
+}
+
+.heart-image.liked {
+    filter: none; /* Reset filter to show the original color */
+}
+
+.play-button {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    cursor: pointer; /* Show pointer cursor on hover */
+}
+
+.play-button:hover {
+    transform: scale(1.05);
+}
+.heart-image:hover {
+    transform: scale(1.05);
 }
 
 song-list::-webkit-scrollbar {
@@ -274,3 +316,5 @@ album-list::-webkit-scrollbar {
 .user-list {
     scrollbar-color: #B200FF #2D1E33; 
 }
+
+
