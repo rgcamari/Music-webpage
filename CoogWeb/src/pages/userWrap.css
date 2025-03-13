@@ -1,0 +1,20 @@
+.wrapUpPage {
+    max-height: 400px; /* Keep within viewport */
+    overflow-y: auto; /* Enable scrolling */
+    scrollbar-color: #B200FF #2D1E33;
+}
+
+.wrapUpPage::-webkit-scrollbar {
+    width: 8px;
+    display: block; /* Ensure it is visible */
+}
+
+.wrapUpPage::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+}
+
+.wrapUpPage::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+}

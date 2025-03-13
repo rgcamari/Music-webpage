@@ -3,7 +3,8 @@ import purple_image from './purple_image.png';
 import './home.css';
 import { SongList, ArtistList, AlbumList} from './sections';
 import {Profile} from './input';
-import {TopTrending, CougarWrapUp} from './wrap';
+import {TopTrending} from './wrap';
+import { CougarWrapUp } from './userWrap';
 
 const TopBar = () => {
   const username = "Username"; // Replace with dynamic username if needed
