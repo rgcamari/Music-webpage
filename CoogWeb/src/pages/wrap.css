@@ -1,0 +1,474 @@
+.Trending-Page {
+    max-height: 400px; /* Keep within viewport */
+    overflow-y: auto; /* Enable scrolling */
+    scrollbar-color: #B200FF #2D1E33;
+}
+
+.Trending-Page::-webkit-scrollbar {
+    width: 8px;
+    display: block; /* Ensure it is visible */
+}
+
+.Trending-Page::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+}
+
+.Trending-Page::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+}
+
+.trending-section {
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33); /* Light gray to lavender gradient */
+    border-radius: 10px;
+    height: 100px;
+    
+  }
+
+  .trending-section:hover {
+    box-shadow: 0 0 15px rgba(226, 160, 239, 0.5); /* Lavender glow effect on hover */
+  }
+  
+  .trending-header {
+    display: flex;
+    justify-content: center; /* Centers the text horizontally */
+    align-items: center; /* Centers the text vertically */
+    font-size: 24px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    text-align: center; /* Ensures text is centered in the container */
+  }
+
+  .top-artists-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0; /* Remove padding to allow full-width header */
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 310px;
+    overflow: hidden; /* Prevents the header from being affected by padding */
+    display: flex;
+    flex-direction: column;
+}
+
+.top-artists-header {
+    background-color: #B200FF;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center; /* Centers the text vertically */
+    justify-content: center; /* Centers the text horizontally */
+    
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.top-artist-list {
+    max-height: 400px; 
+    overflow-y: auto; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: grid;
+    gap: 10px; 
+    padding: 10px;
+    border: 1px solid #180F1C; 
+    border-radius: 5px; 
+    background-color: #180F1C; 
+}
+
+.top-artist-card {
+    background: #000000;
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: space-between; 
+    height: 200px; 
+    font-family: 'Montserrat';
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.top-artist-card:hover {
+    transform: scale(1.05);
+}
+
+.top-artist-image {
+    width: 125px; 
+    height: 125px; 
+    object-fit: cover;
+    border-radius: 10%; 
+    margin-top: 5px; 
+}
+
+.top-artist-name {
+    
+    font-size: 20px;
+    text-align: center;
+}
+
+.top-songs-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0; /* Remove padding to allow full-width header */
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 310px;
+    overflow: hidden; /* Prevents the header from being affected by padding */
+    display: flex;
+    flex-direction: column;
+}
+
+.top-songs-header {
+    background-color: #B200FF;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center; /* Centers the text vertically */
+    justify-content: center; /* Centers the text horizontally */
+    
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/* TopSongList container */
+.top-song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between each song row */
+    width: 100%;
+    margin: 0 auto; /* Center the list */
+}
+
+/* TopSongCard container */
+.topsong-card {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    gap: 15px; /* Space between rank, image, name, and artist */
+    padding: 10px;
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33);
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+}
+
+.topsong-card:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+/* Rank styling */
+.topsong-rank {
+    width: 30px; /* Fixed width for rank */
+    text-align: center;
+    font-size: 18px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold; /* Dark text color */
+}
+
+/* Image styling */
+.topsong-image {
+    width: 50px; /* Fixed width for image */
+    height: 50px; /* Fixed height for image */
+    border-radius: 8px; /* Rounded corners for image */
+    object-fit: cover; /* Ensure the image covers the area */
+}
+
+/* Song name styling */
+.topsong-name {
+    flex: 1; /* Take up remaining space */
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+}
+
+/* Artist name styling */
+.topsong-artist {
+    font-size: 14px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+}
+
+.top-songs-section {
+    max-height: 400px; /* Keep within viewport */
+    overflow-y: auto; /* Enable scrolling */
+    scrollbar-color: #B200FF #2D1E33;
+}
+
+.top-songs-section::-webkit-scrollbar {
+    width: 8px;
+    display: block; /* Ensure it is visible */
+}
+
+.top-songs-section::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+}
+
+.top-songs-section::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+}
+
+.top-albums-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0; /* Remove padding to allow full-width header */
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 310px;
+    overflow: hidden; /* Prevents the header from being affected by padding */
+    display: flex;
+    flex-direction: column;
+}
+
+.top-albums-header {
+    background-color: #B200FF;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center; /* Centers the text vertically */
+    justify-content: center; /* Centers the text horizontally */
+    
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.top-album-list {
+    max-height: 400px; 
+    overflow-y: auto; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: grid;
+    gap: 10px; 
+    padding: 10px;
+    border: 1px solid #180F1C; 
+    border-radius: 5px; 
+    background-color: #180F1C; 
+}
+
+.top-album-card {
+    background: #000000;
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: space-between; 
+    height: 200px; 
+    font-family: 'Montserrat';
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.top-album-card:hover {
+    transform: scale(1.05);
+}
+
+.top-album-image {
+    width: 125px; 
+    height: 125px; 
+    object-fit: cover;
+    border-radius: 10%; 
+    margin-top: 5px; 
+}
+
+.top-album-name {
+    
+    font-size: 20px;
+    text-align: center;
+}
+
+.top-album-artist {
+    font-size: 14px;
+    margin: 0; 
+}
+
+.top-genres-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0;
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 310px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-genres-header {
+    background-color: #B200FF;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.top-genres-container {
+    display: flex;
+    gap: 15px; /* Space between cards */
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between; /* Ensure cards are spaced evenly */
+    flex-wrap: nowrap; /* Prevent wrapping to the next line */
+    width: 100%; /* Ensure container takes full available width */
+}
+
+.top-genre-card {
+    flex: 1; /* Allow cards to expand equally */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content horizontally */
+    gap: 10px;
+    padding: 10px;
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 150px; /* Minimum width for each card */
+}
+
+.top-genre-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.top-genre-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+}
+
+.other-list {
+    display: flex;
+    flex-wrap: wrap; /* Allow cards to wrap to the next line if needed */
+    gap: 15px; /* Space between cards */
+    padding: 10px;
+}
+
+.other-card {
+    flex: 1 1 200px; /* Allow cards to grow and shrink, with a base width of 200px */
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.other-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.other-label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    margin-bottom: 10px; /* Space between label and value */
+}
+
+.other-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: 'Montserrat';
+}
+
+.Other-Sections {
+    max-height: 400px; /* Keep within viewport */
+    overflow-y: auto; /* Enable scrolling */
+    scrollbar-color: #B200FF #2D1E33;
+}
+
+.Other-Sections::-webkit-scrollbar {
+    width: 8px;
+    display: block; /* Ensure it is visible */
+}
+
+.Other-Sections::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+}
+
+.Other-Sections::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+}
+
+.Other-Sections {
+    flex: 1;
+    background-color: #000000;
+    padding: 0; /* Remove padding to allow full-width header */
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 400px;
+    overflow: hidden; /* Prevents the header from being affected by padding */
+    display: flex;
+    flex-direction: column;
+}
+
+.other-header {
+    background-color: #B200FF;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center; /* Centers the text vertically */
+    justify-content: center; /* Centers the text horizontally */
+    
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 24px;
+}

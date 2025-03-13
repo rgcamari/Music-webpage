@@ -1,3 +1,18 @@
+# CoogWeb Pages
+
+1. introduction.js (Main Menu Page)
+2. signup.js (Sign Up Page)
+3. login.js (Log In Page)
+4. home.js (Basic Home Page structure w/ Top Bar, Bottom Bar, and Side Bar)
+5. sections.js (Song List Page, Aritst List Page, Album List Page)
+6. input.js (Profile for user page)
+7. wrap.js (Top Trending and Cougar Wrap-up Page)
+
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
