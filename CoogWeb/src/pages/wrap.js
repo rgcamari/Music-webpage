@@ -111,6 +111,44 @@ export const TopGenreCard = ({ topgenre }) => {
     );
 };
 
+export const Other = () => {
+    const [others, setOthers] = useState({
+        TotalStreams: 1000000,
+        TotalUsers: 100000,
+        TotalArtists: 1000,
+        TotalAlbums: 10000,
+        TotalGenres: 100,
+        TotalPlaylists: 1000,
+        TotalLikes: 100000,
+    });
+
+    // Convert the `others` object into an array of key-value pairs
+    const othersArray = Object.entries(others);
+
+    return (
+        <div className="other-list">
+            {othersArray.map(([key, value]) => (
+                <OtherCard key={key} label={key} value={value} />
+            ))}
+        </div>
+    );
+};
+
+export const OtherCard = ({ label, value }) => {
+    // Format the label to be more readable (e.g., "totalstreams" -> "Total Streams")
+    const formattedLabel = label
+        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+        .replace(/^./, (str) => str.toUpperCase()) // Capitalize the first letter
+        .replace("total", ""); // Remove the word "total"
+
+    return (
+        <div className="other-card">
+            <h3 className="other-label">{formattedLabel}</h3>
+            <p className="other-value">{value.toLocaleString()}</p> {/* Format numbers with commas */}
+        </div>
+    );
+};
+
 
 export const TopTrending = () => {
     return (
@@ -143,6 +181,12 @@ export const TopTrending = () => {
             <div className="top-genres-header">Top 3 Genres of the Week! 
             </div>
             <TopGenre />
+        </div>
+
+        <div className="Other-Sections">
+            <div className = "other-header"> Miscellaneous Information
+            </div>
+            <Other />
         </div>
         </section>
     );
