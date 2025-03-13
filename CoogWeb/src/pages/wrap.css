@@ -317,3 +317,69 @@
     font-size: 14px;
     margin: 0; 
 }
+
+.top-genres-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0;
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 310px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-genres-header {
+    background-color: #B200FF;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.top-genres-container {
+    display: flex;
+    gap: 15px; /* Space between cards */
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between; /* Ensure cards are spaced evenly */
+    flex-wrap: nowrap; /* Prevent wrapping to the next line */
+    width: 100%; /* Ensure container takes full available width */
+}
+
+.top-genre-card {
+    flex: 1; /* Allow cards to expand equally */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content horizontally */
+    gap: 10px;
+    padding: 10px;
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 150px; /* Minimum width for each card */
+}
+
+.top-genre-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.top-genre-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+}

@@ -87,6 +87,31 @@ export const TopAlbumCard = ({ topalbum }) => {
     );
 };
 
+export const TopGenre = () => {
+    const [topgenres] = useState([
+        { id: 1, name: "Pop"},
+        { id: 2, name: "Rap"},
+        { id: 3, name: "K-Pop"}
+    ]);
+
+    return (
+        <div className="top-genre-list">
+            {topgenres.map((topgenre) => (
+                <TopGenreCard key={topgenre.id} topgenre={topgenre} />
+            ))}
+        </div>
+    );
+};
+
+export const TopGenreCard = ({ topgenre }) => {
+    return (
+        <div className="top-genre-card"> {/* Fixed class name here */}
+            <h3 className="top-genre-name">{topgenre.name}</h3>
+        </div>
+    );
+};
+
+
 export const TopTrending = () => {
     return (
         <section className = "Trending-Page">
@@ -112,6 +137,12 @@ export const TopTrending = () => {
             <div className="top-albums-header">Top 3 Albums of the Week! 
             </div>
             <TopAlbum />
+        </div>
+
+        <div className="top-genres-section">
+            <div className="top-genres-header">Top 3 Genres of the Week! 
+            </div>
+            <TopGenre />
         </div>
         </section>
     );
