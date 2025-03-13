@@ -191,4 +191,3 @@ export const TopTrending = () => {
         </section>
     );
 };
-export const CougarWrapUp = () => <div>Cougar Wrap-Up</div>;
