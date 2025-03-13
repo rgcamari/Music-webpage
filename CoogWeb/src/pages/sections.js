@@ -1,19 +1,21 @@
 import React, {useState} from 'react';
 import purple_image from './purple_image.png';
+import heart from './heart.png';
 import './sections.css';
+import play_button from './play.png';
 
 
 export const SongList = () => {
     const [songs] = useState([
-        { id: 1, name: "Blinding Lights", photo: purple_image },
-        { id: 2, name: "Shape of You", photo: purple_image },
-        { id: 3, name: "Someone Like You", photo: purple_image },
-        { id: 4, name: "Uptown Funk", photo: purple_image },
-        { id: 5, name: "Levitating", photo: purple_image },
-        { id: 6, name: "Levitating", photo: purple_image },
-        { id: 7, name: "Levitating", photo: purple_image },
-        { id: 8, name: "Levitating", photo: purple_image },
-        { id: 9, name: "Levitating", photo: purple_image }
+        { id: 1, name: "Blinding Lights", photo: purple_image,artist: "Lady Gaga" },
+        { id: 2, name: "Shape of You", photo: purple_image,artist: "Lady Gaga" },
+        { id: 3, name: "Someone Like You", photo: purple_image,artist: "Lady Gaga" },
+        { id: 4, name: "Uptown Funk", photo: purple_image,artist: "Lady Gaga" },
+        { id: 5, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 6, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 7, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 8, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 9, name: "Levitating", photo: purple_image,artist: "Lady Gaga" }
     ]);
 
     return (
@@ -26,10 +28,26 @@ export const SongList = () => {
 };
 
 export const SongCard = ({ song }) => {
+    const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
+
+    const handleHeartClick = () => {
+        setIsLiked(!isLiked); // Toggle the liked state
+    };
+
     return (
         <div className="song-card">
             <img src={song.photo} alt={song.name} className="song-image" />
             <h3 className="song-name">{song.name}</h3>
+            <h3 className="song-artist">{song.artist}</h3>
+            <div className="bottom-section">
+                <img
+                    src={heart} // Use the same heart image
+                    alt="heart"
+                    className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
+                    onClick={handleHeartClick} // Handle click event
+                />
+                <img src={play_button} alt="play" className="play-button" />
+            </div>
         </div>
     );
 };
@@ -67,15 +85,15 @@ export const ArtistCard = ({ artist }) => {
 
 export const AlbumList = () => {
     const [albums] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image },
-        { id: 2, name: "Harlequin", photo: purple_image },
-        { id: 3, name: "Love for Sale", photo: purple_image },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image },
-        { id: 5, name: "Joanne", photo: purple_image },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image },
-        { id: 7, name: "Born this way", photo: purple_image },
-        { id: 8, name: "The Fame", photo: purple_image },
-        { id: 9, name: "Abracadabra", photo: purple_image }
+        { id: 1, name: "Mayhem", photo: purple_image,artist: "Lady Gaga" },
+        { id: 2, name: "Harlequin", photo: purple_image,artist: "Lady Gaga" },
+        { id: 3, name: "Love for Sale", photo: purple_image,artist: "Lady Gaga" },
+        { id: 4, name: "Dawn of Chromatica", photo: purple_image,artist: "Lady Gaga" },
+        { id: 5, name: "Joanne", photo: purple_image,artist: "Lady Gaga" },
+        { id: 6, name: "Cheek to Cheek", photo: purple_image,artist: "Lady Gaga" },
+        { id: 7, name: "Born this way", photo: purple_image,artist: "Lady Gaga" },
+        { id: 8, name: "The Fame", photo: purple_image,artist: "Lady Gaga" },
+        { id: 9, name: "Abracadabra", photo: purple_image,artist: "Lady Gaga" }
     ]);
 
     return (
@@ -88,15 +106,59 @@ export const AlbumList = () => {
 }
 
 export const AlbumCard = ({ album }) => {
+    const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
+
+    const handleHeartClick = () => {
+        setIsLiked(!isLiked); // Toggle the liked state
+    };
     return (
         <div className="album-card">
             <img src={album.photo} alt={album.name} className="album-image" />
             <h3 className="album-name">{album.name}</h3>
+            <h3 className="album-artist">{album.artist}</h3>
+            <div className="bottom-section">
+                <img
+                    src={heart} // Use the same heart image
+                    alt="heart"
+                    className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
+                    onClick={handleHeartClick} // Handle click event
+                />
+                </div>
         </div>
     );
 };
 
+export const UserList = () => {
+    const [users] = useState([
+        { id: 1, name: "Ariana Grande", photo: purple_image, },
+        { id: 2, name: "The Beatles", photo: purple_image },
+        { id: 3, name: "Zutomayo", photo: purple_image },
+        { id: 4, name: "Lady Gaga", photo: purple_image },
+        { id: 5, name: "Nightcore @ 25", photo: purple_image },
+        { id: 6, name: "Taylor Swift", photo: purple_image },
+        { id: 7, name: "Rick Montgomery", photo: purple_image },
+        { id: 8, name: "Doechii", photo: purple_image },
+        { id: 9, name: "Deco*27", photo: purple_image }
+    ]);
 
+    return (
+        <div className="user-list">
+            {users.map((user) => (
+                <UserCard key={user.id} user={user} />
+            ))}
+        </div>
+    );
+}
+
+export const UserCard = ({ user }) => {
+    
+    return (
+        <div className="user-card">
+            <img src={user.photo} alt={user.name} className="user-image" />
+            <h3 className="user-name">{user.name}</h3>
+        </div>
+    );
+};
 
 
 /*
