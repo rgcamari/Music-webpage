@@ -119,3 +119,117 @@
     font-size: 20px;
     text-align: center;
 }
+
+.top-songs-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0; /* Remove padding to allow full-width header */
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 310px;
+    overflow: hidden; /* Prevents the header from being affected by padding */
+    display: flex;
+    flex-direction: column;
+}
+
+.top-songs-header {
+    background-color: #B200FF;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center; /* Centers the text vertically */
+    justify-content: center; /* Centers the text horizontally */
+    
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/* TopSongList container */
+.top-song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between each song row */
+    width: 100%;
+    margin: 0 auto; /* Center the list */
+}
+
+/* TopSongCard container */
+.topsong-card {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    gap: 15px; /* Space between rank, image, name, and artist */
+    padding: 10px;
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33);
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+}
+
+.topsong-card:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+/* Rank styling */
+.topsong-rank {
+    width: 30px; /* Fixed width for rank */
+    text-align: center;
+    font-size: 18px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold; /* Dark text color */
+}
+
+/* Image styling */
+.topsong-image {
+    width: 50px; /* Fixed width for image */
+    height: 50px; /* Fixed height for image */
+    border-radius: 8px; /* Rounded corners for image */
+    object-fit: cover; /* Ensure the image covers the area */
+}
+
+/* Song name styling */
+.topsong-name {
+    flex: 1; /* Take up remaining space */
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+}
+
+/* Artist name styling */
+.topsong-artist {
+    font-size: 14px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+}
+
+.top-songs-section {
+    max-height: 400px; /* Keep within viewport */
+    overflow-y: auto; /* Enable scrolling */
+    scrollbar-color: #B200FF #2D1E33;
+}
+
+.top-songs-section::-webkit-scrollbar {
+    width: 8px;
+    display: block; /* Ensure it is visible */
+}
+
+.top-songs-section::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+}
+
+.top-songs-section::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+}
