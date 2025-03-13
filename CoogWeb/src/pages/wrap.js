@@ -61,6 +61,32 @@ export const TopSongCard = ({ topsong }) => {
     );
 };
 
+export const TopAlbum = () => {
+    const [topalbum] = useState([
+        { id: 1, name: "Mayhem", photo: purple_image, artist: "Lady Gaga" },
+        { id: 2, name: "Short n' Sweet", photo: purple_image, artist: "Sabrina Carpenter"},
+        { id: 3, name: "Brat", photo: purple_image, artist: "Charlie XCX" },
+    ]);
+
+    return (
+        <div className="top-album-list">
+            {topalbum.map((topalbum) => (
+                <TopAlbumCard key={topalbum.id} topalbum={topalbum} />
+            ))}
+        </div>
+    );
+}
+
+export const TopAlbumCard = ({ topalbum }) => {
+    return (
+        <div className="top-album-card">
+            <img src={topalbum.photo} alt={topalbum.name} className="top-album-image" />
+            <h3 className="top-album-name">{topalbum.name}</h3>
+            <p className="top-album-artist">{topalbum.artist}</p>
+        </div>
+    );
+};
+
 export const TopTrending = () => {
     return (
         <section className = "Trending-Page">
@@ -80,6 +106,12 @@ export const TopTrending = () => {
             <div className="top-songs-header">Top 10 Songs of the Week! 
             </div>
             <TopSongList />
+        </div>
+
+        <div className="top-albums-section">
+            <div className="top-albums-header">Top 3 Albums of the Week! 
+            </div>
+            <TopAlbum />
         </div>
         </section>
     );
