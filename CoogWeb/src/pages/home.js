@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
 import { SongList, ArtistList, AlbumList, UserList} from './sections';
-import {Profile} from './input';
+import {Profile, ArtistProfile} from './input';
 import {TopTrending} from './wrap';
 import { CougarWrapUp } from './userWrap';
 
@@ -37,6 +37,7 @@ const SideBar = ({ onButtonClick }) => {
       <button className="side-bar-button" onClick={() => onButtonClick('album-list')}>Album List</button>
       <button className="side-bar-button" onClick={() => onButtonClick('user-lists')}>User List</button>
       <button className="side-bar-button" onClick={() => onButtonClick('profile')}>Profile</button>
+      <button className="side-bar-button" onClick={() => onButtonClick('artist-profile')}>Artist Profile</button>
       <button className="side-bar-button" onClick={() => onButtonClick('top-trending')}>Top Trending</button>
       <button className="side-bar-button" onClick={() => onButtonClick('cougar-wrap-up')}>Cougar Wrap-Up</button>
     </div>
@@ -79,6 +80,8 @@ const Home = () => {
         return <AlbumList />;
       case 'profile':
         return <Profile />;
+      case 'artist-profile':
+        return <ArtistProfile />;
       case 'top-trending':
         return <TopTrending />;
       case 'cougar-wrap-up':
