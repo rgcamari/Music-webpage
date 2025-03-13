@@ -1,0 +1,21 @@
+.trending-section {
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33); /* Light gray to lavender gradient */
+    border-radius: 10px;
+    height: 100px;
+    
+  }
+
+  .trending-section:hover {
+    box-shadow: 0 0 15px rgba(226, 160, 239, 0.5); /* Lavender glow effect on hover */
+  }
+  
+  .trending-header {
+    display: flex;
+    justify-content: center; /* Centers the text horizontally */
+    align-items: center; /* Centers the text vertically */
+    font-size: 24px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    text-align: center; /* Ensures text is centered in the container */
+  }
