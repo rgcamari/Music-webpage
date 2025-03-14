@@ -106,6 +106,7 @@
   
   .albumView-header {
     background-color: #303030;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     height: 40px;
     padding: 10px;
     color: white;
@@ -205,6 +206,7 @@
     overflow: hidden; /* Prevents the header from being affected by padding */
     display: flex;
     flex-direction: column;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
   }
   
   .songView-header {

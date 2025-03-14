@@ -97,3 +97,38 @@ export const ArtistView = ({ stats = {} }) => {
       </section>
     );
   };
+
+  export const AlbumViewPage = ({ album = {} }) => {
+    const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
+
+    const handleHeartClick = () => {
+        setIsLiked(!isLiked); // Toggle the liked state
+    };
+
+    return (
+        <section className="everything">
+            <div className="profile-section">
+                <div className="profile-header">
+                    <img src={album.photo || purple_image} alt="Album Cover" className="profile-image" />
+                    <h2 className="profile-username">Album Name</h2>
+                </div>
+                <div className="basic-stats">
+                    <p className="basic-stats-text">Songs: {album.songs || 0}</p>
+                    <p className="basic-stats-text">Streams: {album.streams || 0}</p>
+                    <p className="basic-stats-text">Likes: {album.likes || 0}</p>
+                    <img
+                        src={heart} // Use the same heart image
+                        alt="heart"
+                        className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
+                        onClick={handleHeartClick} // Handle click event
+                    />
+                </div>
+            </div>
+
+            <div className="songView-section">
+                <div className="songView-header">Songs: </div>
+                <SongViewList songs={album.songs} /> {/* Pass album's songs list */}
+            </div>
+        </section>
+    );
+};
