@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
-import { SongList, ArtistList, AlbumList, UserList} from './sections';
-import {Profile, ArtistProfile} from './input';
-import {TopTrending} from './wrap';
+import { SongList, ArtistList, AlbumList, UserList } from './sections';
+import { Profile, ArtistProfile } from './input';
+import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
+import { ArtistView, AlbumViewPage } from './view';
 
 const TopBar = () => {
   const username = "Username"; // Replace with dynamic username if needed
@@ -52,7 +53,7 @@ const BottomBar = ({ currentSong }) => {
         {currentSong && (
           <>
             <img src={currentSong.photo} alt={currentSong.name} className="song-photo" />
-            <span className="song-name">{currentSong.name}</span>
+            <span className="current-song-name">{currentSong.name}</span>
           </>
         )}
       </div>
@@ -61,7 +62,6 @@ const BottomBar = ({ currentSong }) => {
 };
 
 
-// Main App Component
 const Home = () => {
   const [currentSong, setCurrentSong] = useState({
     name: 'Sample Song',
@@ -70,27 +70,13 @@ const Home = () => {
 
   const [activeScreen, setActiveScreen] = useState('song-list'); // Default to Song List
 
-  const renderScreen = () => {
-    switch (activeScreen) {
-      case 'song-list':
-        return <SongList />;
-      case 'artist-list':
-        return <ArtistList />;
-      case 'album-list':
-        return <AlbumList />;
-      case 'profile':
-        return <Profile />;
-      case 'artist-profile':
-        return <ArtistProfile />;
-      case 'top-trending':
-        return <TopTrending />;
-      case 'cougar-wrap-up':
-        return <CougarWrapUp />;
-      case 'user-lists':
-        return <UserList />;
-      default:
-        return <SongList />;
-    }
+  // Function to handle artist click
+  const handleArtistClick = (screen) => {
+    setActiveScreen(screen);
+  };
+
+  const handleAlbumClick = (screen) => {
+    setActiveScreen(screen);
   };
 
   return (
@@ -99,12 +85,29 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} />
         <div className="main-content">
-          {renderScreen()}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
     </div>
   );
+};
+
+// Separate function for rendering screens
+const renderScreen = (activeScreen, onArtistClick,onAlbumClick) => {
+  switch (activeScreen) {
+    case 'song-list': return <SongList />;
+    case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
+    case 'album-list': return <AlbumList onAlbumClick={onAlbumClick}/>;
+    case 'profile': return <Profile />;
+    case 'artist-profile': return <ArtistProfile />;
+    case 'top-trending': return <TopTrending />;
+    case 'cougar-wrap-up': return <CougarWrapUp />;
+    case 'user-lists': return <UserList />;
+    case 'artist-view': return <ArtistView />;
+    case 'album-view-page': return <AlbumViewPage />;
+    default: return <SongList />;
+  }
 };
 
 export default Home;

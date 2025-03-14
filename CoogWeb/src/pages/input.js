@@ -151,7 +151,7 @@ export const ArtistProfile = () => {
             </div>
         </div>
         <div className="albumProfile-section">
-                <div className="albumProfile-header">Your Platlists: 
+                <div className="albumProfile-header">Your Albums: 
                 <button className="create-album-button">Create Album</button>
                 </div>
             <AlbumProfileList />

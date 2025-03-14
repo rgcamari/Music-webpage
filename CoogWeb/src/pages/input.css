@@ -439,3 +439,26 @@ box-shadow: 0 0 15px #B200FF;
   font-family: 'Montserrat';
   font-weight: bold;
 }
+
+.songProfile-list::-webkit-scrollbar {
+  width: 8px; 
+}
+
+.songProfile-list::-webkit-scrollbar-track {
+  background: #2D1E33; 
+  border-radius: 5px;
+}
+
+.songProfile-list::-webkit-scrollbar-thumb {
+  background: #B200FF; 
+  border-radius: 5px;
+}
+
+.songProfile-list::-webkit-scrollbar-thumb:hover {
+  background: #B200FF; 
+}
+
+.songProfile-list {
+  scrollbar-color: #B200FF #2D1E33; 
+  direction: rtl;
+}

@@ -85,6 +85,35 @@
     transform: scale(1.05);
 }
 
+.forward-button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer; /* Show pointer cursor on hover */
+    background: none; /* Remove default button background */
+    border: none; /* Remove default button border */
+    padding: 0; /* Remove default button padding */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease; /* Smooth hover effect */
+}
+
+.forward-button:hover {
+    transform: scale(1.05); /* Slightly enlarge the button on hover */
+}
+
+.forward-icon {
+    width: 100%; /* Make the icon fill the button */
+    height: 100%; /* Make the icon fill the button */
+    object-fit: contain; /* Ensure the icon fits within the button */
+    filter: brightness(0) invert(1); /* Make the icon white */
+    transition: filter 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.forward-button:hover .forward-icon {
+    filter: brightness(1) invert(0); /* Change icon color on hover */
+}
+
 song-list::-webkit-scrollbar {
     width: 8px; 
 }
@@ -106,7 +135,6 @@ song-list::-webkit-scrollbar {
 .song-list {
     scrollbar-color: #B200FF #2D1E33; 
 }
-
 .artist-list {
     max-height: 400px; 
     overflow-y: auto; 
@@ -132,9 +160,6 @@ song-list::-webkit-scrollbar {
     align-items: center; 
     justify-content: space-between; 
     height: 200px; 
-    font-family: 'Montserrat';
-    font-weight: bold;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .artist-card:hover {
@@ -142,17 +167,17 @@ song-list::-webkit-scrollbar {
 }
 
 .artist-image {
-    width: 125px; 
-    height: 125px; 
+    width: 100px; 
+    height: 100px; 
     object-fit: cover;
     border-radius: 10%; 
     margin-top: 5px; 
 }
 
 .artist-name {
-    
     font-size: 20px;
     text-align: center;
+    margin: 10px 0 0px 0; /* Adjust margin for spacing */
 }
 
 artist-list::-webkit-scrollbar {
