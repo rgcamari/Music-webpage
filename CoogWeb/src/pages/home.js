@@ -53,7 +53,7 @@ const BottomBar = ({ currentSong }) => {
         {currentSong && (
           <>
             <img src={currentSong.photo} alt={currentSong.name} className="song-photo" />
-            <span className="song-name">{currentSong.name}</span>
+            <span className="current-song-name">{currentSong.name}</span>
           </>
         )}
       </div>
