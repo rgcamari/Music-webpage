@@ -35,6 +35,39 @@ export const AlbumViewCard = ({ albumView }) => {
     );
 };
 
+export const SongViewList = () => {
+    const [songViews] = useState([
+        { id: 1, name: "Blinding Lights", photo: purple_image, album: "The Weeknd" },
+        { id: 2,name: "Shape of You", photo: purple_image, album: "Ed Sheeran" },
+        { id: 3,name: "Someone Like You", photo: purple_image, album: "Adele" },
+        { id: 4,name: "Uptown Funk", photo: purple_image, album: "Mark Ronson" },
+        { id: 5,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
+        { id: 6,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
+        { id: 7,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
+        { id: 8,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
+        { id: 9,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
+        { id: 10,name: "Levitating", photo: purple_image, album: "Dua Lipa" }
+    ]);
+
+    return (
+        <div className="songView-list">
+            {songViews.map((songView) => (
+                <SongViewCard key={songView.id} songView={songView} />
+            ))}
+        </div>
+    );
+};
+
+export const SongViewCard = ({ songView }) => {
+    return (
+        <div className="songView-card">
+            <img src={songView.photo} alt={songView.name} className="songView-image" />
+            <h3 className="songView-name">{songView.name}</h3>
+            <h3 className="songView-album">{songView.album}</h3>
+        </div>
+    );
+};
+
 export const ArtistView = ({ stats = {} }) => {
     return (
       <section className="everything">
@@ -54,6 +87,12 @@ export const ArtistView = ({ stats = {} }) => {
                         <div className="albumView-header">Albums: 
                         </div>
             <AlbumViewList />
+        </div>
+
+        <div className="songView-section">
+                <div className="songView-header">Songs: 
+                </div>
+            <SongViewList />
         </div>
       </section>
     );

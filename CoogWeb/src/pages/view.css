@@ -194,3 +194,122 @@
     scrollbar-color: #B200FF #2D1E33; 
     direction: rtl;
   }
+
+  .songView-section {
+    flex: 1;
+    background-color: #000000;
+    padding: 0; /* Remove padding to allow full-width header */
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 400px;
+    overflow: hidden; /* Prevents the header from being affected by padding */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .songView-header {
+    background-color: #303030;
+    height: 40px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    
+    /* Make it take up the full width */
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    gap: 100px;
+    font-size: 24px;
+  }
+  
+  .songView-list {
+    max-height: 400px; 
+    overflow-y: auto; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: grid;
+    gap: 10px; 
+    padding: 10px;
+    border: 1px solid #180F1C; 
+    border-radius: 5px; 
+    background-color: #180F1C; 
+  }
+  
+  .songView-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between each song row */
+    width: 100%;
+    margin: 0 auto; /* Center the list */
+  }
+  
+  /* TopSongCard container */
+  .songView-card {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    gap: 15px; /* Space between rank, image, name, and artist */
+    padding: 10px;
+    background-color: black;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+  }
+  
+  .songView-card:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+  }
+  
+  
+  /* Image styling */
+  .songView-image {
+    width: 50px; /* Fixed width for image */
+    height: 50px; /* Fixed height for image */
+    border-radius: 8px; /* Rounded corners for image */
+    object-fit: cover; /* Ensure the image covers the area */
+  }
+  
+  /* Song name styling */
+  .songView-name {
+    flex: 1; /* Take up remaining space */
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+  }
+  
+  /* Artist name styling */
+  .songView-album {
+    font-size: 14px;
+    color: #ffffff;
+    font-family: 'Montserrat';
+    font-weight: bold;
+  }
+
+  .songView-list::-webkit-scrollbar {
+    width: 8px; 
+  }
+  
+  .songView-list::-webkit-scrollbar-track {
+    background: #2D1E33; 
+    border-radius: 5px;
+  }
+  
+  .songView-list::-webkit-scrollbar-thumb {
+    background: #B200FF; 
+    border-radius: 5px;
+  }
+  
+  .songView-list::-webkit-scrollbar-thumb:hover {
+    background: #B200FF; 
+  }
+  
+  .songView-list {
+    scrollbar-color: #B200FF #2D1E33; 
+    direction: rtl;
+  }
