@@ -6,7 +6,7 @@ import { Profile, ArtistProfile } from './input';
 import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
 import { ArtistView, AlbumViewPage } from './view';
-import { SongForm } from './inputForms';
+import { SongForm, SongFormDelete, SongFormEdit } from './inputForms';
 
 const TopBar = () => {
   const username = "Username"; // Replace with dynamic username if needed
@@ -108,6 +108,8 @@ const renderScreen = (activeScreen, onArtistClick,onAlbumClick) => {
     case 'artist-view': return <ArtistView />;
     case 'album-view-page': return <AlbumViewPage />;
     case 'create-song': return <SongForm />;
+    case 'edit-song': return <SongFormEdit />;
+    case 'delete-song': return <SongFormDelete />;
     default: return <SongList />;
   }
 };

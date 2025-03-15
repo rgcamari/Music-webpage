@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import purple_image from './purple_image.png';
 import './input.css';
-import {SongForm} from './inputForms.js';
+import {SongForm, SongFormDelete, SongFormEdit} from './inputForms.js';
 
 export const PlaylistList = () => {
     const [playlists] = useState([
@@ -164,6 +164,16 @@ export const ArtistProfile = ({setActiveScreen}) => {
                         className="create-song-button"
                         onClick={() => setActiveScreen('create-song')}>
                         Create Song
+                    </button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('edit-song')}>
+                        Edit Song
+                    </button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('delete-song')}>
+                        Delete Song
                     </button>
                 </div>
             <SongProfileList />
