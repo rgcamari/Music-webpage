@@ -153,7 +153,31 @@ export const ArtistProfile = ({setActiveScreen}) => {
         </div>
         <div className="albumProfile-section">
                 <div className="albumProfile-header">Your Albums: 
-                <button className="create-album-button">Create Album</button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('create-album')}>
+                        Create Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('edit-album')}>
+                        Edit Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('delete-album')}>
+                        Delete Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('add-song-album')}>
+                        Add Song
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('remove-song-album')}>
+                        Remove Song
+                    </button>
                 </div>
             <AlbumProfileList />
             </div>

@@ -138,3 +138,200 @@ export const SongFormDelete = () => {
         </section>
     );
 }
+
+
+export const AlbumForm = () => {
+    const [album, setAlbum] = useState({
+        name: "",
+        genre: "",
+        image: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSong({ ...album, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Album submitted:", album);
+        // Here you can add logic to save the song data
+    };
+
+    return (
+        <section className="everything">
+        <div className="input-section">
+                    <div className="profile-header">
+                        <h2 className="input-username">Create an Album!</h2>
+                    </div>
+        </div>
+        <form className="song-form" onSubmit={handleSubmit}>
+            <label>Album Name</label>
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+
+            <label>Genre Name</label>
+            <input type="text" name="genre" placeholder="Enter genre" value={album.genre} onChange={handleChange} required />
+
+            <label>Image Name</label>
+            <input type="text" name="image" placeholder="Enter image name" value={album.image} onChange={handleChange} required />
+
+            <button type="submit">Create</button>
+        </form>
+        </section>
+    );
+}
+
+export const AlbumFormAdd = () => {
+    const [album, setAlbum] = useState({
+        name: "",
+        genre: "",
+        image: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSong({ ...album, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Album submitted:", album);
+        // Here you can add logic to save the song data
+    };
+
+    return (
+        <section className="everything">
+        <div className="input-section">
+                    <div className="profile-header">
+                        <h2 className="input-username">Add a Song to an Album!</h2>
+                    </div>
+        </div>
+        <form className="song-form" onSubmit={handleSubmit}>
+            <label>Album Name</label>
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+
+            <label>Enter Song Name you want to Add to the Album</label>
+            <input type="text" name="song" placeholder="Enter song name" value={album.song} onChange={handleChange} required />
+
+            <button type="submit">Add</button>
+        </form>
+        </section>
+    );
+}
+
+export const AlbumFormEdit = () => {
+    const [album, setAlbum] = useState({
+        name: "",
+        genre: "",
+        image: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSong({ ...album, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Album submitted:", album);
+        // Here you can add logic to save the song data
+    };
+
+    return (
+        <section className="everything">
+        <div className="input-section">
+                    <div className="profile-header">
+                        <h2 className="input-username">Edit an Album!</h2>
+                    </div>
+        </div>
+        <form className="song-form" onSubmit={handleSubmit}>
+            <label>Enter Album Name you want to Edit</label>
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+
+            <label>Album Name</label>
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+
+            <label>Genre Name</label>
+            <input type="text" name="genre" placeholder="Enter genre" value={album.genre} onChange={handleChange} required />
+
+            <label>Image Name</label>
+            <input type="text" name="image" placeholder="Enter image name" value={album.image} onChange={handleChange} required />
+
+            <button type="submit">Edit</button>
+        </form>
+        </section>
+    );
+}
+
+export const AlbumFormDelete = () => {
+    const [album, setAlbum] = useState({
+        name: "",
+        genre: "",
+        image: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSong({ ...album, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Album submitted:", album);
+        // Here you can add logic to save the song data
+    };
+
+    return (
+        <section className="everything">
+        <div className="input-section">
+                    <div className="profile-header">
+                        <h2 className="input-username">Delete an Album!</h2>
+                    </div>
+        </div>
+        <form className="song-form" onSubmit={handleSubmit}>
+            <label>Enter Album Name you want to Delete</label>
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+
+            <button type="submit">Delete</button>
+        </form>
+        </section>
+    );
+}
+
+export const AlbumFormRemove = () => {
+    const [album, setAlbum] = useState({
+        name: "",
+        genre: "",
+        image: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSong({ ...album, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Album submitted:", album);
+        // Here you can add logic to save the song data
+    };
+
+    return (
+        <section className="everything">
+        <div className="input-section">
+                    <div className="profile-header">
+                        <h2 className="input-username">Remove a Song from an Album!</h2>
+                    </div>
+        </div>
+        <form className="song-form" onSubmit={handleSubmit}>
+            <label>Enter Album Name</label>
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+
+            <label>Enter Song Name you want to Remove</label>
+            <input type="text" name="name" placeholder="Enter album name" value={album.song} onChange={handleChange} required />
+
+            <button type="submit">Remove</button>
+        </form>
+        </section>
+    );
+}
