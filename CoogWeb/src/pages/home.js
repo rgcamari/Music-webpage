@@ -6,6 +6,7 @@ import { Profile, ArtistProfile } from './input';
 import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
 import { ArtistView, AlbumViewPage } from './view';
+import { SongForm } from './inputForms';
 
 const TopBar = () => {
   const username = "Username"; // Replace with dynamic username if needed
@@ -85,7 +86,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick)}
+        {renderScreen(activeScreen, setActiveScreen, handleArtistClick, handleAlbumClick)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -100,12 +101,13 @@ const renderScreen = (activeScreen, onArtistClick,onAlbumClick) => {
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
     case 'album-list': return <AlbumList onAlbumClick={onAlbumClick}/>;
     case 'profile': return <Profile />;
-    case 'artist-profile': return <ArtistProfile />;
+    case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} />;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
     case 'artist-view': return <ArtistView />;
     case 'album-view-page': return <AlbumViewPage />;
+    case 'create-song': return <SongForm />;
     default: return <SongList />;
   }
 };

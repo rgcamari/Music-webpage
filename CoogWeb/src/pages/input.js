@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import purple_image from './purple_image.png';
 import './input.css';
+import {SongForm} from './inputForms.js';
 
 export const PlaylistList = () => {
     const [playlists] = useState([
@@ -130,7 +131,7 @@ export const SongProfileCard = ({ songProfile }) => {
     );
 };
 
-export const ArtistProfile = () => {
+export const ArtistProfile = ({setActiveScreen}) => {
     const [stats, setStats] = useState({
         following: 120,  // Example count
         friends: 85,     // Example count
@@ -159,7 +160,11 @@ export const ArtistProfile = () => {
 
             <div className="songProfile-section">
                 <div className="songProfile-header">Your Songs: 
-                <button className="create-song-button">Create Song</button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('create-song')}>
+                        Create Song
+                    </button>
                 </div>
             <SongProfileList />
             </div>
