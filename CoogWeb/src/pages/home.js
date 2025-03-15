@@ -6,7 +6,7 @@ import { Profile, ArtistProfile } from './input';
 import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
 import { ArtistView, AlbumViewPage } from './view';
-import { SongForm, SongFormDelete, SongFormEdit, AlbumForm, AlbumFormAdd, AlbumFormDelete, AlbumFormEdit, AlbumFormRemove } from './inputForms';
+import { SongForm, SongFormDelete, SongFormEdit, AlbumForm, AlbumFormAdd, AlbumFormDelete, AlbumFormEdit, AlbumFormRemove, PlaylistForm,PlaylistFormAdd, PlaylistFormDelete, PlaylistFormEdit, PlaylistFormRemove } from './inputForms';
 
 const TopBar = () => {
   const username = "Username"; // Replace with dynamic username if needed
@@ -100,7 +100,7 @@ const renderScreen = (activeScreen, onArtistClick,onAlbumClick) => {
     case 'song-list': return <SongList />;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
     case 'album-list': return <AlbumList onAlbumClick={onAlbumClick}/>;
-    case 'profile': return <Profile />;
+    case 'profile': return <Profile setActiveScreen={onArtistClick}/>;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} />;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
@@ -115,6 +115,11 @@ const renderScreen = (activeScreen, onArtistClick,onAlbumClick) => {
     case 'delete-album': return <AlbumFormDelete />;
     case 'add-song-album': return <AlbumFormAdd />;
     case 'remove-song-album': return <AlbumFormRemove />;
+    case 'create-playlist': return <PlaylistForm />;
+    case 'edit-playlist': return <PlaylistFormEdit />;
+    case 'delete-playlist': return <PlaylistFormDelete />;
+    case 'add-song-playlist': return <PlaylistFormAdd />;
+    case 'remove-song-playlist': return <PlaylistFormRemove />;
     default: return <SongList />;
   }
 };

@@ -36,7 +36,7 @@ export const PlaylistCard = ({ playlist }) => {
 
 
 
-export const Profile = () => {
+export const Profile = ({setActiveScreen}) => {
     const [stats, setStats] = useState({
         following: 120,  // Example count
         friends: 85,     // Example count
@@ -59,7 +59,31 @@ export const Profile = () => {
 
         <div className="playlist-section">
             <div className="playlist-header">Your Platlists: 
-            <button className="create-playlist-button">Create Playlist</button>
+            <button
+                        className="create-playlist-button"
+                        onClick={() => setActiveScreen('create-playlist')}>
+                        Create Playlist
+                    </button>
+                <button
+                        className="create-playlist-button"
+                        onClick={() => setActiveScreen('edit-playlist')}>
+                        Edit Playlist
+                    </button>
+                <button
+                        className="create-playlist-button"
+                        onClick={() => setActiveScreen('delete-playlist')}>
+                        Delete Playlist
+                    </button>
+                <button
+                        className="create-playlist-button"
+                        onClick={() => setActiveScreen('add-song-playlist')}>
+                        Add Song
+                    </button>
+                <button
+                        className="create-playlist-button"
+                        onClick={() => setActiveScreen('remove-song-playlist')}>
+                        Remove Song
+                    </button>
             </div>
             <PlaylistList />
         </div>

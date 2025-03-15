@@ -82,23 +82,19 @@
 }
 
 .playlist-header {
-    background-color: #303030;
-    height: 40px;
-    padding: 10px;
-    color: white;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    
-    /* Make it take up the full width */
-    width: 100%;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    color: #ffffff;
-    font-family: 'Montserrat';
-    font-weight: bold;
-    gap: 10px;
-    font-size: 20px;
+  background-color: #303030;
+  height: 50px;
+  padding: 3px 8px;
+  color: white;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  font-family: 'Montserrat';
+  font-weight: bold;
+  font-size: 20px;
+  gap: 20px;
 }
 
 .playlist-list {
@@ -114,26 +110,25 @@
 }
 
 .create-playlist-button {
-    background-color: #000000;
+  background-color: #000000;
   color: white;
   font-size: 20px;
   font-family: 'Montserrat';
   font-weight: bold;
   border: none;
-  padding: 5px 10px;
   cursor: pointer;
-  width: 200px;
-  height: 40px; /* Set a fixed height */
-  position: relative;
-  top: 50%; /* Move down by 50% of the parent's height */
-  transform: translateY(-50%); /* Adjust to center vertically */
-  padding: 0 10px; /* Add padding for content */
-  border-radius: 20px;
+  width: auto;
+  height: 35px;
+  padding: 3px 8px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .create-playlist-button:hover {
   background-color: #1F1426;
-  box-shadow: 0 0 15px #B200FF;
+  box-shadow: 0 0 10px #B200FF;
 }
 
 .playlist-card {
