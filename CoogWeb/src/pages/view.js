@@ -132,3 +132,26 @@ export const ArtistView = ({ stats = {} }) => {
         </section>
     );
 };
+
+export const PlaylistViewPage = ({ playlist = {} }) => {
+
+    return (
+        <section className="everything">
+            <div className="profile-section">
+                <div className="profile-header">
+                    <img src={playlist.photo || purple_image} alt="Playlist Cover" className="profile-image" />
+                    <h2 className="profile-username">Playlist Name</h2>
+                </div>
+                <div className="basic-stats">
+                    <p className="basic-stats-text">Songs: {playlist.songs || 0}</p>
+                    <p className="basic-stats-text">Streams: {playlist.streams || 0}</p>
+                </div>
+            </div>
+
+            <div className="songView-section">
+                <div className="songView-header">Songs: </div>
+                <SongViewList songs={playlist.songs} /> {/* Pass album's songs list */}
+            </div>
+        </section>
+    );
+};

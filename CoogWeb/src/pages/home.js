@@ -5,7 +5,7 @@ import { SongList, ArtistList, AlbumList, UserList } from './sections';
 import { Profile, ArtistProfile } from './input';
 import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
-import { ArtistView, AlbumViewPage } from './view';
+import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 import { SongForm, SongFormDelete, SongFormEdit, AlbumForm, AlbumFormAdd, AlbumFormDelete, AlbumFormEdit, AlbumFormRemove, PlaylistForm,PlaylistFormAdd, PlaylistFormDelete, PlaylistFormEdit, PlaylistFormRemove } from './inputForms';
 
 const TopBar = () => {
@@ -80,13 +80,17 @@ const Home = () => {
     setActiveScreen(screen);
   };
 
+  const handlePlaylistClick = (screen) => {
+    setActiveScreen(screen);
+  };
+
   return (
     <div className="Home">
       <TopBar />
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} />
         <div className="main-content">
-        {renderScreen(activeScreen, setActiveScreen, handleArtistClick, handleAlbumClick)}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -95,12 +99,12 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick,onAlbumClick) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick) => {
   switch (activeScreen) {
     case 'song-list': return <SongList />;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
-    case 'album-list': return <AlbumList onAlbumClick={onAlbumClick}/>;
-    case 'profile': return <Profile setActiveScreen={onArtistClick}/>;
+    case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} />;
+    case 'profile': return <Profile setActiveScreen={onPlaylistClick} />;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} />;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
@@ -120,6 +124,7 @@ const renderScreen = (activeScreen, onArtistClick,onAlbumClick) => {
     case 'delete-playlist': return <PlaylistFormDelete />;
     case 'add-song-playlist': return <PlaylistFormAdd />;
     case 'remove-song-playlist': return <PlaylistFormRemove />;
+    case 'playlist-view': return <PlaylistViewPage />;
     default: return <SongList />;
   }
 };

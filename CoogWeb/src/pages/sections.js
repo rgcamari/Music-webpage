@@ -4,7 +4,7 @@ import heart from './heart.png';
 import './sections.css';
 import play_button from './play.png';
 import forward from './forward.png';
-import { ArtistView, AlbumViewPage } from './view';
+import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 
 
 export const SongList = () => {

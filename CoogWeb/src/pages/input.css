@@ -132,21 +132,18 @@
 }
 
 .playlist-card {
-    background: #000000;
-    color: white;
-    border-radius: 10px;
-    padding: 15px;
-    text-align: center;
-    transition: transform 0.2s;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: space-between; 
-    height: 200px; 
-    font-family: 'Montserrat';
-    font-weight: bold;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  background: #303030;
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: space-between; 
+  height: 200px; 
 }
 
 .playlist-card:hover {
@@ -154,8 +151,8 @@
 }
 
 .playlist-image {
-    width: 125px; 
-    height: 125px; 
+    width: 100px; 
+    height: 100px; 
     object-fit: cover;
     border-radius: 10%; 
     margin-top: 5px; 
@@ -163,8 +160,9 @@
 
 .playlist-name {
     
-    font-size: 20px;
-    text-align: center;
+  font-size: 20px;
+  text-align: center;
+  margin: 10px 0 0px 0;
 }
 
 .playlist-list::-webkit-scrollbar {
