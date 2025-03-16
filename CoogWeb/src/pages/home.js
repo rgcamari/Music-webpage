@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
 import { SongList, ArtistList, AlbumList, UserList } from './sections';
@@ -7,6 +7,9 @@ import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 import { SongForm, SongFormDelete, SongFormEdit, AlbumForm, AlbumFormAdd, AlbumFormDelete, AlbumFormEdit, AlbumFormRemove, PlaylistForm,PlaylistFormAdd, PlaylistFormDelete, PlaylistFormEdit, PlaylistFormRemove } from './inputForms';
+import pause_button from './pause_button.png';
+import play_button from './play_button.png';
+
 
 const TopBar = () => {
   const username = "Username"; // Replace with dynamic username if needed
@@ -46,27 +49,73 @@ const SideBar = ({ onButtonClick }) => {
   );
 };
 
-// BottomBar Component
-const BottomBar = ({ currentSong }) => {
+export const BottomBar = ({ currentSong }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  // Ensure currentSong is never null
+  const song = currentSong || tempSong;
+
+  // Ensure audio src updates when the song changes
+  useEffect(() => {
+    console.log("Audio ref:", audioRef.current); // Debugging
+    if (audioRef.current) {
+      console.log("Setting audio src:", song.url); // Debugging
+      audioRef.current.src = song.url; // Set the src explicitly
+      console.log("Audio element src after setting:", audioRef.current.src); // Debugging
+      setIsPlaying(false); // Reset play state
+    }
+  }, [song]);
+
+  const togglePlayPause = () => {
+    if (audioRef.current) {
+      console.log("Audio src:", audioRef.current.src); // Debugging
+      console.log("Audio paused:", audioRef.current.paused); // Debugging
+      if (!isPlaying) {
+        audioRef.current
+          .play()
+          .then(() => {
+            console.log("Playback started"); // Debugging
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.error("Playback failed:", error); // Debugging
+          });
+      } else {
+        audioRef.current.pause();
+        console.log("Playback paused"); // Debugging
+        setIsPlaying(false);
+      }
+    }
+  };
+
   return (
     <div className="bottom-bar">
       <div className="now-playing">
-        {currentSong && (
-          <>
-            <img src={currentSong.photo} alt={currentSong.name} className="song-photo" />
-            <span className="current-song-name">{currentSong.name}</span>
-          </>
-        )}
+        <img src={song.photo} alt={song.name} className="song-photo" />
+        <span className="current-song-name">{song.name}</span>
       </div>
+      <button className="play-pause-btn" onClick={togglePlayPause}>
+        <img
+          src={isPlaying ? pause_button : play_button}
+          alt={isPlaying ? 'Pause' : 'Play'}
+          className="play-pause-image"
+        />
+      </button>
+      {/* Audio element with ref and src */}
+      <audio ref={audioRef} src={song.url} />
     </div>
   );
 };
 
 
+
+
 const Home = () => {
   const [currentSong, setCurrentSong] = useState({
-    name: 'Sample Song',
-    photo: purple_image,
+      name: "Dawn of Change",
+      url: "/dawnofchange.mp3", // Ensure this path is correct
+      photo: purple_image, // Ensure this is imported or a valid path
   });
 
   const [activeScreen, setActiveScreen] = useState('song-list'); // Default to Song List
