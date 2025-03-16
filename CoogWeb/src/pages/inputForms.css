@@ -1,0 +1,87 @@
+.input-section {
+    padding: 10px;
+    background: linear-gradient(to bottom, #6a4a7d, #2D1E33); /* Light gray to lavender gradient */
+    border-radius: 10px;
+    
+  }
+
+  .input-section:hover {
+    box-shadow: 0 0 15px rgba(226, 160, 239, 0.5); /* Lavender glow effect on hover */
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center; /* Vertically center the image and username */
+    
+  }
+
+  .input-username {
+    font-size: 24px;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    text-align: center; /* Center text */
+    width: 100%;
+  }
+
+  .song-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 30px auto 0 auto;
+    padding: 20px;
+    background-color: rgb(122, 118, 118); 
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.song-form label {
+    font-family: "Montserrat";
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    margin-bottom: 5px;
+    text-align: left;
+    width: 100%;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)
+}
+
+.song-form input {
+    font-family: "Montserrat";
+    font-size: 14px;
+    color: grey;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.song-form input:focus {
+    border-color: #777;
+    color: white;
+}
+
+.song-form button {
+    font-family: "Mantissa", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    background-color: #af7bcd;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.song-form button:hover {
+    background-color: #9365ad;
+}

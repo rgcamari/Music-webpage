@@ -1,8 +1,11 @@
 import React, {useState} from 'react';
 import purple_image from './purple_image.png';
 import './input.css';
+import {SongForm, SongFormDelete, SongFormEdit} from './inputForms.js';
+import {PlaylistViewPage} from './view.js';
+import forward from './forward.png';
 
-export const PlaylistList = () => {
+export const PlaylistList = ({ onPlaylistClick }) => {
     const [playlists] = useState([
         { id: 1, name: "Mayhem", photo: purple_image },
         { id: 2, name: "Harlequin", photo: purple_image },
@@ -18,50 +21,65 @@ export const PlaylistList = () => {
     return (
         <div className="playlist-list">
             {playlists.map((playlist) => (
-                <PlaylistCard key={playlist.id} playlist={playlist} />
+                <PlaylistCard key={playlist.id} playlist={playlist} onPlaylistClick={onPlaylistClick} />
             ))}
         </div>
     );
 }
 
-export const PlaylistCard = ({ playlist }) => {
+export const PlaylistCard = ({ playlist, onPlaylistClick }) => {
     return (
         <div className="playlist-card">
             <img src={playlist.photo} alt={playlist.name} className="playlist-image" />
             <h3 className="playlist-name">{playlist.name}</h3>
+            <button className="forward-button" onClick={() => onPlaylistClick('playlist-view', playlist.id)}>
+                <img src={forward} alt="forward" className="forward-icon" />
+            </button>
         </div>
     );
 };
 
-
-
-export const Profile = () => {
-    const [stats, setStats] = useState({
+export const Profile = ({ setActiveScreen }) => {
+    const [stats] = useState({
         following: 120,  // Example count
         friends: 85,     // Example count
         likedSongs: 300, // Example count
     });
 
     return (
-        <section className = "everything">
-        <div className="profile-section">
-            <div className="profile-header">
-                <img src={purple_image} alt="Profile" className="profile-image" />
-                <h2 className="profile-username">Username</h2>
+        <section className="everything">
+            <div className="profile-section">
+                <div className="profile-header">
+                    <img src={purple_image} alt="Profile" className="profile-image" />
+                    <h2 className="profile-username">Username</h2>
+                </div>
+                <div className="Basic-Stats">
+                    <p className="basic-stats-text"> Following: {stats.following}</p>
+                    <p className="basic-stats-text"> Friends: {stats.friends}</p>
+                    <p className="basic-stats-text"> Liked Songs: {stats.likedSongs}</p>
+                </div>
             </div>
-            <div className="Basic-Stats">
-                <p className="basic-stats-text"> Following: {stats.following}</p>
-                <p className="basic-stats-text"> Friends: {stats.friends}</p>
-                <p className="basic-stats-text"> Liked Songs: {stats.likedSongs}</p>
-            </div>
-        </div>
 
-        <div className="playlist-section">
-            <div className="playlist-header">Your Platlists: 
-            <button className="create-playlist-button">Create Playlist</button>
+            <div className="playlist-section">
+                <div className="playlist-header">Your Playlists:
+                    <button className="create-playlist-button" onClick={() => setActiveScreen('create-playlist')}>
+                        Create Playlist
+                    </button>
+                    <button className="create-playlist-button" onClick={() => setActiveScreen('edit-playlist')}>
+                        Edit Playlist
+                    </button>
+                    <button className="create-playlist-button" onClick={() => setActiveScreen('delete-playlist')}>
+                        Delete Playlist
+                    </button>
+                    <button className="create-playlist-button" onClick={() => setActiveScreen('add-song-playlist')}>
+                        Add Song
+                    </button>
+                    <button className="create-playlist-button" onClick={() => setActiveScreen('remove-song-playlist')}>
+                        Remove Song
+                    </button>
+                </div>
+                <PlaylistList onPlaylistClick={setActiveScreen} />
             </div>
-            <PlaylistList />
-        </div>
         </section>
     );
 };
@@ -130,7 +148,7 @@ export const SongProfileCard = ({ songProfile }) => {
     );
 };
 
-export const ArtistProfile = () => {
+export const ArtistProfile = ({setActiveScreen}) => {
     const [stats, setStats] = useState({
         following: 120,  // Example count
         friends: 85,     // Example count
@@ -152,14 +170,52 @@ export const ArtistProfile = () => {
         </div>
         <div className="albumProfile-section">
                 <div className="albumProfile-header">Your Albums: 
-                <button className="create-album-button">Create Album</button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('create-album')}>
+                        Create Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('edit-album')}>
+                        Edit Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('delete-album')}>
+                        Delete Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('add-song-album')}>
+                        Add Song
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('remove-song-album')}>
+                        Remove Song
+                    </button>
                 </div>
             <AlbumProfileList />
             </div>
 
             <div className="songProfile-section">
                 <div className="songProfile-header">Your Songs: 
-                <button className="create-song-button">Create Song</button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('create-song')}>
+                        Create Song
+                    </button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('edit-song')}>
+                        Edit Song
+                    </button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('delete-song')}>
+                        Delete Song
+                    </button>
                 </div>
             <SongProfileList />
             </div>
