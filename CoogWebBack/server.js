@@ -1,14 +1,18 @@
 const http = require('http');
-const { loginUser } = require('./login');
 const url = require('url');
+const mysql = require('mysql2');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const pool = require('./database.js');
+const eRoutes = require('./routes');
 
 const corsMiddleWare = cors();
 
 const map_route = {
     'GET': [
     ],
-    'POST': [
+    'POST': ['/signup', '/login'
     ],
     'PUT': [
     ],

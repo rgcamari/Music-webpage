@@ -22,7 +22,7 @@
   }
 
   .SignUp-title {
-    font-size: 50px;
+    font-size: 40px;
     font-weight: bold;
     margin: 20px;
     font-family: 'Montserrat';
@@ -31,7 +31,7 @@
 
   .SignUp-description {
     font-size: 18px;
-    margin: 18px;
+    margin: 14px;
     font-family: 'Montserrat';
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)
   }
@@ -43,7 +43,7 @@
     font-weight: bold;
     padding: 5px 15px;
     border-radius: 10px;
-    margin: 10px;
+    margin: 5px;
     text-decoration: none;
     font-family: 'Montserrat';
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
@@ -62,7 +62,7 @@
     font-weight: bold;
     padding: 5px 15px;
     border-radius: 10px;
-    margin: 10px;
+    margin: 5px;
     text-decoration: none;
     font-family: 'Montserrat';
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);

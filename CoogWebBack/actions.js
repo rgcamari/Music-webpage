@@ -16,8 +16,43 @@ const getUsers = (req,res) => {
     });
 };
 
+const handleSignup = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chink.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const {accountType, email, username, password,image} = JSON.parse(body);
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            let tableName;
+            if (accountType === 'user') {
+                tableName = 'user';
+            }
+            else if (accountType === 'artist') {
+                tableName = 'artist';
+            }
+            else {throw new Error('Invalid account type');}
+
+            const [result] = await pool.promise().query(`INSERT INTO ${tableName} (email, username, password, image_url) values (?,?,?,?)`,
+                [email, username, hashedPassword, image]
+            );
+            res.writeHead(201, {"Content-Type": 'application/json'});
+            res.end(JSON.stringify({success: true}));
+        }
+        catch (err) {
+            console.error('Error during sigup:', err);
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({success: false, message: 'Signup Failed'}));
+        }
+    });
+};
 
 
 module.exports = {
-    getUsers
+    getUsers,
+    handleSignup
 };

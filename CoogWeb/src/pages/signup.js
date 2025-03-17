@@ -7,6 +7,7 @@ function Signup() {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [image, setImage] = useState("");
 
     const handleType = (actionType) => {
         if (actionType === "user") {
@@ -17,10 +18,29 @@ function Signup() {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault(); // Prevents page reload
-        alert(`AccountType: ${accountType}\nEmail: ${email}\n Username: ${username}\nPassword: ${password}`);
-        window.location.href = '/home';
+        
+        try {
+          const response = await fetch('http://localhost:3000/signup', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({accountType,email,username,password,image}),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert('Signup Successful!');
+          window.location.href = '/home';
+        }
+        else {
+          alert(`Signup failed: ${data.message}`);
+        }
+      }
+      catch (err) {
+        console.error('Error during signup:', err);
+        alert('Signup failed. Please try again.');
+      }
     }    
 
     return (
@@ -61,6 +81,16 @@ function Signup() {
                     type="password" 
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)} 
+                    required
+                    />
+
+                    <div className="Input-Type">
+                    <label>Profile Picture:</label>
+                    </div>
+                    <input className= "Input-Box"
+                    type="image_url" 
+                    value={image} 
+                    onChange={(e) => setImage(e.target.value)} 
                     required
                     />
                     
