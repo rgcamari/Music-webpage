@@ -1,4 +1,4 @@
-const actions = require('./actions');
+const {handleSignup} = require('./actions');
 
 
 function routes(req, res) {
@@ -9,6 +9,9 @@ function routes(req, res) {
     if (URL.startsWith('/signup') && method === 'POST') {
         return handleSignup(req, res);
     } 
+
+    res.writeHead(404, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Route Not Found" }));
 };
 
 module.exports = routes;

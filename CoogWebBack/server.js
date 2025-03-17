@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
-const routes = require('./routes'); 
+const routes = require('./route'); 
 
 const map_route = {
     'GET': [],
