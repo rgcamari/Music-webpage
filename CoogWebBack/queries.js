@@ -59,3 +59,27 @@ const insertHistory = `INSERT INTO history (user_id, song_id, last_listen) value
 const insertLikedSong = `INSERT INTO liked_song (user_id, song_id, liked_at) values (?,?,?);`   
 
 const insertPlaylist = `INSERT INTO playlist (name, user_id, image_url, created_at) values (?,?,?,?);`
+
+module.exports = {
+    getSongs,
+    getUsers,
+    getAlbums,
+    getArtists,
+    getPlaylists,
+    getSongListOutput,
+    getArtistListOutput,
+    getAlbumListOutput,
+    getPlaylistListOutput,
+    getUserListOutput,
+    insertAlbum,
+    insertAdmin,
+    insertArtist,
+    insertFollowing,
+    insertFriend,
+    insertHistory,
+    insertLikedAlbum,
+    insertLikedSong,
+    insertPlaylist,
+    insertSong,
+    insertUser
+}
