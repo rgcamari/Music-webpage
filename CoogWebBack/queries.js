@@ -60,6 +60,8 @@ const insertLikedSong = `INSERT INTO liked_song (user_id, song_id, liked_at) val
 
 const insertPlaylist = `INSERT INTO playlist (name, user_id, image_url, created_at) values (?,?,?,?);`
 
+
+
 module.exports = {
     getSongs,
     getUsers,
