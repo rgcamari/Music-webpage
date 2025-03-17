@@ -13,6 +13,9 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
-    "mysql2": "^3.13.0"
+    "bcrypt": "^5.1.1",
+    "cookie": "^1.0.2",
+    "mysql2": "^3.13.0",
+    "uuid": "^11.1.0"
   }
 }
