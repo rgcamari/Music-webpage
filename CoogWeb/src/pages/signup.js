@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import './signup.css';
 
 
 function Signup() {
+    const navigate = useNavigate();
     const [accountType, setAccountType] = useState("");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
@@ -31,7 +33,7 @@ function Signup() {
         const data = await response.json();
         if (data.success) {
           alert('Signup Successful!');
-          window.location.href = '/home';
+          navigate('/home');
         }
         else {
           alert(`Signup failed: ${data.message}`);
@@ -49,8 +51,8 @@ function Signup() {
                 <p className= "SignUp-title"> Sign In</p>
                 <p className= "SignUp-description">Please identify the account type you want:</p>
                 <form onSubmit={handleSubmit}>
-                    <button className="User-Button" onClick={() =>handleType("user")}>User</button>
-                    <button className="Artist-Button" onClick={() =>handleType("artist")}>Artist</button>
+                    <button type="button" className="User-Button" onClick={() =>handleType("user")}>User</button>
+                    <button type="button" className="Artist-Button" onClick={() =>handleType("artist")}>Artist</button>
 
                     <div className="Input-Type">
                     <label>Email:</label>
@@ -88,7 +90,7 @@ function Signup() {
                     <label>Profile Picture:</label>
                     </div>
                     <input className= "Input-Box"
-                    type="image_url" 
+                    type="url" 
                     value={image} 
                     onChange={(e) => setImage(e.target.value)} 
                     required

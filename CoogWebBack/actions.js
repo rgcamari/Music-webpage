@@ -1,18 +1,19 @@
 const { stringify } = require('qs');
 const pool = require('./database.js');
 const queries = require('./queries.js');
+const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 
-const getUsers = (req,res) => {
+const getUsers = (req, res) => {
     pool.query(queries.getUsers, (error, results) => {
         if (error) {
-            console.error("Error fetching Users:", error);
-            response.writeHead(500, {"Content-Type": "application/json"});
-            response.end(JSON.stringify({error: "Internal server error"}));
+            console.error("Error fetching users:", error);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Internal server error" }));
             return;
         }
-        response.writeHead(200, {"Content-Type": "application/json"});
-        response.end(JSON.stringify(results));
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(results));
     });
 };
 
@@ -20,37 +21,39 @@ const handleSignup = async (req, res) => {
     let body = '';
 
     req.on('data', (chunk) => {
-        body += chink.toString();
+        body += chunk.toString();
     });
 
     req.on('end', async () => {
         try {
-            const {accountType, email, username, password,image} = JSON.parse(body);
-            const hashedPassword = await bcrypt.hash(password, 10);
-            
-            let tableName;
-            if (accountType === 'user') {
-                tableName = 'user';
-            }
-            else if (accountType === 'artist') {
-                tableName = 'artist';
-            }
-            else {throw new Error('Invalid account type');}
+            const parsedBody = JSON.parse(body);
+            const { accountType, email, username, password, image } = parsedBody;
 
-            const [result] = await pool.promise().query(`INSERT INTO ${tableName} (email, username, password, image_url) values (?,?,?,?)`,
-                [email, username, hashedPassword, image]
+            if (!accountType || !email || !username || !password) {
+                throw new Error('Missing required fields');
+            }
+
+            const validAccountTypes = ['user', 'artist'];
+            if (!validAccountTypes.includes(accountType)) {
+                throw new Error('Invalid account type');
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const [result] = await pool.promise().query(
+                `INSERT INTO ?? (email, username, password, image_url) VALUES (?, ?, ?, ?)`,
+                [accountType, email, username, hashedPassword, image]
             );
-            res.writeHead(201, {"Content-Type": 'application/json'});
-            res.end(JSON.stringify({success: true}));
-        }
-        catch (err) {
-            console.error('Error during sigup:', err);
-            res.writeHead(500, {'Content-Type': 'application/json'});
-            res.end(JSON.stringify({success: false, message: 'Signup Failed'}));
+
+            res.writeHead(201, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, userId: result.insertId }));
+        } catch (err) {
+            console.error('Error during signup:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Signup Failed' }));
         }
     });
 };
-
 
 module.exports = {
     getUsers,
