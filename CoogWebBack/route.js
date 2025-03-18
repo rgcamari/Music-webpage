@@ -12,10 +12,6 @@ function routes(req, res) {
     if (URL.startsWith('/login') && method === 'POST') {
         return actions.handleLogin(req, res);
     }
-    if (URL === "/test" && method === "GET") {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ success: true, message: "Test route working!" }));
-    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

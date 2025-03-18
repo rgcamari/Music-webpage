@@ -53,15 +53,65 @@ const handleSignup = async (req, res) => {
     });
 };
 
+const handleLogin = async (req, res) => {
+    let body = "";
 
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { username, password} = parsedBody;
+
+            if (!username || !password) {
+                throw new Error('Missing required fields');
+            }
+
+            const [user_check] = await pool.promise().query(
+                `SELECT user_id FROM user WHERE ? = username AND ? = password`, [username,password]
+            );
+            if (user_check.length > 0) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, userId: user_check.insertId, message: "User Account" }));
+                return;
+            }
+
+            const [artist_check] = await pool.promise().query(
+                `SELECT artist_id FROM artist WHERE ? = username AND ? = password`, [username, password]
+            );
+            if (artist_check.length > 0) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, artistId: artist_check.insertId, message: "Artist Account" }));
+                return;
+            }
+
+            const [admin_check] = await pool.promise().query(
+                `SELECT album_id FROM album WHERE ? = username AND ? = password`, [username, password]
+            );
+            if (admin_check.length > 0) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, adminId: admin_check.insertId, message: "Admin Account" }));
+                return;
+            }
+        }
+        catch (err) {
+            console.error('Error during signup:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Login Failed' }));
+        }
+    });
+
+};
 
 
 
 
 module.exports = {
     getUsers,
-    handleSignup
-    //handleLogin
+    handleSignup,
+    handleLogin
 };
 
 /*const handleLogin = async (req, res) => {
