@@ -154,7 +154,7 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType) => {
   switch (activeScreen) {
     case 'song-list': return <SongList />;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
@@ -164,8 +164,8 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
-    case 'artist-view': return <ArtistView />;
-    case 'album-view-page': return <AlbumViewPage />;
+    case 'artist-view': return <ArtistView accountType={'artist'}/>;
+    case 'album-view-page': return <AlbumViewPage/>;
     case 'create-song': return <SongForm />;
     case 'edit-song': return <SongFormEdit />;
     case 'delete-song': return <SongFormDelete />;
