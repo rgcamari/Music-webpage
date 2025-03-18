@@ -9,6 +9,7 @@ import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 import { SongForm, SongFormDelete, SongFormEdit, AlbumForm, AlbumFormAdd, AlbumFormDelete, AlbumFormEdit, AlbumFormRemove, PlaylistForm,PlaylistFormAdd, PlaylistFormDelete, PlaylistFormEdit, PlaylistFormRemove } from './inputForms';
 import pause_button from './pause_button.png';
 import play_button from './play_button.png';
+import { useLocation } from 'react-router-dom';
 
 
 const TopBar = () => {
@@ -118,6 +119,8 @@ export const BottomBar = ({ currentSong }) => {
 
 
 const Home = () => {
+  const location = useLocation();
+  const { userId, username, accountType, image_url } = location.state;
   const [currentSong, setCurrentSong] = useState({
       name: "Dawn of Change",
       url: "/dawnofchange.mp3", // Ensure this path is correct
@@ -141,9 +144,9 @@ const Home = () => {
 
   return (
     <div className="Home">
-      <TopBar />
+      <TopBar username={username} userImage={image_url}/>
       <div className="content">
-        <SideBar onButtonClick={setActiveScreen} accountType = {'artist'} />
+        <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
           {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick)}
         </div>

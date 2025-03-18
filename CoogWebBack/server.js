@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
 const Routes = require('./route'); 
+const cors = require('cors');
+
 
 const map_route = {
     'GET': [],
@@ -14,37 +16,36 @@ const map_route = {
 };
 
 const server = http.createServer((req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*"); // OR better: "http://localhost:5173"
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Or specify your frontend URL
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    if (req.method === "OPTIONS") {
-      res.writeHead(204);
-      res.end();
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  const parsedUrl = url.parse(req.url, true);
+  const { pathname } = parsedUrl;
+  const method = req.method;
+
+  if (pathname === "/") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify("From backend side"));
       return;
-    }
+  }
 
-    const URL_PARSE = url.parse(req.url, true);
-    const { pathname } = URL_PARSE;
-    const method = req.method;
+  const isMatch = (map_route[method] || []).some(route =>
+    pathname.startsWith(route)
+  );
 
-    if (pathname === "/") {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify("From backend side"));
-        return;
-      }
-  
-      const isMatch = (map_route[method] || []).some(route =>
-        pathname.startsWith(route)
-      );
-    
-      if (isMatch) {
-        Routes(req, res);
-        return;
-      }
+  if (isMatch) {
+    return Routes(req, res);
+  }
 
-    res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Route Not Found" }));
+  res.writeHead(404, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ error: "Route Not Found" }));
 });
 
 const PORT = process.env.PORT || 3000;

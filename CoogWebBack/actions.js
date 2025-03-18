@@ -70,7 +70,7 @@ const handleLogin = async (req, res) => {
             }
 
             const [user_check] = await pool.promise().query(
-                `SELECT user_id FROM user WHERE ? = username AND ? = password`, [username,password]
+                `SELECT user_id FROM user WHERE username = ? AND password = ?`, [username,password]
             );
             if (user_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
@@ -84,7 +84,7 @@ const handleLogin = async (req, res) => {
             }
 
             const [artist_check] = await pool.promise().query(
-                `SELECT artist_id FROM artist WHERE ? = username AND ? = password`, [username, password]
+                `SELECT artist_id FROM artist WHERE username = ? AND password = ?`, [username, password]
             );
             if (artist_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
@@ -98,7 +98,7 @@ const handleLogin = async (req, res) => {
             }
 
             const [admin_check] = await pool.promise().query(
-                `SELECT album_id FROM album WHERE ? = username AND ? = password`, [username, password]
+                `SELECT album_id FROM album WHERE username = ? AND password = ?`, [username, password]
             );
             if (admin_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });

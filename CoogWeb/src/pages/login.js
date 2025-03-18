@@ -13,9 +13,11 @@ function Login () {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3000/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("http://localhost:3000/login", {  // Ensure the URL is correct
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({ username, password }),
             });
 
@@ -28,7 +30,7 @@ function Login () {
 
             if (data.success) {
                 alert('Login Successful!');
-                navigate('/home');
+                navigate('/home', { state: { userId: data.userId, username: data.username, accountType: data.accountType, image_url: data.image_url } });
             } else {
                 alert(`Login failed: ${data.message || 'Invalid username or password'}`);
             }
