@@ -39,7 +39,7 @@ const handleSignup = async (req, res) => {
             }
 
             const [result] = await pool.promise().query(
-                `INSERT INTO ?? (email, username, password, image_url) VALUES (?, ?, ?, ?)`,
+                `INSERT INTO ?? (email, username, password, image_url, created_at) VALUES (?, ?, ?, ?, NOW())`,
                 [accountType, email, username, password, image]
             );
 
