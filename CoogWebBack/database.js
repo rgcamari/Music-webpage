@@ -3,6 +3,7 @@ require('dotenv').config()
 
 const MYSQL = require('mysql2')
 // MySQL package for Node.js
+console.log(process.env.DB_DATABASE);
 
 const pool = MYSQL.createPool({
     host: process.env.DB_HOST,

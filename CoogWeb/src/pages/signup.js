@@ -13,10 +13,10 @@ function Signup() {
 
     const handleType = (actionType) => {
         if (actionType === "user") {
-          setAccountType("User");
+          setAccountType("user");
         }
         else if (actionType === "artist") {
-          setAccountType("Artist");
+          setAccountType("artist");
         }
     };
 

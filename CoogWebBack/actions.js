@@ -38,11 +38,9 @@ const handleSignup = async (req, res) => {
                 throw new Error('Invalid account type');
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
-
             const [result] = await pool.promise().query(
                 `INSERT INTO ?? (email, username, password, image_url) VALUES (?, ?, ?, ?)`,
-                [accountType, email, username, hashedPassword, image]
+                [accountType, email, username, password, image]
             );
 
             res.writeHead(201, { "Content-Type": "application/json" });
@@ -55,7 +53,28 @@ const handleSignup = async (req, res) => {
     });
 };
 
+
+
+
+
+
 module.exports = {
     getUsers,
     handleSignup
+    //handleLogin
 };
+
+/*const handleLogin = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on("end", () => {
+        console.log("Received body:", body);
+
+        res.writeHead(200, { "Content-Type": "application/json" }); // ✅ Fix headers
+        res.end(JSON.stringify({ success: true, message: "Request received" }));
+    });
+};*/
