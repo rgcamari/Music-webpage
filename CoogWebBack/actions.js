@@ -42,9 +42,12 @@ const handleSignup = async (req, res) => {
                 `INSERT INTO ?? (email, username, password, image_url, created_at) VALUES (?, ?, ?, ?, NOW())`,
                 [accountType, email, username, password, image]
             );
+            
+            
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, message: 'Signup Success' }));
+                return;
 
-            res.writeHead(201, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: true, userId: result.insertId }));
         } catch (err) {
             console.error('Error during signup:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
