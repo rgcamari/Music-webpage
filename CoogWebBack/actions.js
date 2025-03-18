@@ -39,12 +39,15 @@ const handleSignup = async (req, res) => {
             }
 
             const [result] = await pool.promise().query(
-                `INSERT INTO ?? (email, username, password, image_url) VALUES (?, ?, ?, ?)`,
+                `INSERT INTO ?? (email, username, password, image_url, created_at) VALUES (?, ?, ?, ?, NOW())`,
                 [accountType, email, username, password, image]
             );
+            
+            
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, message: 'Signup Success' }));
+                return;
 
-            res.writeHead(201, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: true, userId: result.insertId }));
         } catch (err) {
             console.error('Error during signup:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -70,13 +73,17 @@ const handleLogin = async (req, res) => {
             }
 
             const [user_check] = await pool.promise().query(
-                `SELECT user_id FROM user WHERE ? = username AND ? = password`, [username,password]
+                `SELECT user_id, username, image_url FROM user WHERE username = ? AND password = ?`, [username,password]
             );
+            console.log('User Check:', user_check);
+
             if (user_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({
                     success: true,
                     userId: user_check[0].user_id, // Correct the access to user_id
+                    userName: user_check[0].username,
+                    userImage: user_check[0].image_url,
                     accountType: 'user', // Returning the account type
                     message: "User Account"
                 }));
@@ -84,13 +91,15 @@ const handleLogin = async (req, res) => {
             }
 
             const [artist_check] = await pool.promise().query(
-                `SELECT artist_id FROM artist WHERE ? = username AND ? = password`, [username, password]
+                `SELECT artist_id, username, image_url FROM artist WHERE username = ? AND password = ?`, [username, password]
             );
             if (artist_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({
                     success: true,
-                    artistId: artist_check[0].artist_id, // Correct the access to user_id
+                    userId: artist_check[0].artist_id, // Correct the access to user_id
+                    userName: artist_check[0].username,
+                    userImage: artist_check[0].image_url,
                     accountType: 'artist', // Returning the account type
                     message: "Artist Account"
                 }));
@@ -98,13 +107,15 @@ const handleLogin = async (req, res) => {
             }
 
             const [admin_check] = await pool.promise().query(
-                `SELECT album_id FROM album WHERE ? = username AND ? = password`, [username, password]
+                `SELECT admin_id, username, image_url FROM admin WHERE username = ? AND password = ?`, [username, password]
             );
             if (admin_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({
                     success: true,
-                    adminId: admin_check[0].admin_id, // Correct the access to user_id
+                    userId: admin_check[0].admin_id, // Correct the access to user_id
+                    userName: admin_check[0].username,
+                    userImage: admin_check[0].image_url, 
                     accountType: 'admin', // Returning the account type
                     message: "Admin Account"
                 }));
@@ -120,13 +131,26 @@ const handleLogin = async (req, res) => {
 
 };
 
+const getArtistList = async (req, res) => {
+    try {
+        const [artists] = await pool.promise().query(`SELECT artist_id, username, image_url FROM artist`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, artists}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch artists' }));
+    }
+};
 
 
 
 module.exports = {
     getUsers,
     handleSignup,
-    handleLogin
+    handleLogin,
+    getArtistList
 };
 
 /*const handleLogin = async (req, res) => {

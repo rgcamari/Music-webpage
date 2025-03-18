@@ -13,10 +13,12 @@ function Login () {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3000/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
+            const response = await fetch("http://localhost:5000/login", {  // Ensure the URL is correct
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username:username, password:password }),
             });
 
             // Check if response is okay (status 2xx)
@@ -27,9 +29,37 @@ function Login () {
             const data = await response.json();
 
             if (data.success) {
-                alert('Login Successful!');
-                navigate('/home');
-            } else {
+                
+                if (data.accountType === "artist") {
+                    alert(
+                        `Login Successful!\n\n` +
+                        `User ID: ${data.userId}\n` +
+                        `Username: ${data.userName}\n` +
+                        `Account Type: ${data.accountType}\n` +
+                        `Image URL: ${data.userImage}`
+                    );
+                    navigate('/home', { state: { userId: data.userId, userName: data.userName, accountType: data.accountType, userImage: data.userImage } });
+                } else if (data.accountType === "admin") {
+                    alert(
+                        `Login Successful!\n\n` +
+                        `User ID: ${data.userId}\n` +
+                        `Username: ${data.userName}\n` +
+                        `Account Type: ${data.accountType}\n` +
+                        `Image URL: ${data.userImage}`
+                    );
+                    navigate('/home', { state: { userId: data.userId, userName: data.userName, accountType: data.accountType, userImage: data.userImage } });
+                } else {
+                    alert(
+                        `Login Successful!\n\n` +
+                        `User ID: ${data.userId}\n` +
+                        `Username: ${data.userName}\n` +
+                        `Account Type: ${data.accountType}\n` +
+                        `Image URL: ${data.userImage}`
+                    );
+                    navigate('/home', { state: { userId: data.userId, userName: data.userName, accountType: data.accountType, userImage: data.userImage } });
+                }            } 
+                
+                else {
                 alert(`Login failed: ${data.message || 'Invalid username or password'}`);
             }
         } catch (err) {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import purple_image from './purple_image.png';
 import heart from './heart.png';
 import './sections.css';
@@ -55,22 +55,40 @@ export const SongCard = ({ song }) => {
 };
 
 export const ArtistList = ({onArtistClick}) => {
-    const [artists] = useState([
-        { id: 1, name: "Ariana Grande", photo: purple_image },
-        { id: 2, name: "The Beatles", photo: purple_image },
-        { id: 3, name: "Zutomayo", photo: purple_image },
-        { id: 4, name: "Lady Gaga", photo: purple_image },
-        { id: 5, name: "Nightcore @ 25", photo: purple_image },
-        { id: 6, name: "Taylor Swift", photo: purple_image },
-        { id: 7, name: "Rick Montgomery", photo: purple_image },
-        { id: 8, name: "Doechii", photo: purple_image },
-        { id: 9, name: "Deco*27", photo: purple_image }
-    ]);
+    const [artists, setArtists] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchArtists = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/artistlist', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setArtists(data.artists);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch artists');
+                }
+            } catch (err) {
+                setError('Error fetching artists');
+            } finally {
+                setLoading(false);  // Data is loaded or error occurred
+            }
+        };
+
+        fetchArtists();
+    }, []);  // Empty dependency array to run this only once when the component mounts
+
+    if (loading) return <div>Loading artists...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="artist-list">
-          {artists.map((artist) => (
-            <ArtistCard key={artist.id} artist={artist} onArtistClick={onArtistClick} />
+          {artists.map((artist, index) => (
+            <ArtistCard key={index} artist={artist} onArtistClick={onArtistClick} />
           ))}
         </div>
       );
@@ -79,14 +97,14 @@ export const ArtistList = ({onArtistClick}) => {
 export const ArtistCard = ({ artist, onArtistClick }) => {
     return (
       <div className="artist-card">
-        <img src={artist.photo} alt={artist.name} className="artist-image" />
-        <h3 className="artist-name">{artist.name}</h3>
-        <button onClick={() => onArtistClick('artist-view')} className="forward-button">
+        <img src={artist.image_url} alt={artist.username} className="artist-image" />
+        <h3 className="artist-name">{artist.username}</h3>
+        <button onClick={() => onArtistClick('artist-view', artist)} className="forward-button">
           <img src={forward} alt="forward" className="forward-icon" />
         </button>
       </div>
     );
-  };
+};
 
   export const AlbumList = ({ onAlbumClick }) => {
     const [albums] = useState([

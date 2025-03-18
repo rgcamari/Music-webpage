@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
 import { SongList, ArtistList, AlbumList, UserList } from './sections';
@@ -9,24 +9,26 @@ import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 import { SongForm, SongFormDelete, SongFormEdit, AlbumForm, AlbumFormAdd, AlbumFormDelete, AlbumFormEdit, AlbumFormRemove, PlaylistForm,PlaylistFormAdd, PlaylistFormDelete, PlaylistFormEdit, PlaylistFormRemove } from './inputForms';
 import pause_button from './pause_button.png';
 import play_button from './play_button.png';
+import { useLocation } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 
-const TopBar = () => {
-  const username = "Username"; // Replace with dynamic username if needed
-  const userImage = purple_image; // Replace with actual user image URL
+const TopBar = ({ username, userimage }) => {
+  const navigate = useNavigate();
+  console.log('TopBar props:', { username, userimage });
 
   return (
     <div className="top-bar">
       <div className="user-infos">
-        <img src={userImage} alt={username} className="user-images" />
+        <img src={userimage} className="user-images" />
         <span className="username">{username}</span>
       </div>
       <div className="top-bar-buttons">
-        <button className="settings-button" onClick={() => window.location.href = '/settings'}>Settings</button>
-        <button className="main-menu-button" onClick={() => window.location.href = '/'}>Main Menu</button>
+        <button className="settings-button" onClick={() => navigate('/settings')}>Settings</button>
+        <button className="main-menu-button" onClick={() => navigate('/')}>Main Menu</button>
       </div>
       <div className="project-name">
-        <img src={userImage} alt={username} className="project-image" />
+        <img src={purple_image} className="project-image" />
         <h1>Coog Music</h1>
       </div>
     </div>
@@ -35,6 +37,7 @@ const TopBar = () => {
 
 // SideBar Component
 const SideBar = ({ onButtonClick, accountType }) => {
+  
   return (
     <div className="side-bar">
       <button className="side-bar-button" onClick={() => onButtonClick('song-list')}>Song List</button>
@@ -115,9 +118,15 @@ export const BottomBar = ({ currentSong }) => {
 };
 
 
-
+const handleArtistClick = (screen) => {
+  setActiveScreen(<ArtistList/>);
+};
 
 const Home = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { userId, userName, accountType, userImage } = location.state || {};
+
   const [currentSong, setCurrentSong] = useState({
       name: "Dawn of Change",
       url: "/dawnofchange.mp3", // Ensure this path is correct
@@ -126,10 +135,6 @@ const Home = () => {
 
   const [activeScreen, setActiveScreen] = useState('song-list'); // Default to Song List
 
-  // Function to handle artist click
-  const handleArtistClick = (screen) => {
-    setActiveScreen(screen);
-  };
 
   const handleAlbumClick = (screen) => {
     setActiveScreen(screen);
@@ -141,9 +146,9 @@ const Home = () => {
 
   return (
     <div className="Home">
-      <TopBar />
+      <TopBar username={userName} userImage={userImage}/>
       <div className="content">
-        <SideBar onButtonClick={setActiveScreen} accountType = {'artist'} />
+        <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
           {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick)}
         </div>
@@ -164,7 +169,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
-    case 'artist-view': return <ArtistView accountType={'artist'}/>;
+    case 'artist-view': return <ArtistView accountType={accountType} />;
     case 'album-view-page': return <AlbumViewPage/>;
     case 'create-song': return <SongForm />;
     case 'edit-song': return <SongFormEdit />;

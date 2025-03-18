@@ -22,18 +22,22 @@ function Signup() {
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevents page reload
+        console.log({accountType, email, username, password, image});
         
         try {
-          const response = await fetch('http://localhost:3000/signup', {
+          const response = await fetch('http://localhost:5000/signup', {
             method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({accountType,email,username,password,image}),
         });
 
         const data = await response.json();
+
         if (data.success) {
-          alert('Signup Successful!');
-          navigate('/home');
+          alert(
+              `Signup Successful!`
+          );
+          navigate('/');
         }
         else {
           alert(`Signup failed: ${data.message}`);
@@ -48,7 +52,7 @@ function Signup() {
     return (
             <header className="SignUp-Page">
               <div className="SignUp-Text">
-                <p className= "SignUp-title"> Sign In</p>
+                <p className= "SignUp-title"> Sign Up</p>
                 <p className= "SignUp-description">Please identify the account type you want:</p>
                 <form onSubmit={handleSubmit}>
                     <button type="button" className="User-Button" onClick={() =>handleType("user")}>User</button>
@@ -98,7 +102,7 @@ function Signup() {
                     
 
                     <div>
-                    <button className="Input-Button" type="submit">Log In</button>
+                    <button className="Input-Button" type="submit">Sign Up</button>
                     </div>
                     </form>
               </div>
