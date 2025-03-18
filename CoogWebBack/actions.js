@@ -74,7 +74,12 @@ const handleLogin = async (req, res) => {
             );
             if (user_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
-                res.end(JSON.stringify({ success: true, userId: user_check.insertId, message: "User Account" }));
+                res.end(JSON.stringify({
+                    success: true,
+                    userId: user_check[0].user_id, // Correct the access to user_id
+                    accountType: 'user', // Returning the account type
+                    message: "User Account"
+                }));
                 return;
             }
 
@@ -83,7 +88,12 @@ const handleLogin = async (req, res) => {
             );
             if (artist_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
-                res.end(JSON.stringify({ success: true, artistId: artist_check.insertId, message: "Artist Account" }));
+                res.end(JSON.stringify({
+                    success: true,
+                    artistId: artist_check[0].artist_id, // Correct the access to user_id
+                    accountType: 'artist', // Returning the account type
+                    message: "Artist Account"
+                }));
                 return;
             }
 
@@ -92,7 +102,12 @@ const handleLogin = async (req, res) => {
             );
             if (admin_check.length > 0) {
                 res.writeHead(201, { "Content-Type": "application/json" });
-                res.end(JSON.stringify({ success: true, adminId: admin_check.insertId, message: "Admin Account" }));
+                res.end(JSON.stringify({
+                    success: true,
+                    adminId: admin_check[0].admin_id, // Correct the access to user_id
+                    accountType: 'admin', // Returning the account type
+                    message: "Admin Account"
+                }));
                 return;
             }
         }
