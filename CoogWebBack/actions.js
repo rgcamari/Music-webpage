@@ -1,109 +1,130 @@
 const { stringify } = require('qs');
 const pool = require('./database.js');
 const queries = require('./queries.js');
+const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 
-function updateAdmin(adminId, updates) {
-    const fields = [];
-    const values = [];
+const getUsers = (req, res) => {
+    pool.query(queries.getUsers, (error, results) => {
+        if (error) {
+            console.error("Error fetching users:", error);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Internal server error" }));
+            return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(results));
+    });
+};
 
-    // Add fields and values to update
-    if (updates.username !== undefined) {
-        fields.push('username = ?');
-        values.push(updates.username);
-    }
-    if (updates.password !== undefined) {
-        fields.push('password = ?');
-        values.push(updates.password);
-    }
-    if (updates.email !== undefined) {
-        fields.push('email = ?');
-        values.push(updates.email);
-    }
-    if (updates.image_url !== undefined) {
-        fields.push('image_url = ?');
-        values.push(updates.image_url);
-    }
+const handleSignup = async (req, res) => {
+    let body = '';
 
-    // If no fields are provided, return early
-    if (fields.length === 0) {
-        throw new Error('No fields to update');
-    }
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
 
-    // Construct the query
-    const query = `UPDATE admin SET ${fields.join(', ')} WHERE admin_id = ?`;
-    values.push(adminId);  // Add admin_id to the values array
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { accountType, email, username, password, image } = parsedBody;
 
-    // Execute the query
-    return db.query(query, values);
-}
+            if (!accountType || !email || !username || !password) {
+                throw new Error('Missing required fields');
+            }
 
-function updateUser(userID, updates) {
-    const fields = [];
-    const values = [];
+            const validAccountTypes = ['user', 'artist'];
+            if (!validAccountTypes.includes(accountType)) {
+                throw new Error('Invalid account type');
+            }
 
-    // Add fields and values to update
-    if (updates.username !== undefined) {
-        fields.push('username = ?');
-        values.push(updates.username);
-    }
-    if (updates.password !== undefined) {
-        fields.push('password = ?');
-        values.push(updates.password);
-    }
-    if (updates.email !== undefined) {
-        fields.push('email = ?');
-        values.push(updates.email);
-    }
-    if (updates.image_url !== undefined) {
-        fields.push('image_url = ?');
-        values.push(updates.image_url);
-    }
+            const [result] = await pool.promise().query(
+                `INSERT INTO ?? (email, username, password, image_url) VALUES (?, ?, ?, ?)`,
+                [accountType, email, username, password, image]
+            );
 
-    // If no fields are provided, return early
-    if (fields.length === 0) {
-        throw new Error('No fields to update');
-    }
+            res.writeHead(201, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, userId: result.insertId }));
+        } catch (err) {
+            console.error('Error during signup:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Signup Failed' }));
+        }
+    });
+};
 
-    // Construct the query
-    const query = `UPDATE user SET ${fields.join(', ')} WHERE user_id = ?`;
-    values.push(userID);  // Add admin_id to the values array
+const handleLogin = async (req, res) => {
+    let body = "";
 
-    // Execute the query
-    return db.query(query, values);
-}
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
 
-function updateArtist(artistID, updates) {
-    const fields = [];
-    const values = [];
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { username, password} = parsedBody;
 
-    // Add fields and values to update
-    if (updates.username !== undefined) {
-        fields.push('username = ?');
-        values.push(updates.username);
-    }
-    if (updates.password !== undefined) {
-        fields.push('password = ?');
-        values.push(updates.password);
-    }
-    if (updates.email !== undefined) {
-        fields.push('email = ?');
-        values.push(updates.email);
-    }
-    if (updates.image_url !== undefined) {
-        fields.push('image_url = ?');
-        values.push(updates.image_url);
-    }
+            if (!username || !password) {
+                throw new Error('Missing required fields');
+            }
 
-    // If no fields are provided, return early
-    if (fields.length === 0) {
-        throw new Error('No fields to update');
-    }
+            const [user_check] = await pool.promise().query(
+                `SELECT user_id FROM user WHERE ? = username AND ? = password`, [username,password]
+            );
+            if (user_check.length > 0) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, userId: user_check.insertId, message: "User Account" }));
+                return;
+            }
 
-    // Construct the query
-    const query = `UPDATE artist SET ${fields.join(', ')} WHERE artist_ID = ?`;
-    values.push(artistID);  // Add admin_id to the values array
+            const [artist_check] = await pool.promise().query(
+                `SELECT artist_id FROM artist WHERE ? = username AND ? = password`, [username, password]
+            );
+            if (artist_check.length > 0) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, artistId: artist_check.insertId, message: "Artist Account" }));
+                return;
+            }
 
-    // Execute the query
-    return db.query(query, values);
-}
+            const [admin_check] = await pool.promise().query(
+                `SELECT album_id FROM album WHERE ? = username AND ? = password`, [username, password]
+            );
+            if (admin_check.length > 0) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, adminId: admin_check.insertId, message: "Admin Account" }));
+                return;
+            }
+        }
+        catch (err) {
+            console.error('Error during signup:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Login Failed' }));
+        }
+    });
+
+};
+
+
+
+
+module.exports = {
+    getUsers,
+    handleSignup,
+    handleLogin
+};
+
+/*const handleLogin = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on("end", () => {
+        console.log("Received body:", body);
+
+        res.writeHead(200, { "Content-Type": "application/json" }); // ✅ Fix headers
+        res.end(JSON.stringify({ success: true, message: "Request received" }));
+    });
+};*/

@@ -37,7 +37,7 @@ const getUserListOutput =
      FROM USER;`
 
 
-const insertAlbum = `INSERT INTO album (name, artist_id, genre, image_url, created_at) values (?,?,?,?,?);`
+const insertAlbum = `INSERT INTO album (name, artist_id, image_url, created_at) values (?,?,?,?,?);`
 
 const insertArtist = `INSERT INTO artist (username, email, password, genre, image_url, created_at) values (?,?,?,?,?,?);`
 
