@@ -68,7 +68,7 @@ export const SongViewCard = ({ songView }) => {
     );
 };
 
-export const ArtistView = ({ stats = {} }) => {
+export const ArtistView = ({ stats = {}, accountType }) => {
     return (
       <section className="everything">
         <div className="profile-section">
@@ -80,7 +80,9 @@ export const ArtistView = ({ stats = {} }) => {
             <p className="basic-stats-text">Follwers: {stats.followers || 0}</p>
             <p className="basic-stats-text">Streams: {stats.streams || 0}</p>
             <p className="basic-stats-text">Likes: {stats.likes || 0}</p>
+            {accountType !== 'artist' && (
             <button className="follow-button">Follow</button>
+            )}
           </div>
         </div>
         <div className="albumView-section">
@@ -98,7 +100,7 @@ export const ArtistView = ({ stats = {} }) => {
     );
   };
 
-  export const AlbumViewPage = ({ album = {} }) => {
+  export const AlbumViewPage = ({ album = {}}) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
 
     const handleHeartClick = () => {

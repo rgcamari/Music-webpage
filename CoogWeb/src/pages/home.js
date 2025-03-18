@@ -34,15 +34,21 @@ const TopBar = () => {
 };
 
 // SideBar Component
-const SideBar = ({ onButtonClick }) => {
+const SideBar = ({ onButtonClick, accountType }) => {
   return (
     <div className="side-bar">
       <button className="side-bar-button" onClick={() => onButtonClick('song-list')}>Song List</button>
       <button className="side-bar-button" onClick={() => onButtonClick('artist-list')}>Artist List</button>
       <button className="side-bar-button" onClick={() => onButtonClick('album-list')}>Album List</button>
-      <button className="side-bar-button" onClick={() => onButtonClick('user-lists')}>User List</button>
-      <button className="side-bar-button" onClick={() => onButtonClick('profile')}>Profile</button>
-      <button className="side-bar-button" onClick={() => onButtonClick('artist-profile')}>Artist Profile</button>
+      {accountType !== 'artist' && (
+        <button className="side-bar-button" onClick={() => onButtonClick('user-lists')}>User List</button>
+      )}
+      {accountType !== 'artist' && (
+        <button className="side-bar-button" onClick={() => onButtonClick('profile')}>Profile</button>
+      )}
+      {accountType !== 'user' && (
+        <button className="side-bar-button" onClick={() => onButtonClick('artist-profile')}>Artist Profile</button>
+      )}
       <button className="side-bar-button" onClick={() => onButtonClick('top-trending')}>Top Trending</button>
       <button className="side-bar-button" onClick={() => onButtonClick('cougar-wrap-up')}>Cougar Wrap-Up</button>
     </div>
@@ -137,7 +143,7 @@ const Home = () => {
     <div className="Home">
       <TopBar />
       <div className="content">
-        <SideBar onButtonClick={setActiveScreen} />
+        <SideBar onButtonClick={setActiveScreen} accountType = {'artist'} />
         <div className="main-content">
           {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick)}
         </div>
@@ -148,7 +154,7 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType) => {
   switch (activeScreen) {
     case 'song-list': return <SongList />;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
@@ -158,8 +164,8 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
-    case 'artist-view': return <ArtistView />;
-    case 'album-view-page': return <AlbumViewPage />;
+    case 'artist-view': return <ArtistView accountType={'artist'}/>;
+    case 'album-view-page': return <AlbumViewPage/>;
     case 'create-song': return <SongForm />;
     case 'edit-song': return <SongFormEdit />;
     case 'delete-song': return <SongFormDelete />;
