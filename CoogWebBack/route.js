@@ -12,6 +12,9 @@ function routes(req, res) {
     if (URL.startsWith('/login') && method === 'POST') {
         return actions.handleLogin(req, res);
     }
+    if (URL.startsWith('/artistlist') && method === 'GET') {
+        return actions.getArtistList(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

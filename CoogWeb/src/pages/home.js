@@ -37,6 +37,7 @@ const TopBar = ({ username, userimage }) => {
 
 // SideBar Component
 const SideBar = ({ onButtonClick, accountType }) => {
+  
   return (
     <div className="side-bar">
       <button className="side-bar-button" onClick={() => onButtonClick('song-list')}>Song List</button>
@@ -117,10 +118,13 @@ export const BottomBar = ({ currentSong }) => {
 };
 
 
-
+const handleArtistClick = (screen) => {
+  setActiveScreen(<ArtistList/>);
+};
 
 const Home = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { userId, userName, accountType, userImage } = location.state || {};
 
   const [currentSong, setCurrentSong] = useState({
@@ -131,10 +135,6 @@ const Home = () => {
 
   const [activeScreen, setActiveScreen] = useState('song-list'); // Default to Song List
 
-  // Function to handle artist click
-  const handleArtistClick = (screen) => {
-    setActiveScreen(screen);
-  };
 
   const handleAlbumClick = (screen) => {
     setActiveScreen(screen);
@@ -169,7 +169,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
-    case 'artist-view': return <ArtistView accountType={'accountType'}/>;
+    case 'artist-view': return <ArtistView accountType={accountType} />;
     case 'album-view-page': return <AlbumViewPage/>;
     case 'create-song': return <SongForm />;
     case 'edit-song': return <SongFormEdit />;

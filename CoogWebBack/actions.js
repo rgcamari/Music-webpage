@@ -131,13 +131,26 @@ const handleLogin = async (req, res) => {
 
 };
 
+const getArtistList = async (req, res) => {
+    try {
+        const [artists] = await pool.promise().query(`SELECT username, image_url FROM artist`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, artists}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch artists' }));
+    }
+};
 
 
 
 module.exports = {
     getUsers,
     handleSignup,
-    handleLogin
+    handleLogin,
+    getArtistList
 };
 
 /*const handleLogin = async (req, res) => {
