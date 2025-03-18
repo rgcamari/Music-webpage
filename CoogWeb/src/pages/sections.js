@@ -7,56 +7,52 @@ import forward from './forward.png';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 
 
-export const SongList = ({onPlaySong}) => {
+export const SongList = () => {
     const [songs] = useState([
-        { id: 1, name: "Blinding Lights", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 2, name: "Shape of You", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 3, name: "Someone Like You", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 4, name: "Uptown Funk", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 5, name: "Levitating", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 6, name: "Levitating", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 7, name: "Levitating", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 8, name: "Levitating", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' },
-        { id: 9, name: "Levitating", photo: purple_image,artist: "Lady Gaga", url: '/dawnofchange.mp3' }
+        { id: 1, name: "Blinding Lights", photo: purple_image,artist: "Lady Gaga" },
+        { id: 2, name: "Shape of You", photo: purple_image,artist: "Lady Gaga" },
+        { id: 3, name: "Someone Like You", photo: purple_image,artist: "Lady Gaga" },
+        { id: 4, name: "Uptown Funk", photo: purple_image,artist: "Lady Gaga" },
+        { id: 5, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 6, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 7, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 8, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
+        { id: 9, name: "Levitating", photo: purple_image,artist: "Lady Gaga" }
     ]);
 
     return (
         <div className="song-list">
             {songs.map((song) => (
-                <SongCard key={song.id} song={song} onPlaySong={onPlaySong} />
+                <SongCard key={song.id} song={song} />
             ))}
         </div>
-      );
+    );
+};
+
+export const SongCard = ({ song }) => {
+    const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
+
+    const handleHeartClick = () => {
+        setIsLiked(!isLiked); // Toggle the liked state
     };
-    
-    export const SongCard = ({ song, onPlaySong }) => {
-        const [isLiked, setIsLiked] = useState(false);
-    
-        const handleHeartClick = () => {
-            setIsLiked(!isLiked); // Toggle the like state
-        };
-    
-        const handlePlayClick = () => {
-            onPlaySong(song); // Trigger play for the clicked song
-        };
-    
-        return (
-            <div className="song-card">
-                <img src={song.photo} alt={song.name} className="song-image" />
-                <h3 className="song-name">{song.name}</h3>
-                <h3 className="song-artist">{song.artist}</h3>
-                <div className="bottom-section">
-                    <img
-                        src={heart}
-                        alt="heart"
-                        className={`heart-image ${isLiked ? "liked" : ""}`}
-                        onClick={handleHeartClick}
-                    />
-                    <button onClick={handlePlayClick} className="play-button">Play</button>
-                </div>
+
+    return (
+        <div className="song-card">
+            <img src={song.photo} alt={song.name} className="song-image" />
+            <h3 className="song-name">{song.name}</h3>
+            <h3 className="song-artist">{song.artist}</h3>
+            <div className="bottom-section">
+                <img
+                    src={heart} // Use the same heart image
+                    alt="heart"
+                    className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
+                    onClick={handleHeartClick} // Handle click event
+                />
+                <img src={play_button} alt="play" className="play-button" />
             </div>
-        );
-    };
+        </div>
+    );
+};
 
 export const ArtistList = ({onArtistClick}) => {
     const [artists] = useState([
