@@ -8,22 +8,40 @@ import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 
 
 export const SongList = () => {
-    const [songs] = useState([
-        { id: 1, name: "Blinding Lights", photo: purple_image,artist: "Lady Gaga" },
-        { id: 2, name: "Shape of You", photo: purple_image,artist: "Lady Gaga" },
-        { id: 3, name: "Someone Like You", photo: purple_image,artist: "Lady Gaga" },
-        { id: 4, name: "Uptown Funk", photo: purple_image,artist: "Lady Gaga" },
-        { id: 5, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 6, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 7, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 8, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 9, name: "Levitating", photo: purple_image,artist: "Lady Gaga" }
-    ]);
+    const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchSongs = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/songlist', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setSongs(data.songs);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch songs');
+                }
+            } catch (err) {
+                setError('Error fetching songs');
+            } finally {
+                setLoading(false);  // Data is loaded or error occurred
+            }
+        };
+
+        fetchSongs();
+    }, []);  // Empty dependency array to run this only once when the component mounts
+
+    if (loading) return <div>Loading songs...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="song-list">
-            {songs.map((song) => (
-                <SongCard key={song.id} song={song} />
+            {songs.map((song, index) => (
+                <SongCard key={index} song={song} />
             ))}
         </div>
     );
@@ -38,9 +56,9 @@ export const SongCard = ({ song }) => {
 
     return (
         <div className="song-card">
-            <img src={song.photo} alt={song.name} className="song-image" />
+            <img src={song.image_url} alt={song.name} className="song-image" />
             <h3 className="song-name">{song.name}</h3>
-            <h3 className="song-artist">{song.artist}</h3>
+            <h3 className="song-artist">{song.artist_name}</h3>
             <div className="bottom-section">
                 <img
                     src={heart} // Use the same heart image
