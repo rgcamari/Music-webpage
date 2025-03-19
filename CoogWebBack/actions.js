@@ -144,13 +144,54 @@ const getArtistList = async (req, res) => {
     }
 };
 
+const getAlbumList = async (req, res) => {
+    try {
+        const [albums] = await pool.promise().query(`SELECT album_id, album.name AS album_name, album.image_url AS album_image, artist.username AS artist_username FROM artist, album WHERE album.artist_id = artist.artist_id`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, albums}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+    }
+};
+
+const getUserList = async (req, res) => {
+    try {
+        const [users] = await pool.promise().query(`SELECT user_id, username, image_url FROM user`);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, users}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch users' }));
+    }
+}
+
+const getSongList = async (req, res) => {
+    try {
+        const [songs] = await pool.promise().query(`SELECT song_id, name, song.image_url, artist.username AS artist_username FROM artist, song WHERE song.artist_id = artist.artist_id`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, songs}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+    }
+};
 
 
 module.exports = {
     getUsers,
     handleSignup,
     handleLogin,
-    getArtistList
+    getArtistList,
+    getAlbumList,
+    getUserList,
+    getSongList
 };
 
 /*const handleLogin = async (req, res) => {

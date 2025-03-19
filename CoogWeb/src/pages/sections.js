@@ -8,22 +8,40 @@ import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 
 
 export const SongList = () => {
-    const [songs] = useState([
-        { id: 1, name: "Blinding Lights", photo: purple_image,artist: "Lady Gaga" },
-        { id: 2, name: "Shape of You", photo: purple_image,artist: "Lady Gaga" },
-        { id: 3, name: "Someone Like You", photo: purple_image,artist: "Lady Gaga" },
-        { id: 4, name: "Uptown Funk", photo: purple_image,artist: "Lady Gaga" },
-        { id: 5, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 6, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 7, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 8, name: "Levitating", photo: purple_image,artist: "Lady Gaga" },
-        { id: 9, name: "Levitating", photo: purple_image,artist: "Lady Gaga" }
-    ]);
+    const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchSongs = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/songlist', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setSongs(data.songs);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch songs');
+                }
+            } catch (err) {
+                setError('Error fetching songs');
+            } finally {
+                setLoading(false);  // Data is loaded or error occurred
+            }
+        };
+
+        fetchSongs();
+    }, []);  // Empty dependency array to run this only once when the component mounts
+
+    if (loading) return <div>Loading songs...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="song-list">
-            {songs.map((song) => (
-                <SongCard key={song.id} song={song} />
+            {songs.map((song, index) => (
+                <SongCard key={index} song={song} />
             ))}
         </div>
     );
@@ -38,9 +56,9 @@ export const SongCard = ({ song }) => {
 
     return (
         <div className="song-card">
-            <img src={song.photo} alt={song.name} className="song-image" />
+            <img src={song.image_url} alt={song.name} className="song-image" />
             <h3 className="song-name">{song.name}</h3>
-            <h3 className="song-artist">{song.artist}</h3>
+            <h3 className="song-artist">{song.artist_name}</h3>
             <div className="bottom-section">
                 <img
                     src={heart} // Use the same heart image
@@ -107,22 +125,40 @@ export const ArtistCard = ({ artist, onArtistClick }) => {
 };
 
   export const AlbumList = ({ onAlbumClick }) => {
-    const [albums] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image, artist: "Lady Gaga" },
-        { id: 2, name: "Harlequin", photo: purple_image, artist: "Lady Gaga" },
-        { id: 3, name: "Love for Sale", photo: purple_image, artist: "Lady Gaga" },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image, artist: "Lady Gaga" },
-        { id: 5, name: "Joanne", photo: purple_image, artist: "Lady Gaga" },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image, artist: "Lady Gaga" },
-        { id: 7, name: "Born this way", photo: purple_image, artist: "Lady Gaga" },
-        { id: 8, name: "The Fame", photo: purple_image, artist: "Lady Gaga" },
-        { id: 9, name: "Abracadabra", photo: purple_image, artist: "Lady Gaga" }
-    ]);
+    const [albums, setAlbums] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchAlbums = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/albumlist', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setAlbums(data.albums);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch artists');
+                }
+            } catch (err) {
+                setError('Error fetching artists');
+            } finally {
+                setLoading(false);  // Data is loaded or error occurred
+            }
+        };
+
+        fetchAlbums();
+    }, []);  // Empty dependency array to run this only once when the component mounts
+
+    if (loading) return <div>Loading albums...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="album-list">
-            {albums.map((album) => (
-                <AlbumCard key={album.id} album={album} onAlbumClick={onAlbumClick} />
+            {albums.map((album, index) => (
+                <AlbumCard key={index} album={album} onAlbumClick={onAlbumClick} />
             ))}
         </div>
     );
@@ -138,9 +174,9 @@ export const AlbumCard = ({ album, onAlbumClick }) => {
   
     return (
       <div className="album-card">
-        <img src={album.photo} alt={album.name} className="album-image" />
-        <h3 className="album-name">{album.name}</h3>
-        <h3 className="album-artist">{album.artist}</h3>
+        <img src={album.photo} alt={album.album_name} className="album-image" />
+        <h3 className="album-name">{album.album_name}</h3>
+        <h3 className="album-artist">{album.artist_username}</h3>
         <div className="bottom-section">
           <img
             src={heart} // Use the same heart image
@@ -157,22 +193,40 @@ export const AlbumCard = ({ album, onAlbumClick }) => {
   };
 
 export const UserList = () => {
-    const [users] = useState([
-        { id: 1, name: "Ariana Grande", photo: purple_image, },
-        { id: 2, name: "The Beatles", photo: purple_image },
-        { id: 3, name: "Zutomayo", photo: purple_image },
-        { id: 4, name: "Lady Gaga", photo: purple_image },
-        { id: 5, name: "Nightcore @ 25", photo: purple_image },
-        { id: 6, name: "Taylor Swift", photo: purple_image },
-        { id: 7, name: "Rick Montgomery", photo: purple_image },
-        { id: 8, name: "Doechii", photo: purple_image },
-        { id: 9, name: "Deco*27", photo: purple_image }
-    ]);
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/userlist', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setUsers(data.users);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch users');
+                }
+            } catch (err) {
+                setError('Error fetching users');
+            } finally {
+                setLoading(false);  // Data is loaded or error occurred
+            }
+        };
+
+        fetchUsers();
+    }, []);  // Empty dependency array to run this only once when the component mounts
+
+    if (loading) return <div>Loading users...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="user-list">
-            {users.map((user) => (
-                <UserCard key={user.id} user={user} />
+            {users.map((user, index) => (
+                <UserCard key={index} user={user} />
             ))}
         </div>
     );
@@ -182,8 +236,8 @@ export const UserCard = ({ user }) => {
     
     return (
         <div className="user-card">
-            <img src={user.photo} alt={user.name} className="user-image" />
-            <h3 className="user-name">{user.name}</h3>
+            <img src={user.image_url} alt={user.username} className="user-image" />
+            <h3 className="user-name">{user.username}</h3>
         </div>
     );
 };
