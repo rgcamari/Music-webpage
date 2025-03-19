@@ -102,6 +102,42 @@ const filterAlbums = `
     AND (@artist_id IS NULL OR ALBUM.artist_id = @artist_id);
 `;
 
+// Get Sorted and Paginated Songs
+const getSortedPaginatedSongs = `
+  SELECT SONG.name, ARTIST.name AS artist_name, SONG.image_url, SONG.song_url
+  FROM SONG
+  JOIN ARTIST ON SONG.artist_id = ARTIST.artist_id
+  ORDER BY 
+    CASE WHEN @sort_by = 'name' AND @order = 'asc' THEN SONG.name END ASC,
+    CASE WHEN @sort_by = 'name' AND @order = 'desc' THEN SONG.name END DESC,
+    CASE WHEN @sort_by = 'artist' AND @order = 'asc' THEN ARTIST.name END ASC,
+    CASE WHEN @sort_by = 'artist' AND @order = 'desc' THEN ARTIST.name END DESC
+  OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY;
+`;
+
+// Get Total Song Count for Pagination
+const getTotalSongsCount = `
+  SELECT COUNT(*) AS total FROM SONG;
+`;
+
+// Get Sorted and Paginated Albums
+const getSortedPaginatedAlbums = `
+  SELECT ALBUM.name, ARTIST.username AS artist_name, ALBUM.image_url
+  FROM ALBUM
+  JOIN ARTIST ON ALBUM.artist_id = ARTIST.artist_id
+  ORDER BY 
+    CASE WHEN @sort_by = 'name' AND @order = 'asc' THEN ALBUM.name END ASC,
+    CASE WHEN @sort_by = 'name' AND @order = 'desc' THEN ALBUM.name END DESC,
+    CASE WHEN @sort_by = 'artist' AND @order = 'asc' THEN ARTIST.username END ASC,
+    CASE WHEN @sort_by = 'artist' AND @order = 'desc' THEN ARTIST.username END DESC
+  OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY;
+`;
+
+// Get Total Album Count for Pagination
+const getTotalAlbumsCount = `
+  SELECT COUNT(*) AS total FROM ALBUM;
+`;
+
 */
 
 module.exports = {
@@ -131,5 +167,9 @@ module.exports = {
     filterSongs,
     searchArtists,
     filterAlbums
+    getSortedPaginatedSongs,
+    getTotalSongsCount,
+    getSortedPaginatedAlbums,
+    getTotalAlbumsCount
     */
 }

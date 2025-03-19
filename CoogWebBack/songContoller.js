@@ -98,11 +98,41 @@ const searchSongs = async (req, res) => {
     }
   };
   
+  
+// Get Sorted and Paginated Songs
+const getSortedPaginatedSongs = async (req, res) => {
+    try {
+      const { sort_by = 'name', order = 'asc', page = 1, limit = 10 } = req.query;
+      const offset = (parseInt(page) - 1) * parseInt(limit);
+  
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('sort_by', sort_by)
+        .input('order', order.toLowerCase() === 'desc' ? 'desc' : 'asc')
+        .input('offset', offset)
+        .input('limit', parseInt(limit))
+        .query(queries.getSortedPaginatedSongs);
+  
+      const countResult = await pool.request().query(queries.getTotalSongsCount);
+      const total = countResult.recordset[0].total;
+  
+      res.status(200).json({
+        data: result.recordset,
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(total / parseInt(limit))
+      });
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  };
 
 module.exports = {
   getSongs,
   getSongListOutput,
   addSong,
   searchSongs,
-  filterSongs
+  filterSongs,
+  getSortedPaginatedSongs
 };
