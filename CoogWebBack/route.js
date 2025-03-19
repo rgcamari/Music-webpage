@@ -24,7 +24,7 @@ function routes(req, res) {
     if (URL.startsWith('/songlist') && method === 'GET') {
         return actions.getSongList(req, res);
     }
-    if (URL.startsWith('/artistview') && method === 'GET') {
+    if (URL.startsWith('/artistview') && method === 'POST') {
         return actions.getArtistViewInfo(req, res);
     }
     

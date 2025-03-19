@@ -82,7 +82,11 @@ export const ArtistView = ({ artist = {}, accountType }) => {
             const fetchArtistInfo = async () => {
                 try {
                     const response = await fetch('http://localhost:5000/artistview', {
-                        method: 'GET',
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ username: artist.username }), 
                     });
                     const data = await response.json();
     
