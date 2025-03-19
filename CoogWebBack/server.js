@@ -9,7 +9,7 @@ const cors = require('cors');
 
 
 const map_route = {
-    'GET': ['/artistlist'],
+    'GET': ['/artistlist', '/albumlist'],
     'POST': ['/signup', '/login'],
     'PUT': [],
     'DELETE': [],

@@ -107,22 +107,40 @@ export const ArtistCard = ({ artist, onArtistClick }) => {
 };
 
   export const AlbumList = ({ onAlbumClick }) => {
-    const [albums] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image, artist: "Lady Gaga" },
-        { id: 2, name: "Harlequin", photo: purple_image, artist: "Lady Gaga" },
-        { id: 3, name: "Love for Sale", photo: purple_image, artist: "Lady Gaga" },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image, artist: "Lady Gaga" },
-        { id: 5, name: "Joanne", photo: purple_image, artist: "Lady Gaga" },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image, artist: "Lady Gaga" },
-        { id: 7, name: "Born this way", photo: purple_image, artist: "Lady Gaga" },
-        { id: 8, name: "The Fame", photo: purple_image, artist: "Lady Gaga" },
-        { id: 9, name: "Abracadabra", photo: purple_image, artist: "Lady Gaga" }
-    ]);
+    const [albums, setAlbums] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchAlbums = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/albumlist', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setAlbums(data.albums);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch artists');
+                }
+            } catch (err) {
+                setError('Error fetching artists');
+            } finally {
+                setLoading(false);  // Data is loaded or error occurred
+            }
+        };
+
+        fetchAlbums();
+    }, []);  // Empty dependency array to run this only once when the component mounts
+
+    if (loading) return <div>Loading albums...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="album-list">
-            {albums.map((album) => (
-                <AlbumCard key={album.id} album={album} onAlbumClick={onAlbumClick} />
+            {albums.map((album, index) => (
+                <AlbumCard key={index} album={album} onAlbumClick={onAlbumClick} />
             ))}
         </div>
     );
@@ -138,9 +156,9 @@ export const AlbumCard = ({ album, onAlbumClick }) => {
   
     return (
       <div className="album-card">
-        <img src={album.photo} alt={album.name} className="album-image" />
-        <h3 className="album-name">{album.name}</h3>
-        <h3 className="album-artist">{album.artist}</h3>
+        <img src={album.photo} alt={album.album_name} className="album-image" />
+        <h3 className="album-name">{album.album_name}</h3>
+        <h3 className="album-artist">{album.artist_username}</h3>
         <div className="bottom-section">
           <img
             src={heart} // Use the same heart image

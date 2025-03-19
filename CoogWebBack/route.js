@@ -15,6 +15,9 @@ function routes(req, res) {
     if (URL.startsWith('/artistlist') && method === 'GET') {
         return actions.getArtistList(req, res);
     }
+    if (URL.startsWith('/albumlist') && method === 'GET') {
+        return actions.getAlbumList(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });
