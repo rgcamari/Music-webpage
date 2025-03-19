@@ -75,10 +75,59 @@ const insertPlaylistSong = `INSERT INTO playlist_song (playlist_id, song_id, add
 // check if the song is in the playlist
 const checkSongInPlaylist = `Select PL.song_id FROM playlist_song as PL, playlist as P WHERE PL.playlist_id = P.playlist_id and P.user_id = userID;`
 
+// update users password
+const updateUserPassword = `UPDATE users SET password = tempPassword WHERE user_id = userID;`
 
+// update users image url
+const updateUserImage = `UPDATE users SET image_url = tempImage WHERE user_id = userID;`
 
+// update playlist image url
+const updatePlaylistImage = `UPDATE playlist SET image_url = tempImage WHERE user_id = userID;`
 
+// update playlist name
+const updatePlaylistName = `UPDATE playlist SET name = tempName WHERE user_id = userID;`
 
+// update artist username
+const updateArtistUsername = `UPDATE artist SET username = tempUsername WHERE artist_id = artistID;`
+
+// update artist password
+const updateArtistPassword = `UPDATE artist SET password = tempPassword WHERE artist_id = artistID;`
+
+// update artist imageUrl
+const updateArtistImage = `UPDATE artist SET image_url = tempImage WHERE artist_id = artistID;`
+
+// update album name
+const updateAlbumnName = `UPDATE album SET name = tempName WHERE artist_id = artistID;`
+
+// update album genre
+const updateAlbumnGenre = `UPDATE album SET genre = tempGenre WHERE artist_id = artistID;`
+
+// update album image
+const updateAlbumnName = `UPDATE album SET image_url = tempImage WHERE artist_id = artistID;`
+
+// artist deleting song from album
+
+// artist deleting an album
+
+// user deleting a following
+
+// user deleting a playlist
+
+// user deleting a friend
+
+// user deleting a liked Album
+
+// user deleting a liked Song
+
+// admin deleting a user
+
+// admin deleting a artist
+
+// admin deleting a song
+
+// admin deleting a album
+
+// admin deleting a artist
 
 
 /*
