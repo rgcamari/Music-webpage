@@ -157,6 +157,18 @@ const getAlbumList = async (req, res) => {
     }
 };
 
+const getUserList = async (req, res) => {
+    try {
+        const [users] = await pool.promise().query(`SELECT user_id, username, image_url FROM user`);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, users}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch users' }));
+    }
+}
 
 
 module.exports = {
@@ -164,7 +176,8 @@ module.exports = {
     handleSignup,
     handleLogin,
     getArtistList,
-    getAlbumList
+    getAlbumList,
+    getUserList
 };
 
 /*const handleLogin = async (req, res) => {

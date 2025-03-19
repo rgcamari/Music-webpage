@@ -175,22 +175,40 @@ export const AlbumCard = ({ album, onAlbumClick }) => {
   };
 
 export const UserList = () => {
-    const [users] = useState([
-        { id: 1, name: "Ariana Grande", photo: purple_image, },
-        { id: 2, name: "The Beatles", photo: purple_image },
-        { id: 3, name: "Zutomayo", photo: purple_image },
-        { id: 4, name: "Lady Gaga", photo: purple_image },
-        { id: 5, name: "Nightcore @ 25", photo: purple_image },
-        { id: 6, name: "Taylor Swift", photo: purple_image },
-        { id: 7, name: "Rick Montgomery", photo: purple_image },
-        { id: 8, name: "Doechii", photo: purple_image },
-        { id: 9, name: "Deco*27", photo: purple_image }
-    ]);
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/userlist', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setUsers(data.users);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch users');
+                }
+            } catch (err) {
+                setError('Error fetching users');
+            } finally {
+                setLoading(false);  // Data is loaded or error occurred
+            }
+        };
+
+        fetchUsers();
+    }, []);  // Empty dependency array to run this only once when the component mounts
+
+    if (loading) return <div>Loading users...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="user-list">
-            {users.map((user) => (
-                <UserCard key={user.id} user={user} />
+            {users.map((user, index) => (
+                <UserCard key={index} user={user} />
             ))}
         </div>
     );
@@ -200,8 +218,8 @@ export const UserCard = ({ user }) => {
     
     return (
         <div className="user-card">
-            <img src={user.photo} alt={user.name} className="user-image" />
-            <h3 className="user-name">{user.name}</h3>
+            <img src={user.image_url} alt={user.username} className="user-image" />
+            <h3 className="user-name">{user.username}</h3>
         </div>
     );
 };
