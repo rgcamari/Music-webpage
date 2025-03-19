@@ -68,18 +68,18 @@ export const SongViewCard = ({ songView }) => {
     );
 };
 
-export const ArtistView = ({ stats = {}, accountType }) => {
+export const ArtistView = ({ artist = {}, accountType }) => {
     return (
       <section className="everything">
         <div className="profile-section">
           <div className="profile-header">
-            <img src={purple_image} alt="Profile" className="profile-image" />
-            <h2 className="profile-username">Username</h2>
+            <img src={artist.image_url} alt="Profile" className="profile-image" />
+            <h2 className="profile-username">{artist.username}</h2>
           </div>
           <div className="basic-stats">
-            <p className="basic-stats-text">Follwers: {stats.followers || 0}</p>
-            <p className="basic-stats-text">Streams: {stats.streams || 0}</p>
-            <p className="basic-stats-text">Likes: {stats.likes || 0}</p>
+            <p className="basic-stats-text">Followers: 0</p>
+            <p className="basic-stats-text">Streams: 0</p>
+            <p className="basic-stats-text">Likes: 0</p>
             {accountType !== 'artist' && (
             <button className="follow-button">Follow</button>
             )}
