@@ -69,6 +69,18 @@ const insertLikedSong = `INSERT INTO liked_song (user_id, song_id, liked_at) val
 
 const insertPlaylist = `INSERT INTO playlist (name, user_id, image_url, created_at) values (?,?,?,?);`
 
+// insert a song into a playlist
+const insertPlaylistSong = `INSERT INTO playlist_song (playlist_id, song_id, added_at) values (?,?,?);`
+
+// check if the song is in the playlist
+const checkSongInPlaylist = `Select PL.song_id FROM playlist_song as PL, playlist as P WHERE PL.playlist_id = P.playlist_id and P.user_id = userID;`
+
+
+
+
+
+
+
 /*
 // Search Songs by Name or Artist
 const searchSongs = `
