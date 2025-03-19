@@ -183,6 +183,29 @@ const getSongList = async (req, res) => {
     }
 };
 
+const getArtistViewInfo = async (req, res) => {
+    try {
+        const [followers] = await pool.promise().query(`SELECT followers FROM artist WHERE artist.username = 'Zutomayo';`);
+
+        const [streams] = await pool.promise().query(`SELECT COUNT(*) AS streams_count FROM history, song, artist WHERE history.song_id = song.song_id AND song.artist_id = artist.artist_id AND artist.username = 'Zutomayo';`);
+
+        const [likedSongs] = await pool.promise().query(`SELECT COUNT(*) AS liked_songs_count FROM liked_song, song, artist WHERE song.song_id = liked_song.song_id AND song.artist_id = artist.artist_id AND artist.username = 'Zutomayo';`);
+
+        const [likedAlbums] = await pool.promise().query(`SELECT COUNT(*) AS liked_albums_count FROM liked_album, album, artist WHERE album.album_id = liked_album.album_id AND album.artist_id = artist.artist_id AND artist.username = 'Zutomayo';`);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, success: true, 
+            followers: followers[0].followers, 
+            streams: streams[0].streams_count, 
+            likedSongs: likedSongs[0].liked_songs_count, 
+            likedAlbums: likedAlbums[0].liked_albums_count 
+        }));
+    }catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch Artist Info' }));
+    }
+}
 
 module.exports = {
     getUsers,
@@ -191,7 +214,8 @@ module.exports = {
     getArtistList,
     getAlbumList,
     getUserList,
-    getSongList
+    getSongList,
+    getArtistViewInfo
 };
 
 /*const handleLogin = async (req, res) => {

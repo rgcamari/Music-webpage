@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import purple_image from './purple_image.png';
 import heart from './heart.png';
 import './view.css';
@@ -69,6 +69,44 @@ export const SongViewCard = ({ songView }) => {
 };
 
 export const ArtistView = ({ artist = {}, accountType }) => {
+    const [info, setInfo] = useState({
+        followers: 0,
+        streams: 0,
+        likedSongs: 0,
+        likedAlbums: 0,
+    });
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            const fetchArtistInfo = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/artistview', {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setInfo({
+                            followers: data.followers,
+                            streams: data.streams,
+                            likedSongs: data.likedSongs,
+                            likedAlbums: data.likedAlbums});  
+                    } else {
+                        setError('Failed to fetch artist info');
+                    }
+                } catch (err) {
+                    setError('Error fetching artist info');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchArtistInfo();
+        }, []);  // Empty dependency array to run this only once when the component mounts
+    
+        if (loading) return <div>Loading artists...</div>;
+        if (error) return <div>{error}</div>;
     return (
       <section className="everything">
         <div className="profile-section">
@@ -77,9 +115,10 @@ export const ArtistView = ({ artist = {}, accountType }) => {
             <h2 className="profile-username">{artist.username}</h2>
           </div>
           <div className="basic-stats">
-            <p className="basic-stats-text">Followers: 0</p>
-            <p className="basic-stats-text">Streams: 0</p>
-            <p className="basic-stats-text">Likes: 0</p>
+            <p className="basic-stats-text">Followers: {info.followers}</p>
+            <p className="basic-stats-text">Streams: {info.streams}</p>
+            <p className="basic-stats-text">Liked Songs: {info.likedSongs}</p>
+            <p className="basic-stats-text">Liked Albums: {info.likedAlbums}</p>
             {accountType !== 'artist' && (
             <button className="follow-button">Follow</button>
             )}
