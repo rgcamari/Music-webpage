@@ -3,26 +3,50 @@ import purple_image from './purple_image.png';
 import './wrap.css';
 
 export const TopArtist = () => {
-    const [topartists] = useState([
-        { id: 1, name: "Ariana Grande", photo: purple_image },
-        { id: 2, name: "The Beatles", photo: purple_image },
-        { id: 3, name: "Zutomayo", photo: purple_image },
-    ]);
+    const [artists, setArtists] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            const fetchTopArtists = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/topartists', {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setArtists(data.topArtists);  // Assuming the backend returns an array of artists
+                    } else {
+                        setError('Failed to fetch artists');
+                    }
+                } catch (err) {
+                    setError('Error fetching artists');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchTopArtists();
+        }, []);  // Empty dependency array to run this only once when the component mounts
+    
+        if (loading) return <div>Loading artists...</div>;
+        if (error) return <div>{error}</div>;
 
     return (
         <div className="top-artist-list">
-            {topartists.map((topartist) => (
-                <TopArtistCard key={topartist.id} topartist={topartist} />
+            {artists.map((artist, index) => (
+                <TopArtistCard key={index} artist={artist} />
             ))}
         </div>
     );
 }
 
-export const TopArtistCard = ({ topartist }) => {
+export const TopArtistCard = ({ artist }) => {
     return (
         <div className="top-artist-card">
-            <img src={topartist.photo} alt={topartist.name} className="top-artist-image" />
-            <h3 className="top-artist-name">{topartist.name}</h3>
+            <img src={artist.image_url} alt={artist.username} className="top-artist-image" />
+            <h3 className="top-artist-name">{artist.username}</h3>
         </div>
     );
 };

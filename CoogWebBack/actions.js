@@ -397,6 +397,29 @@ const getTopSongs = async (req, res) => {
     }
 };
 
+const getTopArtists = async (req, res) => {
+    try {
+        const [topArtists] = await pool.promise().query(`SELECT 
+        ROW_NUMBER() OVER (ORDER BY SUM(song.play_count) DESC) AS ranks,
+        artist.artist_id,
+        artist.username,
+        artist.image_url,
+        SUM(song.play_count) AS total_streams
+        FROM artist
+        JOIN song ON artist.artist_id = song.artist_id
+        GROUP BY artist.artist_id, artist.username
+        ORDER BY total_streams DESC
+        LIMIT 3;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topArtists}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch artists' }));
+    }
+};
+
 
 module.exports = {
     getUsers,
@@ -412,8 +435,8 @@ module.exports = {
     getAlbumViewSong,
     getAlbumViewInfo,
     getTopSongs,
-    /*getTopArtists,
-    getTopAlbums,
+    getTopArtists,
+    /*getTopAlbums,
     getTopGenres,
     getTopOther*/
 };
