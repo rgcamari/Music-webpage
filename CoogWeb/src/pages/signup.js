@@ -22,21 +22,20 @@ function Signup() {
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevents page reload
-        console.log({accountType, email, username, password, image});
+        const profileImage = image || '/default_user_icon.png'; //default image
+        console.log({accountType, email, username, password, profileImage});
         
         try {
           const response = await fetch('http://localhost:5000/signup', {
             method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({accountType,email,username,password,image}),
+          body: JSON.stringify({accountType,email,username,password,image: profileImage}),
         });
 
         const data = await response.json();
 
         if (data.success) {
-          alert(
-              `Signup Successful!`
-          );
+          alert(`Signup Successful!`);
           navigate('/');
         }
         else {
@@ -97,7 +96,7 @@ function Signup() {
                     type="url" 
                     value={image} 
                     onChange={(e) => setImage(e.target.value)} 
-                    required
+                    placeholder="Enter image URL or leave blank for default"
                     />
                     
 
