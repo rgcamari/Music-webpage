@@ -103,27 +103,51 @@ export const TopSongCard = ({ song }) => {
 };
 
 export const TopAlbum = () => {
-    const [topalbum] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image, artist: "Lady Gaga" },
-        { id: 2, name: "Short n' Sweet", photo: purple_image, artist: "Sabrina Carpenter"},
-        { id: 3, name: "Brat", photo: purple_image, artist: "Charlie XCX" },
-    ]);
+    const [albums, setAlbums] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            const fetchTopAlbums = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/topalbums', {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setAlbums(data.topAlbums);  // Assuming the backend returns an array of artists
+                    } else {
+                        setError('Failed to fetch artists');
+                    }
+                } catch (err) {
+                    setError('Error fetching artists');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchTopAlbums();
+        }, []);  // Empty dependency array to run this only once when the component mounts
+    
+        if (loading) return <div>Loading albums...</div>;
+        if (error) return <div>{error}</div>;
 
     return (
         <div className="top-album-list">
-            {topalbum.map((topalbum) => (
-                <TopAlbumCard key={topalbum.id} topalbum={topalbum} />
+            {albums.map((album, index) => (
+                <TopAlbumCard key={index} album={album} />
             ))}
         </div>
     );
 }
 
-export const TopAlbumCard = ({ topalbum }) => {
+export const TopAlbumCard = ({ album }) => {
     return (
         <div className="top-album-card">
-            <img src={topalbum.photo} alt={topalbum.name} className="top-album-image" />
-            <h3 className="top-album-name">{topalbum.name}</h3>
-            <p className="top-album-artist">{topalbum.artist}</p>
+            <img src={album.image_url} alt={album.name} className="top-album-image" />
+            <h3 className="top-album-name">{album.name}</h3>
+            <p className="top-album-artist">{album.artist_name}</p>
         </div>
     );
 };
