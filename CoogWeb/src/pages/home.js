@@ -118,14 +118,11 @@ export const BottomBar = ({ currentSong }) => {
 };
 
 
-const handleArtistClick = (screen) => {
-  setActiveScreen(<ArtistList/>);
-};
-
 const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { userId, userName, accountType, userImage } = location.state || {};
+  
 
   const [currentSong, setCurrentSong] = useState({
       name: "Dawn of Change",
@@ -134,15 +131,25 @@ const Home = () => {
   });
 
   const [activeScreen, setActiveScreen] = useState('song-list'); // Default to Song List
+  const [selectedArtist, setSelectedArtist] = useState({});
 
+  const [selectedAlbum, setSelectedAlbum] = useState({});
 
-  const handleAlbumClick = (screen) => {
+  const handleArtistClick = (screen, artist) => {
     setActiveScreen(screen);
+    setSelectedArtist(artist);
+  };
+
+
+  const handleAlbumClick = (screen, album) => {
+    setActiveScreen(screen);
+    setSelectedAlbum(album);
   };
 
   const handlePlaylistClick = (screen) => {
     setActiveScreen(screen);
   };
+
 
   return (
     <div className="Home">
@@ -150,7 +157,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick)}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -159,7 +166,7 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum) => {
   switch (activeScreen) {
     case 'song-list': return <SongList />;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
@@ -169,8 +176,8 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
-    case 'artist-view': return <ArtistView accountType={accountType} />;
-    case 'album-view-page': return <AlbumViewPage/>;
+    case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType}/>;
+    case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType}/>;
     case 'create-song': return <SongForm />;
     case 'edit-song': return <SongFormEdit />;
     case 'delete-song': return <SongFormDelete />;

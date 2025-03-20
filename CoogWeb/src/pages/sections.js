@@ -184,7 +184,7 @@ export const AlbumCard = ({ album, onAlbumClick }) => {
             className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
             onClick={handleHeartClick} // Handle click event
           />
-          <button onClick={() => onAlbumClick('album-view-page')} className="forward-button">
+          <button onClick={() => onAlbumClick('album-view-page',album)} className="forward-button">
             <img src={forward} alt="forward" className="forward-icon" />
           </button>
         </div>
