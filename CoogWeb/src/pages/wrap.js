@@ -201,29 +201,48 @@ export const TopGenreCard = ({ genre }) => {
 };
 
 export const Other = () => {
-    const [others, setOthers] = useState({
-        TotalStreams: 1000000,
-        TotalUsers: 100000,
-        TotalArtists: 1000,
-        TotalAlbums: 10000,
-        TotalGenres: 100,
-        TotalPlaylists: 1000,
-        TotalLikes: 100000,
-    });
+    const [others, setOthers] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            const fetchTopOthers = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/topothers', {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+    
+                    if (data.success && data.topOthers && typeof data.topOthers === 'object') {
+                        setOthers(Object.entries(data.topOthers)); // Assuming the backend returns an array of artists
+                    } else {
+                        setError('Failed to fetch others');
+                    }
+                } catch (err) {
+                    setError('Error fetching others');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchTopOthers();
+        }, []);  // Empty dependency array to run this only once when the component mounts
+    
+        if (loading) return <div>Loading albums...</div>;
+        if (error) return <div>{error}</div>;
 
     // Convert the `others` object into an array of key-value pairs
-    const othersArray = Object.entries(others);
 
     return (
         <div className="other-list">
-            {othersArray.map(([key, value]) => (
-                <OtherCard key={key} label={key} value={value} />
+            {others.map(([label, value], index) => (
+                <OtherCard key={index} label={label} other={value} />
             ))}
         </div>
     );
 };
 
-export const OtherCard = ({ label, value }) => {
+export const OtherCard = ({ label, other }) => {
     // Format the label to be more readable (e.g., "totalstreams" -> "Total Streams")
     const formattedLabel = label
         .replace(/([A-Z])/g, ' $1') // Add space before capital letters
@@ -233,7 +252,7 @@ export const OtherCard = ({ label, value }) => {
     return (
         <div className="other-card">
             <h3 className="other-label">{formattedLabel}</h3>
-            <p className="other-value">{value.toLocaleString()}</p> {/* Format numbers with commas */}
+            <p className="other-value">{other.toLocaleString()}</p> {/* Format numbers with commas */}
         </div>
     );
 };

@@ -464,6 +464,35 @@ const getTopGenres = async (req, res) => {
     }
 };
 
+const getTopOther = async (req, res) => {
+    try {
+        const [streamCount] = await pool.promise().query(`SELECT SUM(song.play_count) FROM song;`);
+        const [userCount] = await pool.promise().query(`SELECT COUNT(*) FROM user;`);
+        const [artistCount] = await pool.promise().query(`SELECT COUNT(*) FROM artist;`);
+        const [albumCount] = await pool.promise().query(`SELECT COUNT(*) FROM album;`);
+        const [genreCount] = await pool.promise().query(`SELECT COUNT(DISTINCT genre) FROM song;`);
+        const [playlistCount] = await pool.promise().query(`SELECT COUNT(*) FROM playlist;`);
+        const [likeCount] = await pool.promise().query(`SELECT 
+        (SELECT SUM(likes) FROM album) + 
+        (SELECT SUM(likes) FROM song) AS counter;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topOthers:{
+            streamCount: streamCount[0]['SUM(song.play_count)'],  // Access the count
+            userCount: userCount[0]['COUNT(*)'],
+            artistCount: artistCount[0]['COUNT(*)'],
+            albumCount: albumCount[0]['COUNT(*)'],
+            genreCount: genreCount[0]['COUNT(DISTINCT genre)'],
+            playlistCount: playlistCount[0]['COUNT(*)'],
+            likeCount: likeCount[0].counter}
+        }));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+    }
+};
+
 
 module.exports = {
     getUsers,
@@ -482,6 +511,6 @@ module.exports = {
     getTopArtists,
     getTopAlbums,
     getTopGenres,
-    //getTopOther
+    getTopOther
 };
 
