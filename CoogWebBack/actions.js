@@ -297,6 +297,82 @@ const getArtistViewSong = async (req, res) => {
     });
 };
 
+const getAlbumViewSong = async (req, res) => {
+    let body = "";
+    
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { album_name } = parsedBody;
+
+            if (!album_name) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            const [songList] = await pool.promise().query(`
+                SELECT song_id, song.name AS song_name, song.image_url AS song_image, album.name AS album_name 
+                FROM song, album 
+                WHERE album.album_id = song.song_id AND album.name = ?;`, [album_name]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, songList }));
+        } catch (err) {
+            console.error('Error fetching songs:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+        }
+    });
+};
+
+const getAlbumViewInfo = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+
+    try {
+        const parsedBody = JSON.parse(body);
+        const { album_name} = parsedBody;
+        if (!album_name) {
+            return res.status(400).json({ success: false, message: 'Username is required' });
+        }
+
+
+        const [songsResult] = await pool.promise().query(`
+            SELECT count(*) AS songCount FROM album, song WHERE album.album_id = song.album_id AND album.name = ?;`, [album_name]);
+
+        const [streamsResult] = await pool.promise().query(`SELECT COUNT(*) AS streams_count 
+            FROM history, song, album 
+            WHERE history.song_id = song.song_id AND song.album_id = album.album_id AND album.name = ?;`, [album_name]);
+
+        const [likedAlbumsResult] = await pool.promise().query(`SELECT likes FROM album WHERE album.name = ?;`, [album_name]);
+
+        const songCount = songsResult.length > 0 ? songsResult[0].songCount : 0;
+        const streams = streamsResult.length > 0 ? streamsResult[0].streams_count : 0;
+        const likes = likedAlbumsResult.length > 0 ? likedAlbumsResult[0].likes : 0;
+            
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, 
+            songCount,
+            streams,
+            likes
+        }));
+    }catch (err) {
+        console.error('Error fetching songs:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+    }
+    });
+};
 
 
 module.exports = {
@@ -309,6 +385,8 @@ module.exports = {
     getSongList,
     getArtistViewInfo,
     getArtistViewAlbum,
-    getArtistViewSong
+    getArtistViewSong,
+    getAlbumViewSong,
+    getAlbumViewInfo
 };
 

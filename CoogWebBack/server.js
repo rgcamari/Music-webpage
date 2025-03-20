@@ -19,7 +19,9 @@ const map_route = {
     '/login',
     '/artistview',
     '/artistalbum',
-    '/artistsong',],
+    '/artistsong',
+    '/albumview',
+    '/albumsong'],
     'PUT': [],
     'DELETE': [],
 };

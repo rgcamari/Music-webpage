@@ -26,10 +26,10 @@ export const AlbumViewList = ({artist = {}}) => {
                     if (data.success) {
                         setAlbums(data.albums);  
                     } else {
-                        setError('Failed to fetch artists');
+                        setError('Failed to fetch albums');
                     }
                 } catch (err) {
-                    setError('Error fetching artists');
+                    setError('Error fetching albums');
                 } finally {
                     setLoading(false);  // Data is loaded or error occurred
                 }
@@ -80,10 +80,10 @@ export const SongViewList = ({artist = {}}) => {
                     if (data.success) {
                         setSongs(data.songs);  
                     } else {
-                        setError('Failed to fetch artists');
+                        setError('Failed to fetch songs');
                     }
                 } catch (err) {
-                    setError('Error fetching artists');
+                    setError('Error fetching songs');
                 } finally {
                     setLoading(false);  // Data is loaded or error occurred
                 }
@@ -91,7 +91,7 @@ export const SongViewList = ({artist = {}}) => {
     
             fetchArtistSong();
         }, [artist.username]);
-        if (loading) return <div>Loading albums...</div>;
+        if (loading) return <div>Loading songs...</div>;
         if (error) return <div>{error}</div>;
 
     return (
@@ -189,24 +189,71 @@ export const ArtistView = ({ artist = {}, accountType }) => {
     );
   };
 
-  export const AlbumViewPage = ({ album = {}}) => {
+  export const AlbumViewPage = ({ album = {}, accountType}) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
 
     const handleHeartClick = () => {
         setIsLiked(!isLiked); // Toggle the liked state
     };
 
+    const [info, setInfo] = useState({
+        songCount: 0,
+        streams: 0,
+        likes: 0,
+    });
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            const fetchAlbumInfo = async () => {
+                try {
+                    if (!album.album_name) {
+                        setError('Album name is missing');
+                        setLoading(false);
+                        return;
+                    }
+                    const response = await fetch('http://localhost:5000/albumview', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ album_name: album.album_name }), 
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setInfo({
+                            songCount: data.songCount,
+                            streams: data.streams,
+                            likes: data.likes});  
+                    } else {
+                        setError('Failed to fetch album info');
+                    }
+                } catch (err) {
+                    setError('Error fetching album info');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchAlbumInfo();
+        }, [album.album_name]);  // Empty dependency array to run this only once when the component mounts
+
+    
+        if (loading) return <div>Loading albums...</div>;
+        if (error) return <div>{error}</div>;
+
     return (
         <section className="everything">
             <div className="profile-section">
                 <div className="profile-header">
                     <img src={album.photo || purple_image} alt="Album Cover" className="profile-image" />
-                    <h2 className="profile-username">Album Name</h2>
+                    <h2 className="profile-username">{album.album_name}</h2>
                 </div>
                 <div className="basic-stats">
-                    <p className="basic-stats-text">Songs: {album.songs || 0}</p>
-                    <p className="basic-stats-text">Streams: {album.streams || 0}</p>
-                    <p className="basic-stats-text">Likes: {album.likes || 0}</p>
+                    <p className="basic-stats-text">Songs: {info.songCount || 0}</p>
+                    <p className="basic-stats-text">Streams: {info.streams || 0}</p>
+                    <p className="basic-stats-text">Likes: {info.likes || 0}</p>
                     <img
                         src={heart} // Use the same heart image
                         alt="heart"
@@ -218,9 +265,64 @@ export const ArtistView = ({ artist = {}, accountType }) => {
 
             <div className="songView-section">
                 <div className="songView-header">Songs: </div>
-                <SongViewList songs={album.songs} /> {/* Pass album's songs list */}
+                <SongAlbumList album={album} /> 
             </div>
         </section>
+    );
+};
+
+export const SongAlbumList = ({album = {}}) => {
+    const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+        useEffect(() => {
+            const fetchAlbumSongs = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/albumsong', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ album_name: album.album_name }), 
+                    })
+                    console.log('Backend response:', response); 
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        setSongs(data.songList);  
+                    } else {
+                        setError('Failed to fetch songs');
+                    }
+                } catch (err) {
+                    setError('Error fetching songs');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchAlbumSongs();
+        }, [album.album_name]);
+        if (loading) return <div>Loading songs...</div>;
+        if (error) return <div>{error}</div>;
+
+    return (
+        <div className="songView-list">
+            {songs.map((song, index) => (
+                <SongViewAlbumCard key={index} song={song} />
+            ))}
+        </div>
+    );
+};
+
+export const SongViewAlbumCard = ({ song }) => {
+    return (
+        <div className="songView-card">
+            <img src={song.image} alt={song.song_name} className="songView-image" />
+            <h3 className="songView-name">{song.song_name}</h3>
+            <h3 className="songView-album">{song.album_name}</h3>
+        </div>
     );
 };
 

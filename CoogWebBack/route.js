@@ -33,6 +33,12 @@ function routes(req, res) {
     if (URL.startsWith('/artistsong') && method === 'POST') {
         return actions.getArtistViewSong(req, res);
     }
+    if (URL.startsWith('/albumview') && method === 'POST') {
+        return actions.getAlbumViewInfo(req, res);
+    }
+    if (URL.startsWith('/albumsong') && method === 'POST') {
+        return actions.getAlbumViewSong(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

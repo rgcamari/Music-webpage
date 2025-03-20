@@ -133,14 +133,17 @@ const Home = () => {
   const [activeScreen, setActiveScreen] = useState('song-list'); // Default to Song List
   const [selectedArtist, setSelectedArtist] = useState({});
 
+  const [selectedAlbum, setSelectedAlbum] = useState({});
+
   const handleArtistClick = (screen, artist) => {
     setActiveScreen(screen);
     setSelectedArtist(artist);
   };
 
 
-  const handleAlbumClick = (screen) => {
+  const handleAlbumClick = (screen, album) => {
     setActiveScreen(screen);
+    setSelectedAlbum(album);
   };
 
   const handlePlaylistClick = (screen) => {
@@ -154,7 +157,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist)}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -163,7 +166,7 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum) => {
   switch (activeScreen) {
     case 'song-list': return <SongList />;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
@@ -174,7 +177,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
     case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType}/>;
-    case 'album-view-page': return <AlbumViewPage artist={selectedArtist}/>;
+    case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType}/>;
     case 'create-song': return <SongForm />;
     case 'edit-song': return <SongFormEdit />;
     case 'delete-song': return <SongFormDelete />;
