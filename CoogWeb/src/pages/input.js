@@ -84,33 +84,56 @@ export const Profile = ({ setActiveScreen }) => {
     );
 };
 
-export const AlbumProfileList = () => {
-    const [albumProfiles] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image },
-        { id: 2, name: "Harlequin", photo: purple_image },
-        { id: 3, name: "Love for Sale", photo: purple_image },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image },
-        { id: 5, name: "Joanne", photo: purple_image },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image },
-        { id: 7, name: "Born this way", photo: purple_image },
-        { id: 8, name: "The Fame", photo: purple_image },
-        { id: 9, name: "Abracadabra", photo: purple_image }
-    ]);
+export const AlbumProfileList = ({userName}) => {
+    const [albums, setAlbums] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+            useEffect(() => {
+                const fetchArtistProfileAlbum = async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/artistprofilealbum', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userName: userName }), 
+                        })
+                        console.log('Backend response:', response); 
+    
+                        const data = await response.json();
+    
+                        if (data.success) {
+                            setAlbums(data.albums);  
+                        } else {
+                            setError('Failed to fetch albums');
+                        }
+                    } catch (err) {
+                        setError('Error fetching albums');
+                    } finally {
+                        setLoading(false);  // Data is loaded or error occurred
+                    }
+                };
+        
+                fetchArtistProfileAlbum();
+            }, [userName]);
+            if (loading) return <div>Loading albums...</div>;
+            if (error) return <div>{error}</div>;
 
     return (
         <div className="albumProfile-list">
-            {albumProfiles.map((albumProfile) => (
-                <AlbumProfileCard key={albumProfile.id} albumProfile={albumProfile} />
+            {albums.map((album,index) => (
+                <AlbumProfileCard key={index} album={album} />
             ))}
         </div>
     );
 }
 
-export const AlbumProfileCard = ({ albumProfile }) => {
+export const AlbumProfileCard = ({ album }) => {
     return (
         <div className="albumProfile-card">
-            <img src={albumProfile.photo} alt={albumProfile.name} className="albumProfile-image" />
-            <h3 className="albumProfile-name">{albumProfile.name}</h3>
+            <img src={album.album_image} alt={album.album_name} className="albumProfile-image" />
+            <h3 className="albumProfile-name">{album.album_name}</h3>
         </div>
     );
 };
@@ -236,7 +259,7 @@ export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
                         Remove Song
                     </button>
                 </div>
-            <AlbumProfileList />
+            <AlbumProfileList userName={userName}/>
             </div>
 
             <div className="songProfile-section">

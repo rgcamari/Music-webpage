@@ -541,6 +541,39 @@ const getArtistInfo = async (req, res) => {
     });
 };
 
+const getArtistProfileAlbum = async (req, res) => {
+    let body = "";
+    
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userName } = parsedBody;
+
+            if (!userName) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            const [albums] = await pool.promise().query(`
+                SELECT album_id, album.name AS album_name, album.image_url AS album_image, artist.username AS artist_username 
+                FROM artist, album 
+                WHERE album.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, albums }));
+        } catch (err) {
+            console.error('Error fetching albums:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+        }
+    });
+};
+
 
 module.exports = {
     getUsers,
@@ -560,6 +593,7 @@ module.exports = {
     getTopAlbums,
     getTopGenres,
     getTopOther,
-    getArtistInfo
+    getArtistInfo,
+    getArtistProfileAlbum
 };
 

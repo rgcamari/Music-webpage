@@ -57,6 +57,9 @@ function routes(req, res) {
     if (URL.startsWith('/artistprofileinfo') && method === 'POST') {
         return actions.getArtistInfo(req, res);
     }
+    if (URL.startsWith('/artistprofilealbum') && method === 'POST') {
+        return actions.getArtistProfileAlbum(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });
