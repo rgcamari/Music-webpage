@@ -53,7 +53,9 @@ const SideBar = ({ onButtonClick, accountType }) => {
         <button className="side-bar-button" onClick={() => onButtonClick('artist-profile')}>Artist Profile</button>
       )}
       <button className="side-bar-button" onClick={() => onButtonClick('top-trending')}>Top Trending</button>
+      {accountType !== 'artist' && accountType !== 'Admin' && (
       <button className="side-bar-button" onClick={() => onButtonClick('cougar-wrap-up')}>Cougar Wrap-Up</button>
+      )}
     </div>
   );
 };
@@ -157,7 +159,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum)}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -166,13 +168,13 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum, userName, userImage) => {
   switch (activeScreen) {
     case 'song-list': return <SongList accountType={accountType}/>;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
     case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} accountType={accountType}/>;
     case 'profile': return <Profile setActiveScreen={onPlaylistClick} />;
-    case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} />;
+    case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} userName={userName} userImage={userImage}/>;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;

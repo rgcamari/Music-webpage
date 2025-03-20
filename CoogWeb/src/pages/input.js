@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import purple_image from './purple_image.png';
 import './input.css';
 import {SongForm, SongFormDelete, SongFormEdit} from './inputForms.js';
@@ -148,24 +148,64 @@ export const SongProfileCard = ({ songProfile }) => {
     );
 };
 
-export const ArtistProfile = ({setActiveScreen}) => {
+export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
     const [stats, setStats] = useState({
-        following: 120,  // Example count
-        friends: 85,     // Example count
-        likedSongs: 300, // Example count
+        followers: 0,
+        streams: 0,
+        likedSongs: 0,
+        likedAlbums: 0,
     });
+
+    const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+        
+            useEffect(() => {
+                const fetchArtistProfileInfo = async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/artistprofileinfo', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userName }), 
+                        });
+                        const data = await response.json();
+        
+                        if (data.success) {
+                            setStats({
+                                followers: data.followers,
+                                streams: data.streams,
+                                likedSongs: data.likedSongs,
+                                likedAlbums: data.likedAlbums});  
+                        } else {
+                            setError('Failed to fetch artist info');
+                        }
+                    } catch (err) {
+                        setError('Error fetching artist info');
+                    } finally {
+                        setLoading(false);  // Data is loaded or error occurred
+                    }
+                };
+        
+                fetchArtistProfileInfo();
+            }, [userName]);  // Empty dependency array to run this only once when the component mounts
+    
+        
+            if (loading) return <div>Loading artists...</div>;
+            if (error) return <div>{error}</div>;
 
     return (
         <section className = "everything">
         <div className="profile-section">
             <div className="profile-header">
-                <img src={purple_image} alt="Profile" className="profile-image" />
-                <h2 className="profile-username">Username</h2>
+                <img src={userImage} alt="Profile" className="profile-image" />
+                <h2 className="profile-username">{userName}</h2>
             </div>
             <div className="Basic-Stats">
-                <p className="basic-stats-text"> Following: {stats.following}</p>
-                <p className="basic-stats-text"> Friends: {stats.friends}</p>
+                <p className="basic-stats-text"> Followers: {stats.followers}</p>
+                <p className="basic-stats-text"> Streams: {stats.streams}</p>
                 <p className="basic-stats-text"> Liked Songs: {stats.likedSongs}</p>
+                <p className="basic-stats-text"> Liked Songs: {stats.likedAlbums}</p>
             </div>
         </div>
         <div className="albumProfile-section">

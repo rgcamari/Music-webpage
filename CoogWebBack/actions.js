@@ -493,6 +493,54 @@ const getTopOther = async (req, res) => {
     }
 };
 
+const getArtistInfo = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+
+    try {
+        const parsedBody = JSON.parse(body);
+        const { userName} = parsedBody;
+        if (!userName) {
+            return res.status(400).json({ success: false, message: 'Username is required' });
+        }
+
+
+        const [followersResult] = await pool.promise().query(`
+            SELECT followers FROM artist WHERE artist.username = ?;`, [userName]);
+
+        const [streamsResult] = await pool.promise().query(`SELECT COUNT(*) AS streams_count 
+            FROM history, song, artist 
+            WHERE history.song_id = song.song_id AND song.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+        const [likedSongsResult] = await pool.promise().query(`SELECT COUNT(*) AS liked_songs_count 
+            FROM liked_song, song, artist 
+            WHERE song.song_id = liked_song.song_id AND song.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+        const [likedAlbumsResult] = await pool.promise().query(`SELECT COUNT(*) AS liked_albums_count 
+            FROM liked_album, album, artist 
+            WHERE album.album_id = liked_album.album_id AND album.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+            
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, 
+            followers: followersResult[0].followers, 
+            streams: streamsResult[0].streams_count, 
+            likedSongs: likedSongsResult[0].liked_songs_count, 
+            likedAlbums: likedAlbumsResult[0].liked_albums_count 
+        }));
+    }catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch Artist Info' }));
+    }
+    });
+};
+
 
 module.exports = {
     getUsers,
@@ -511,6 +559,7 @@ module.exports = {
     getTopArtists,
     getTopAlbums,
     getTopGenres,
-    getTopOther
+    getTopOther,
+    getArtistInfo
 };
 

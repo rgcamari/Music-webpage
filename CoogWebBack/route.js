@@ -54,6 +54,9 @@ function routes(req, res) {
     if (URL.startsWith('/topother') && method === 'GET') {
         return actions.getTopOther(req, res);
     }
+    if (URL.startsWith('/artistprofileinfo') && method === 'POST') {
+        return actions.getArtistInfo(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });
