@@ -7,7 +7,7 @@ import forward from './forward.png';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 
 
-export const SongList = () => {
+export const SongList = ({accountType}) => {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);  // To track loading state
     const [error, setError] = useState(null);
@@ -41,13 +41,13 @@ export const SongList = () => {
     return (
         <div className="song-list">
             {songs.map((song, index) => (
-                <SongCard key={index} song={song} />
+                <SongCard key={index} song={song} accountType={accountType} />
             ))}
         </div>
     );
 };
 
-export const SongCard = ({ song }) => {
+export const SongCard = ({ song, accountType }) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
 
     const handleHeartClick = () => {
@@ -60,12 +60,13 @@ export const SongCard = ({ song }) => {
             <h3 className="song-name">{song.name}</h3>
             <h3 className="song-artist">{song.artist_name}</h3>
             <div className="bottom-section">
+            {accountType !== 'artist' && accountType !== 'admin'  && (
                 <img
                     src={heart} // Use the same heart image
                     alt="heart"
                     className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
                     onClick={handleHeartClick} // Handle click event
-                />
+                />)}
                 <img src={play_button} alt="play" className="play-button" />
             </div>
         </div>
@@ -124,7 +125,7 @@ export const ArtistCard = ({ artist, onArtistClick }) => {
     );
 };
 
-  export const AlbumList = ({ onAlbumClick }) => {
+  export const AlbumList = ({ onAlbumClick, accountType }) => {
     const [albums, setAlbums] = useState([]);
     const [loading, setLoading] = useState(true);  // To track loading state
     const [error, setError] = useState(null);
@@ -158,14 +159,14 @@ export const ArtistCard = ({ artist, onArtistClick }) => {
     return (
         <div className="album-list">
             {albums.map((album, index) => (
-                <AlbumCard key={index} album={album} onAlbumClick={onAlbumClick} />
+                <AlbumCard key={index} album={album} onAlbumClick={onAlbumClick} accountType={accountType} />
             ))}
         </div>
     );
 };
 
 
-export const AlbumCard = ({ album, onAlbumClick }) => {
+export const AlbumCard = ({ album, onAlbumClick, accountType }) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
   
     const handleHeartClick = () => {
@@ -178,12 +179,13 @@ export const AlbumCard = ({ album, onAlbumClick }) => {
         <h3 className="album-name">{album.album_name}</h3>
         <h3 className="album-artist">{album.artist_username}</h3>
         <div className="bottom-section">
+        {accountType !== 'artist' && accountType !== 'admin'  && (
           <img
             src={heart} // Use the same heart image
             alt="heart"
             className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
             onClick={handleHeartClick} // Handle click event
-          />
+          />)}
           <button onClick={() => onAlbumClick('album-view-page',album)} className="forward-button">
             <img src={forward} alt="forward" className="forward-icon" />
           </button>

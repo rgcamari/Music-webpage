@@ -254,12 +254,13 @@ export const ArtistView = ({ artist = {}, accountType }) => {
                     <p className="basic-stats-text">Songs: {info.songCount || 0}</p>
                     <p className="basic-stats-text">Streams: {info.streams || 0}</p>
                     <p className="basic-stats-text">Likes: {info.likes || 0}</p>
+                    {accountType !== 'artist' && accountType !== 'admin'  && (
                     <img
                         src={heart} // Use the same heart image
                         alt="heart"
                         className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
                         onClick={handleHeartClick} // Handle click event
-                    />
+                    />)}
                 </div>
             </div>
 

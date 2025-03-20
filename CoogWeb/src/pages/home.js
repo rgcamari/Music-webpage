@@ -168,9 +168,9 @@ const Home = () => {
 // Separate function for rendering screens
 const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum) => {
   switch (activeScreen) {
-    case 'song-list': return <SongList />;
+    case 'song-list': return <SongList accountType={accountType}/>;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
-    case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} />;
+    case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} accountType={accountType}/>;
     case 'profile': return <Profile setActiveScreen={onPlaylistClick} />;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} />;
     case 'top-trending': return <TopTrending />;
