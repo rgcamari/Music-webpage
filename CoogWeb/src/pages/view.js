@@ -58,35 +58,57 @@ export const AlbumViewCard = ({ album }) => {
     );
 };
 
-export const SongViewList = () => {
-    const [songViews] = useState([
-        { id: 1, name: "Blinding Lights", photo: purple_image, album: "The Weeknd" },
-        { id: 2,name: "Shape of You", photo: purple_image, album: "Ed Sheeran" },
-        { id: 3,name: "Someone Like You", photo: purple_image, album: "Adele" },
-        { id: 4,name: "Uptown Funk", photo: purple_image, album: "Mark Ronson" },
-        { id: 5,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 6,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 7,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 8,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 9,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 10,name: "Levitating", photo: purple_image, album: "Dua Lipa" }
-    ]);
+export const SongViewList = ({artist = {}}) => {
+    const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+        useEffect(() => {
+            const fetchArtistSong = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/artistsong', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ username: artist.username }), 
+                    })
+                    console.log('Backend response:', response); 
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        setSongs(data.songs);  
+                    } else {
+                        setError('Failed to fetch artists');
+                    }
+                } catch (err) {
+                    setError('Error fetching artists');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchArtistSong();
+        }, [artist.username]);
+        if (loading) return <div>Loading albums...</div>;
+        if (error) return <div>{error}</div>;
 
     return (
         <div className="songView-list">
-            {songViews.map((songView) => (
-                <SongViewCard key={songView.id} songView={songView} />
+            {songs.map((song, index) => (
+                <SongViewCard key={index} song={song} />
             ))}
         </div>
     );
 };
 
-export const SongViewCard = ({ songView }) => {
+export const SongViewCard = ({ song }) => {
     return (
         <div className="songView-card">
-            <img src={songView.photo} alt={songView.name} className="songView-image" />
-            <h3 className="songView-name">{songView.name}</h3>
-            <h3 className="songView-album">{songView.album}</h3>
+            <img src={song.image} alt={song.song_name} className="songView-image" />
+            <h3 className="songView-name">{song.song_name}</h3>
+            <h3 className="songView-album">{song.album_name}</h3>
         </div>
     );
 };
@@ -161,7 +183,7 @@ export const ArtistView = ({ artist = {}, accountType }) => {
         <div className="songView-section">
                 <div className="songView-header">Songs: 
                 </div>
-            <SongViewList />
+            <SongViewList artist={artist}/>
         </div>
       </section>
     );
