@@ -103,7 +103,7 @@ const updateAlbumnName = `UPDATE album SET name = tempName WHERE artist_id = art
 const updateAlbumnGenre = `UPDATE album SET genre = tempGenre WHERE artist_id = artistID;`
 
 // update album image
-const updateAlbumnName = `UPDATE album SET image_url = tempImage WHERE artist_id = artistID;`
+const updateAlbmnName = `UPDATE album SET image_url = tempImage WHERE artist_id = artistID;`
 
 // artist deleting song from album
 

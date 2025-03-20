@@ -39,6 +39,21 @@ function routes(req, res) {
     if (URL.startsWith('/albumsong') && method === 'POST') {
         return actions.getAlbumViewSong(req, res);
     }
+    if (URL.startsWith('/topsongs') && method === 'GET') {
+        return actions.getTopSongs(req, res);
+    }
+    if (URL.startsWith('/topartists') && method === 'GET') {
+        return actions.getTopArtists(req, res);
+    }
+    if (URL.startsWith('/topalbums') && method === 'GET') {
+        return actions.getTopAlbums(req, res);
+    }
+    if (URL.startsWith('/topgenres') && method === 'GET') {
+        return actions.getTopGenres(req, res);
+    }
+    if (URL.startsWith('/topother') && method === 'GET') {
+        return actions.getTopOther(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

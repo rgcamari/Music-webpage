@@ -13,7 +13,12 @@ const map_route = {
     '/artistlist',
     '/albumlist',
     '/userlist',
-    '/songlist'],
+    '/songlist',
+    '/topsongs',
+    '/topartists',
+    '/topalbums',
+    '/topgenres',
+    '/topother'],
 
     'POST': ['/signup',
     '/login',

@@ -33,7 +33,7 @@ export const SongList = ({accountType}) => {
         };
 
         fetchSongs();
-    }, []);  // Empty dependency array to run this only once when the component mounts
+    }, []);  
 
     if (loading) return <div>Loading songs...</div>;
     if (error) return <div>{error}</div>;

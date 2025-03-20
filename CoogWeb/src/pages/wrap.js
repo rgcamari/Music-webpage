@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import purple_image from './purple_image.png';
 import './wrap.css';
 
@@ -28,35 +28,52 @@ export const TopArtistCard = ({ topartist }) => {
 };
 
 export const TopSongList = () => {
-    const [topsongs] = useState([
-        { id: 1, rank: 1, name: "Blinding Lights", photo: purple_image, artist: "The Weeknd" },
-        { id: 2, rank: 2, name: "Shape of You", photo: purple_image, artist: "Ed Sheeran" },
-        { id: 3, rank: 3, name: "Someone Like You", photo: purple_image, artist: "Adele" },
-        { id: 4, rank: 4, name: "Uptown Funk", photo: purple_image, artist: "Mark Ronson" },
-        { id: 5, rank: 5, name: "Levitating", photo: purple_image, artist: "Dua Lipa" },
-        { id: 6, rank: 6, name: "Levitating", photo: purple_image, artist: "Dua Lipa" },
-        { id: 7, rank: 7, name: "Levitating", photo: purple_image, artist: "Dua Lipa" },
-        { id: 8, rank: 8, name: "Levitating", photo: purple_image, artist: "Dua Lipa" },
-        { id: 9, rank: 9, name: "Levitating", photo: purple_image, artist: "Dua Lipa" },
-        { id: 10, rank: 10, name: "Levitating", photo: purple_image, artist: "Dua Lipa" }
-    ]);
+    const [songs, setSongs] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            const fetchTopSongs = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/topsongs', {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setSongs(data.songs);  // Assuming the backend returns an array of artists
+                    } else {
+                        setError('Failed to fetch songs');
+                    }
+                } catch (err) {
+                    setError('Error fetching songs');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchTopSongs();
+        }, []);  
+    
+        if (loading) return <div>Loading songs...</div>;
+        if (error) return <div>{error}</div>;
 
     return (
         <div className="top-song-list">
-            {topsongs.map((topsong) => (
-                <TopSongCard key={topsong.id} topsong={topsong} />
+            {songs.map((song, index) => (
+                <TopSongCard key={index} song={song} />
             ))}
         </div>
     );
 };
 
-export const TopSongCard = ({ topsong }) => {
+export const TopSongCard = ({ song }) => {
     return (
         <div className="topsong-card">
-            <h3 className="topsong-rank">{topsong.rank}</h3>
-            <img src={topsong.photo} alt={topsong.name} className="topsong-image" />
-            <h3 className="topsong-name">{topsong.name}</h3>
-            <h3 className="topsong-artist">{topsong.artist}</h3>
+            <h3 className="topsong-rank">{song.ranks}</h3>
+            <img src={song.image_url} alt={song.name} className="topsong-image" />
+            <h3 className="topsong-name">{song.name}</h3>
+            <h3 className="topsong-artist">{song._name}</h3>
         </div>
     );
 };
