@@ -153,25 +153,49 @@ export const TopAlbumCard = ({ album }) => {
 };
 
 export const TopGenre = () => {
-    const [topgenres] = useState([
-        { id: 1, name: "Pop"},
-        { id: 2, name: "Rap"},
-        { id: 3, name: "K-Pop"}
-    ]);
+    const [genres, setGenres] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            const fetchTopGenres = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/topgenres', {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setGenres(data.topGenres);  // Assuming the backend returns an array of artists
+                    } else {
+                        setError('Failed to fetch artists');
+                    }
+                } catch (err) {
+                    setError('Error fetching artists');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchTopGenres();
+        }, []);  // Empty dependency array to run this only once when the component mounts
+    
+        if (loading) return <div>Loading albums...</div>;
+        if (error) return <div>{error}</div>;
 
     return (
         <div className="top-genre-list">
-            {topgenres.map((topgenre) => (
-                <TopGenreCard key={topgenre.id} topgenre={topgenre} />
+            {genres.map((genre, index) => (
+                <TopGenreCard key={index} genre={genre} />
             ))}
         </div>
     );
 };
 
-export const TopGenreCard = ({ topgenre }) => {
+export const TopGenreCard = ({ genre }) => {
     return (
-        <div className="top-genre-card"> {/* Fixed class name here */}
-            <h3 className="top-genre-name">{topgenre.name}</h3>
+        <div className="top-genre-card"> 
+            <h3 className="top-genre-name">{genre.genre_name}</h3>
         </div>
     );
 };

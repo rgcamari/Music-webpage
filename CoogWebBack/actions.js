@@ -445,6 +445,25 @@ const getTopAlbums = async (req, res) => {
     }
 };
 
+const getTopGenres = async (req, res) => {
+    try {
+        const [topGenres] = await pool.promise().query(`SELECT 
+        genre AS genre_name,
+        SUM(play_count) AS total_streams
+        FROM song
+        GROUP BY genre
+        ORDER BY total_streams DESC
+        LIMIT 3;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topGenres}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+    }
+};
+
 
 module.exports = {
     getUsers,
@@ -462,7 +481,7 @@ module.exports = {
     getTopSongs,
     getTopArtists,
     getTopAlbums,
-    /*getTopGenres,
-    getTopOther*/
+    getTopGenres,
+    //getTopOther
 };
 
