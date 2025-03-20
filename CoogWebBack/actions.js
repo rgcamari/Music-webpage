@@ -229,7 +229,42 @@ const getArtistViewInfo = async (req, res) => {
         res.end(JSON.stringify({ success: false, message: 'Failed to fetch Artist Info' }));
     }
     });
-}
+};
+
+const getArtistViewAlbum = async (req, res) => {
+    let body = "";
+    
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { username } = parsedBody;
+
+            if (!username) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            const [albums] = await pool.promise().query(`
+                SELECT album_id, album.name AS album_name, album.image_url AS album_image, artist.username AS artist_username 
+                FROM artist, album 
+                WHERE album.artist_id = artist.artist_id AND artist.username = ?;`, [username]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, albums }));
+        } catch (err) {
+            console.error('Error fetching albums:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+        }
+    });
+};
+
+
 
 module.exports = {
     getUsers,
@@ -239,20 +274,7 @@ module.exports = {
     getAlbumList,
     getUserList,
     getSongList,
-    getArtistViewInfo
+    getArtistViewInfo,
+    getArtistViewAlbum
 };
 
-/*const handleLogin = async (req, res) => {
-    let body = "";
-
-    req.on("data", (chunk) => {
-        body += chunk.toString();
-    });
-
-    req.on("end", () => {
-        console.log("Received body:", body);
-
-        res.writeHead(200, { "Content-Type": "application/json" }); // ✅ Fix headers
-        res.end(JSON.stringify({ success: true, message: "Request received" }));
-    });
-};*/

@@ -27,6 +27,9 @@ function routes(req, res) {
     if (URL.startsWith('/artistview') && method === 'POST') {
         return actions.getArtistViewInfo(req, res);
     }
+    if (URL.startsWith('/artistalbum') && method === 'POST') {
+        return actions.getArtistViewAlbum(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

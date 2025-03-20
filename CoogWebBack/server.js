@@ -17,7 +17,8 @@ const map_route = {
 
     'POST': ['/signup',
     '/login',
-    '/artistview'],
+    '/artistview',
+    '/artistalbum'],
     'PUT': [],
     'DELETE': [],
 };

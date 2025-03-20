@@ -4,33 +4,56 @@ import heart from './heart.png';
 import './view.css';
 import play_button from './play.png';
 
-export const AlbumViewList = () => {
-    const [albumViews] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image },
-        { id: 2, name: "Harlequin", photo: purple_image },
-        { id: 3, name: "Love for Sale", photo: purple_image },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image },
-        { id: 5, name: "Joanne", photo: purple_image },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image },
-        { id: 7, name: "Born this way", photo: purple_image },
-        { id: 8, name: "The Fame", photo: purple_image },
-        { id: 9, name: "Abracadabra", photo: purple_image }
-    ]);
+export const AlbumViewList = ({artist = {}}) => {
+    const [albums, setAlbums] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+        useEffect(() => {
+            const fetchArtistAlbums = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/artistalbum', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ username: artist.username }), 
+                    })
+                    console.log('Backend response:', response); 
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        setAlbums(data.albums);  
+                    } else {
+                        setError('Failed to fetch artists');
+                    }
+                } catch (err) {
+                    setError('Error fetching artists');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchArtistAlbums();
+        }, [artist.username]);
+        if (loading) return <div>Loading albums...</div>;
+        if (error) return <div>{error}</div>;
 
     return (
         <div className="albumView-list">
-            {albumViews.map((albumView) => (
-                <AlbumViewCard key={albumView.id} albumView={albumView} />
+            {albums.map((album, index) => (
+                <AlbumViewCard key={index} album={album} />
             ))}
         </div>
     );
 }
 
-export const AlbumViewCard = ({ albumView }) => {
+export const AlbumViewCard = ({ album }) => {
     return (
         <div className="albumView-card">
-            <img src={albumView.photo} alt={albumView.name} className="albumView-image" />
-            <h3 className="albumView-name">{albumView.name}</h3>
+            <img src={album.album_image} alt={album.album_name} className="albumView-image" />
+            <h3 className="albumView-name">{album.album_name}</h3>
         </div>
     );
 };
@@ -108,6 +131,7 @@ export const ArtistView = ({ artist = {}, accountType }) => {
     
             fetchArtistInfo();
         }, []);  // Empty dependency array to run this only once when the component mounts
+
     
         if (loading) return <div>Loading artists...</div>;
         if (error) return <div>{error}</div>;
@@ -131,7 +155,7 @@ export const ArtistView = ({ artist = {}, accountType }) => {
         <div className="albumView-section">
                         <div className="albumView-header">Albums: 
                         </div>
-            <AlbumViewList />
+            <AlbumViewList artist={artist}/>
         </div>
 
         <div className="songView-section">

@@ -174,7 +174,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'cougar-wrap-up': return <CougarWrapUp />;
     case 'user-lists': return <UserList />;
     case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType}/>;
-    case 'album-view-page': return <AlbumViewPage/>;
+    case 'album-view-page': return <AlbumViewPage artist={selectedArtist}/>;
     case 'create-song': return <SongForm />;
     case 'edit-song': return <SongFormEdit />;
     case 'delete-song': return <SongFormDelete />;
