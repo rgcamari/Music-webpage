@@ -60,6 +60,9 @@ function routes(req, res) {
     if (URL.startsWith('/artistprofilealbum') && method === 'POST') {
         return actions.getArtistProfileAlbum(req, res);
     }
+    if (URL.startsWith('/createsong') && method === 'POST') {
+        return actions.createSong(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

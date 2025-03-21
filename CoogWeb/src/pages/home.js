@@ -159,7 +159,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage)}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage, userId)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -168,7 +168,7 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum, userName, userImage) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum, userName, userImage, userId) => {
   switch (activeScreen) {
     case 'song-list': return <SongList accountType={accountType}/>;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
@@ -180,19 +180,19 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'user-lists': return <UserList />;
     case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType}/>;
     case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType}/>;
-    case 'create-song': return <SongForm />;
-    case 'edit-song': return <SongFormEdit />;
-    case 'delete-song': return <SongFormDelete />;
-    case 'create-album': return <AlbumForm />;
-    case 'edit-album': return <AlbumFormEdit />;
-    case 'delete-album': return <AlbumFormDelete />;
-    case 'add-song-album': return <AlbumFormAdd />;
-    case 'remove-song-album': return <AlbumFormRemove />;
-    case 'create-playlist': return <PlaylistForm />;
-    case 'edit-playlist': return <PlaylistFormEdit />;
-    case 'delete-playlist': return <PlaylistFormDelete />;
-    case 'add-song-playlist': return <PlaylistFormAdd />;
-    case 'remove-song-playlist': return <PlaylistFormRemove />;
+    case 'create-song': return <SongForm userName={userName} userId={userId}/>;
+    case 'edit-song': return <SongFormEdit userName={userName}/>;
+    case 'delete-song': return <SongFormDelete userName={userName}/>;
+    case 'create-album': return <AlbumForm userName={userName}/>;
+    case 'edit-album': return <AlbumFormEdit userName={userName}/>;
+    case 'delete-album': return <AlbumFormDelete userName={userName}/>;
+    case 'add-song-album': return <AlbumFormAdd userName={userName}/>;
+    case 'remove-song-album': return <AlbumFormRemove userName={userName}/>;
+    case 'create-playlist': return <PlaylistForm userName={userName}/>;
+    case 'edit-playlist': return <PlaylistFormEdit userName={userName}/>;
+    case 'delete-playlist': return <PlaylistFormDelete userName={userName}/>;
+    case 'add-song-playlist': return <PlaylistFormAdd userName={userName}/>;
+    case 'remove-song-playlist': return <PlaylistFormRemove userName={userName}/>;
     case 'playlist-view': return <PlaylistViewPage />;
     default: return <SongList />;
   }

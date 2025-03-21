@@ -574,6 +574,60 @@ const getArtistProfileAlbum = async (req, res) => {
     });
 };
 
+const createSong = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { name, artist, genre, album, image, URL } = parsedBody;
+
+            // Validate required fields
+            if (!name || !artist || !genre || !album || !image || !URL) {
+                throw new Error('Missing required fields');
+            }
+
+            // Check if the album exists and belongs to the artist
+            const [albumExists] = await pool.promise().execute(
+                "SELECT album_id, artist_id FROM album WHERE name = ?",
+                [album]
+            );
+
+            if (albumExists.length === 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Album does not exist' }));
+            }
+
+            const album_id = albumExists[0].album_id;
+            const album_artist_id = albumExists[0].artist_id;
+
+
+            // Ensure the artist adding the song is the album's owner
+            if (album_artist_id !== Number(artist)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'album does not exist' }));
+            }
+
+            // Insert the song
+            await pool.promise().query(
+                `INSERT INTO song (name, artist_id, album_id, genre, image_url, play_count, likes,length, song_url, created_at)
+                 VALUES (?, ?, ?, ?, ?, 0, 0,0, ?, NOW())`,
+                [name, artist, album_id, genre, image, URL]
+            );
+
+            res.writeHead(201, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Song added successfully' }));
+        } catch (err) {
+            console.error('Error adding song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to add song' }));
+        }
+    });
+};
 
 module.exports = {
     getUsers,
@@ -594,6 +648,7 @@ module.exports = {
     getTopGenres,
     getTopOther,
     getArtistInfo,
-    getArtistProfileAlbum
+    getArtistProfileAlbum,
+    createSong
 };
 

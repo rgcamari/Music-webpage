@@ -2,10 +2,11 @@ import React, {useState} from 'react';
 import purple_image from './purple_image.png';
 import './inputForms.css';
 
-export const SongForm = () => {
+export const SongForm = ({userName, userId}) => {
     const [song, setSong] = useState({
         name: "",
-        artist: "",
+        artist: userId,
+        genre: "",
         album: "",
         image: "",
         URL: ""
@@ -16,10 +17,29 @@ export const SongForm = () => {
         setSong({ ...song, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Song submitted:", song);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/createsong', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(song),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Song added successfully!");
+                setSong({ name: "", artist: userId,genre: "", album: "", image: "", URL: "" }); // Reset form
+            } else {
+                alert("Failed to add song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error adding song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
