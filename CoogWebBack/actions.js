@@ -374,6 +374,373 @@ const getAlbumViewInfo = async (req, res) => {
     });
 };
 
+const getTopSongs = async (req, res) => {
+    try {
+        const [songs] = await pool.promise().query(`SELECT 
+        ROW_NUMBER() OVER (ORDER BY song.play_count DESC) AS ranks,
+        song.song_id,
+        song.name,
+        song.image_url,
+        artist.artist_id AS artist_name,
+        play_count
+        FROM song
+        JOIN artist ON song.artist_id = artist.artist_id
+        ORDER BY play_count DESC
+        LIMIT 10;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, songs}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+    }
+};
+
+const getTopArtists = async (req, res) => {
+    try {
+        const [topArtists] = await pool.promise().query(`SELECT 
+        ROW_NUMBER() OVER (ORDER BY SUM(song.play_count) DESC) AS ranks,
+        artist.artist_id,
+        artist.username,
+        artist.image_url,
+        SUM(song.play_count) AS total_streams
+        FROM artist
+        JOIN song ON artist.artist_id = song.artist_id
+        GROUP BY artist.artist_id, artist.username
+        ORDER BY total_streams DESC
+        LIMIT 3;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topArtists}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch artists' }));
+    }
+};
+
+const getTopAlbums = async (req, res) => {
+    try {
+        const [topAlbums] = await pool.promise().query(`SELECT 
+        ROW_NUMBER() OVER (ORDER BY SUM(song.play_count) DESC) AS ranks,
+        album.album_id,
+        album.name,
+        album.image_url,
+        artist.username AS artist_name,
+        SUM(song.play_count) AS total_streams
+        FROM album
+        JOIN song ON album.album_id = song.album_id
+        JOIN artist ON album.artist_id = artist.artist_id
+        GROUP BY album.album_id, album.name, album.image_url
+        ORDER BY total_streams DESC
+        LIMIT 3;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topAlbums}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+    }
+};
+
+const getTopGenres = async (req, res) => {
+    try {
+        const [topGenres] = await pool.promise().query(`SELECT 
+        genre AS genre_name,
+        SUM(play_count) AS total_streams
+        FROM song
+        GROUP BY genre
+        ORDER BY total_streams DESC
+        LIMIT 3;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topGenres}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+    }
+};
+
+const getTopOther = async (req, res) => {
+    try {
+        const [streamCount] = await pool.promise().query(`SELECT SUM(song.play_count) FROM song;`);
+        const [userCount] = await pool.promise().query(`SELECT COUNT(*) FROM user;`);
+        const [artistCount] = await pool.promise().query(`SELECT COUNT(*) FROM artist;`);
+        const [albumCount] = await pool.promise().query(`SELECT COUNT(*) FROM album;`);
+        const [genreCount] = await pool.promise().query(`SELECT COUNT(DISTINCT genre) FROM song;`);
+        const [playlistCount] = await pool.promise().query(`SELECT COUNT(*) FROM playlist;`);
+        const [likeCount] = await pool.promise().query(`SELECT 
+        (SELECT SUM(likes) FROM album) + 
+        (SELECT SUM(likes) FROM song) AS counter;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topOthers:{
+            streamCount: streamCount[0]['SUM(song.play_count)'],  // Access the count
+            userCount: userCount[0]['COUNT(*)'],
+            artistCount: artistCount[0]['COUNT(*)'],
+            albumCount: albumCount[0]['COUNT(*)'],
+            genreCount: genreCount[0]['COUNT(DISTINCT genre)'],
+            playlistCount: playlistCount[0]['COUNT(*)'],
+            likeCount: likeCount[0].counter}
+        }));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+    }
+};
+
+const getArtistInfo = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+
+    try {
+        const parsedBody = JSON.parse(body);
+        const { userName} = parsedBody;
+        if (!userName) {
+            return res.status(400).json({ success: false, message: 'Username is required' });
+        }
+
+
+        const [followersResult] = await pool.promise().query(`
+            SELECT followers FROM artist WHERE artist.username = ?;`, [userName]);
+
+        const [streamsResult] = await pool.promise().query(`SELECT COUNT(*) AS streams_count 
+            FROM history, song, artist 
+            WHERE history.song_id = song.song_id AND song.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+        const [likedSongsResult] = await pool.promise().query(`SELECT COUNT(*) AS liked_songs_count 
+            FROM liked_song, song, artist 
+            WHERE song.song_id = liked_song.song_id AND song.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+        const [likedAlbumsResult] = await pool.promise().query(`SELECT COUNT(*) AS liked_albums_count 
+            FROM liked_album, album, artist 
+            WHERE album.album_id = liked_album.album_id AND album.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+            
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, 
+            followers: followersResult[0].followers, 
+            streams: streamsResult[0].streams_count, 
+            likedSongs: likedSongsResult[0].liked_songs_count, 
+            likedAlbums: likedAlbumsResult[0].liked_albums_count 
+        }));
+    }catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch Artist Info' }));
+    }
+    });
+};
+
+const getArtistProfileAlbum = async (req, res) => {
+    let body = "";
+    
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userName } = parsedBody;
+
+            if (!userName) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            const [albums] = await pool.promise().query(`
+                SELECT album_id, album.name AS album_name, album.image_url AS album_image, artist.username AS artist_username 
+                FROM artist, album 
+                WHERE album.artist_id = artist.artist_id AND artist.username = ?;`, [userName]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, albums }));
+        } catch (err) {
+            console.error('Error fetching albums:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+        }
+    });
+};
+
+const createSong = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { name, artist, genre, album, image, URL } = parsedBody;
+
+            // Validate required fields
+            if (!name || !artist || !genre || !album || !image || !URL) {
+                throw new Error('Missing required fields');
+            }
+
+            // Check if the album exists and belongs to the artist
+            const [albumExists] = await pool.promise().execute(
+                "SELECT album_id, artist_id FROM album WHERE name = ?",
+                [album]
+            );
+
+            if (albumExists.length === 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Album does not exist' }));
+            }
+
+            const album_id = albumExists[0].album_id;
+            const album_artist_id = albumExists[0].artist_id;
+
+
+            // Ensure the artist adding the song is the album's owner
+            if (album_artist_id !== Number(artist)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'album does not exist' }));
+            }
+
+            // Insert the song
+            await pool.promise().query(
+                `INSERT INTO song (name, artist_id, album_id, genre, image_url, play_count, likes,length, song_url, created_at)
+                 VALUES (?, ?, ?, ?, ?, 0, 0,0, ?, NOW())`,
+                [name, artist, album_id, genre, image, URL]
+            );
+
+            res.writeHead(201, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Song added successfully' }));
+        } catch (err) {
+            console.error('Error adding song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to add song' }));
+        }
+    });
+};
+
+const editSong = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            let { prevName, name, artist, genre, image } = parsedBody;
+
+            // Validate if at least one field is provided
+            if (!name && !artist && !genre && !image) {
+                throw new Error('Missing required fields to update');
+            }
+
+            // Check if the song exists with the previous name
+            const [songExists] = await pool.promise().execute(
+                "SELECT song_id FROM song WHERE name = ?",
+                [prevName]
+            );
+
+            if (songExists.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Song not found' }));
+            }
+
+            // Check for duplicates with the new name (within the same artist)
+            if (name) {
+                const [duplicateSong] = await pool.promise().execute(
+                    "SELECT song_id FROM song WHERE name = ? AND artist_id = (SELECT artist_id FROM song WHERE name = ?)",
+                    [name, prevName]
+                );
+
+                if (duplicateSong.length > 0) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ success: false, message: 'Duplicate song name for this artist' }));
+                }
+            }
+
+            // Handle undefined fields: if a field is undefined, convert to null
+            name = name || null;
+            artist = artist || null;
+            genre = genre || null;
+            image = image || null;
+
+            // Update the song with new data (only the fields that are provided)
+            await pool.promise().query(
+                `UPDATE song 
+                SET 
+                    name = COALESCE(?, name),
+                    artist_id = COALESCE(?, artist_id),
+                    genre = COALESCE(?, genre),
+                    image_url = COALESCE(?, image_url)
+                WHERE name = ?`,
+                [name, artist, genre, image, prevName]
+            );
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Song edited successfully' }));
+        } catch (err) {
+            console.error('Error editing song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to edit song' }));
+        }
+    });
+};
+
+const deleteSong = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { name, artist } = parsedBody;
+
+            // Validate required fields
+            if (!name || !artist) {
+                throw new Error('Missing required fields to delete');
+            }
+
+            // Check if the song exists for the given artist
+            const [songExists] = await pool.promise().execute(
+                "SELECT song_id FROM song WHERE name = ? AND artist_id = ?",
+                [name, artist]
+            );
+
+            if (songExists.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Song not found' }));
+            }
+
+            // Delete the song
+            await pool.promise().execute(
+                "DELETE FROM song WHERE song_id = ?",
+                [songExists[0].song_id]
+            );
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Song deleted successfully' }));
+        } catch (err) {
+            console.error('Error deleting song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to delete song' }));
+        }
+    });
+};
 
 module.exports = {
     getUsers,
@@ -387,6 +754,16 @@ module.exports = {
     getArtistViewAlbum,
     getArtistViewSong,
     getAlbumViewSong,
-    getAlbumViewInfo
+    getAlbumViewInfo,
+    getTopSongs,
+    getTopArtists,
+    getTopAlbums,
+    getTopGenres,
+    getTopOther,
+    getArtistInfo,
+    getArtistProfileAlbum,
+    createSong,
+    editSong,
+    deleteSong
 };
 

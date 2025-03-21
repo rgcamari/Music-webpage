@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import purple_image from './purple_image.png';
 import './input.css';
 import {SongForm, SongFormDelete, SongFormEdit} from './inputForms.js';
@@ -84,33 +84,56 @@ export const Profile = ({ setActiveScreen }) => {
     );
 };
 
-export const AlbumProfileList = () => {
-    const [albumProfiles] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image },
-        { id: 2, name: "Harlequin", photo: purple_image },
-        { id: 3, name: "Love for Sale", photo: purple_image },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image },
-        { id: 5, name: "Joanne", photo: purple_image },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image },
-        { id: 7, name: "Born this way", photo: purple_image },
-        { id: 8, name: "The Fame", photo: purple_image },
-        { id: 9, name: "Abracadabra", photo: purple_image }
-    ]);
+export const AlbumProfileList = ({userName}) => {
+    const [albums, setAlbums] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+            useEffect(() => {
+                const fetchArtistProfileAlbum = async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/artistprofilealbum', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userName: userName }), 
+                        })
+                        console.log('Backend response:', response); 
+    
+                        const data = await response.json();
+    
+                        if (data.success) {
+                            setAlbums(data.albums);  
+                        } else {
+                            setError('Failed to fetch albums');
+                        }
+                    } catch (err) {
+                        setError('Error fetching albums');
+                    } finally {
+                        setLoading(false);  // Data is loaded or error occurred
+                    }
+                };
+        
+                fetchArtistProfileAlbum();
+            }, [userName]);
+            if (loading) return <div>Loading albums...</div>;
+            if (error) return <div>{error}</div>;
 
     return (
         <div className="albumProfile-list">
-            {albumProfiles.map((albumProfile) => (
-                <AlbumProfileCard key={albumProfile.id} albumProfile={albumProfile} />
+            {albums.map((album,index) => (
+                <AlbumProfileCard key={index} album={album} />
             ))}
         </div>
     );
 }
 
-export const AlbumProfileCard = ({ albumProfile }) => {
+export const AlbumProfileCard = ({ album }) => {
     return (
         <div className="albumProfile-card">
-            <img src={albumProfile.photo} alt={albumProfile.name} className="albumProfile-image" />
-            <h3 className="albumProfile-name">{albumProfile.name}</h3>
+            <img src={album.album_image} alt={album.album_name} className="albumProfile-image" />
+            <h3 className="albumProfile-name">{album.album_name}</h3>
         </div>
     );
 };
@@ -148,24 +171,64 @@ export const SongProfileCard = ({ songProfile }) => {
     );
 };
 
-export const ArtistProfile = ({setActiveScreen}) => {
+export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
     const [stats, setStats] = useState({
-        following: 120,  // Example count
-        friends: 85,     // Example count
-        likedSongs: 300, // Example count
+        followers: 0,
+        streams: 0,
+        likedSongs: 0,
+        likedAlbums: 0,
     });
+
+    const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+        
+            useEffect(() => {
+                const fetchArtistProfileInfo = async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/artistprofileinfo', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userName }), 
+                        });
+                        const data = await response.json();
+        
+                        if (data.success) {
+                            setStats({
+                                followers: data.followers,
+                                streams: data.streams,
+                                likedSongs: data.likedSongs,
+                                likedAlbums: data.likedAlbums});  
+                        } else {
+                            setError('Failed to fetch artist info');
+                        }
+                    } catch (err) {
+                        setError('Error fetching artist info');
+                    } finally {
+                        setLoading(false);  // Data is loaded or error occurred
+                    }
+                };
+        
+                fetchArtistProfileInfo();
+            }, [userName]);  // Empty dependency array to run this only once when the component mounts
+    
+        
+            if (loading) return <div>Loading artists...</div>;
+            if (error) return <div>{error}</div>;
 
     return (
         <section className = "everything">
         <div className="profile-section">
             <div className="profile-header">
-                <img src={purple_image} alt="Profile" className="profile-image" />
-                <h2 className="profile-username">Username</h2>
+                <img src={userImage} alt="Profile" className="profile-image" />
+                <h2 className="profile-username">{userName}</h2>
             </div>
             <div className="Basic-Stats">
-                <p className="basic-stats-text"> Following: {stats.following}</p>
-                <p className="basic-stats-text"> Friends: {stats.friends}</p>
+                <p className="basic-stats-text"> Followers: {stats.followers}</p>
+                <p className="basic-stats-text"> Streams: {stats.streams}</p>
                 <p className="basic-stats-text"> Liked Songs: {stats.likedSongs}</p>
+                <p className="basic-stats-text"> Liked Songs: {stats.likedAlbums}</p>
             </div>
         </div>
         <div className="albumProfile-section">
@@ -196,7 +259,7 @@ export const ArtistProfile = ({setActiveScreen}) => {
                         Remove Song
                     </button>
                 </div>
-            <AlbumProfileList />
+            <AlbumProfileList userName={userName}/>
             </div>
 
             <div className="songProfile-section">
