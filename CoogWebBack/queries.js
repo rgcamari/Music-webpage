@@ -106,29 +106,37 @@ const updateAlbumnGenre = `UPDATE album SET genre = tempGenre WHERE artist_id = 
 const updateAlbumnName = `UPDATE album SET image_url = tempImage WHERE artist_id = artistID;`
 
 // artist deleting song from album
+const artistDeleteSongFromAlbum = `DELETE FROM song WHERE song_id = songID AND artist_id = artistID AND album_id = albumID;`
 
 // artist deleting an album
+const artistDeleteAlbum = `DELETE FROM album WHERE artist_id = artistID AND album_id = albumID;`
 
 // user deleting a following
+const userDeleteFollowing = `DELETE FROM following WHERE artist_id = artistID AND user_id = userID;`
 
 // user deleting a playlist
+const userDeletePlaylist = `DELETE FROM playlist WHERE playist_id = playlistID AND user_id = userID;`
 
 // user deleting a friend
+const userDeleteFriend = `DELETE FROM friend WHERE user_id_2 = userID2 AND user_id_1 = userID;`
 
 // user deleting a liked Album
+const userDeleteLikedAlbum = `DELETE FROM liked_album WHERE album_id = albumID AND user_id = userID;`
 
 // user deleting a liked Song
+const userDeleteLikedSong = `DELETE FROM liked_song WHERE song_id = songID AND user_id = userID;`
 
 // admin deleting a user
+const admindDeleteUser = `DELETE FROM users WHERE user_id = userID;`
 
 // admin deleting a artist
+const adminDeleteArtist = `DELETE FROM artist WHERE artist_id = artistID;`
 
 // admin deleting a song
+const adminDeleteSong = `DELETE FROM song WHERE song_id = songID;`
 
 // admin deleting a album
-
-// admin deleting a artist
-
+const adminDeleteAlbum = `DELETE FROM album WHERE album_id = albumID;`
 
 /*
 // Search Songs by Name or Artist
@@ -222,7 +230,32 @@ module.exports = {
     insertLikedSong,
     insertPlaylist,
     insertSong,
-    insertUser
+    insertUser,
+    insertPlaylistSong,
+    checkSongInPlaylist,
+    updateUserPassword,
+    updateUserImage,
+    updatePlaylistImage,
+    updatePlaylistName,
+    updateArtistUsername,
+    updateArtistPassword,
+    updateArtistImage,
+    updateAlbumnName,
+    updateAlbumnGenre,
+    updateAlbumnName,
+    artistDeleteSongFromAlbum,
+    artistDeleteAlbum,
+    userDeleteFollowing,
+    userDeletePlaylist,
+    userDeleteFriend,
+    userDeleteLikedAlbum,
+    userDeleteLikedSong,
+    admindDeleteUser,
+    adminDeleteArtist,
+    adminDeleteSong,
+    adminDeleteAlbum
+    
+    
     /*
     searchSongs,
     filterSongs,
