@@ -44,13 +44,13 @@ const insertSong = `
 */
 
 const insertAlbum = `INSERT INTO album (name, artist_id, image_url, created_at) values (?,?,?,?,?);`
-// VALUES (@username, @email, @password_hash, @genre_id, @image_url, SYSUTCDATETIME())
+// VALUES (@username, @email, @genre_id, @image_url, SYSUTCDATETIME())
 
 const insertArtist = `INSERT INTO artist (username, email, password, genre, image_url, created_at) values (?,?,?,?,?,?);`
-// VALUES (@username, @email, @password_hash, @genre_id, @image_url, SYSUTCDATETIME())
+// VALUES (@username, @email, @genre_id, @image_url, SYSUTCDATETIME())
 
 const insertUser = `INSERT INTO user (username, password, email, image_url, created_at) values (?,?,?,?,?);`
-// VALUES (@username, @password_hash, @email, @image_url, @role, SYSUTCDATETIME())
+// VALUES (@username, @email, @image_url, @role, SYSUTCDATETIME())
 
 const insertAdmin = `INSERT INTO admin (username, password, email, image_url, created_at) values (?,?,?,?,?);`
 
@@ -68,75 +68,6 @@ const insertHistory = `INSERT INTO history (user_id, song_id, last_listen) value
 const insertLikedSong = `INSERT INTO liked_song (user_id, song_id, liked_at) values (?,?,?);`   
 
 const insertPlaylist = `INSERT INTO playlist (name, user_id, image_url, created_at) values (?,?,?,?);`
-
-// insert a song into a playlist
-const insertPlaylistSong = `INSERT INTO playlist_song (playlist_id, song_id, added_at) values (?,?,?);`
-
-// check if the song is in the playlist
-const checkSongInPlaylist = `Select PL.song_id FROM playlist_song as PL, playlist as P WHERE PL.playlist_id = P.playlist_id and P.user_id = userID;`
-
-// update users password
-const updateUserPassword = `UPDATE users SET password = tempPassword WHERE user_id = userID;`
-
-// update users image url
-const updateUserImage = `UPDATE users SET image_url = tempImage WHERE user_id = userID;`
-
-// update playlist image url
-const updatePlaylistImage = `UPDATE playlist SET image_url = tempImage WHERE user_id = userID;`
-
-// update playlist name
-const updatePlaylistName = `UPDATE playlist SET name = tempName WHERE user_id = userID;`
-
-// update artist username
-const updateArtistUsername = `UPDATE artist SET username = tempUsername WHERE artist_id = artistID;`
-
-// update artist password
-const updateArtistPassword = `UPDATE artist SET password = tempPassword WHERE artist_id = artistID;`
-
-// update artist imageUrl
-const updateArtistImage = `UPDATE artist SET image_url = tempImage WHERE artist_id = artistID;`
-
-// update album name
-const updateAlbumnName = `UPDATE album SET name = tempName WHERE artist_id = artistID;`
-
-// update album genre
-const updateAlbumnGenre = `UPDATE album SET genre = tempGenre WHERE artist_id = artistID;`
-
-// update album image
-const updateAlbumnName = `UPDATE album SET image_url = tempImage WHERE artist_id = artistID;`
-
-// artist deleting song from album
-const artistDeleteSongFromAlbum = `DELETE FROM song WHERE song_id = songID AND artist_id = artistID AND album_id = albumID;`
-
-// artist deleting an album
-const artistDeleteAlbum = `DELETE FROM album WHERE artist_id = artistID AND album_id = albumID;`
-
-// user deleting a following
-const userDeleteFollowing = `DELETE FROM following WHERE artist_id = artistID AND user_id = userID;`
-
-// user deleting a playlist
-const userDeletePlaylist = `DELETE FROM playlist WHERE playist_id = playlistID AND user_id = userID;`
-
-// user deleting a friend
-const userDeleteFriend = `DELETE FROM friend WHERE user_id_2 = userID2 AND user_id_1 = userID;`
-
-// user deleting a liked Album
-const userDeleteLikedAlbum = `DELETE FROM liked_album WHERE album_id = albumID AND user_id = userID;`
-
-// user deleting a liked Song
-const userDeleteLikedSong = `DELETE FROM liked_song WHERE song_id = songID AND user_id = userID;`
-
-// admin deleting a user
-const admindDeleteUser = `DELETE FROM users WHERE user_id = userID;`
-
-// admin deleting a artist
-const adminDeleteArtist = `DELETE FROM artist WHERE artist_id = artistID;`
-
-// admin deleting a song
-const adminDeleteSong = `DELETE FROM song WHERE song_id = songID;`
-
-// admin deleting a album
-const adminDeleteAlbum = `DELETE FROM album WHERE album_id = albumID;`
 
 /*
 // Search Songs by Name or Artist
@@ -230,32 +161,7 @@ module.exports = {
     insertLikedSong,
     insertPlaylist,
     insertSong,
-    insertUser,
-    insertPlaylistSong,
-    checkSongInPlaylist,
-    updateUserPassword,
-    updateUserImage,
-    updatePlaylistImage,
-    updatePlaylistName,
-    updateArtistUsername,
-    updateArtistPassword,
-    updateArtistImage,
-    updateAlbumnName,
-    updateAlbumnGenre,
-    updateAlbumnName,
-    artistDeleteSongFromAlbum,
-    artistDeleteAlbum,
-    userDeleteFollowing,
-    userDeletePlaylist,
-    userDeleteFriend,
-    userDeleteLikedAlbum,
-    userDeleteLikedSong,
-    admindDeleteUser,
-    adminDeleteArtist,
-    adminDeleteSong,
-    adminDeleteAlbum
-    
-    
+    insertUser
     /*
     searchSongs,
     filterSongs,
