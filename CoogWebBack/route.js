@@ -66,6 +66,9 @@ function routes(req, res) {
     if (URL.startsWith('/editsong') && method === 'POST') {
         return actions.editSong(req, res);
     }
+    if (URL.startsWith('/deletesong') && method === 'POST') {
+        return actions.deleteSong(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

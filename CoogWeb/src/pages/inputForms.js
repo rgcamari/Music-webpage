@@ -136,13 +136,10 @@ export const SongFormEdit = ({userName,userId}) => {
     );
 }
 
-export const SongFormDelete = () => {
+export const SongFormDelete = ({userName,userId}) => {
     const [song, setSong] = useState({
         name: "",
-        artist: "",
-        album: "",
-        image: "",
-        URL: ""
+        artist: userId,
     });
 
     const handleChange = (e) => {
@@ -150,11 +147,32 @@ export const SongFormDelete = () => {
         setSong({ ...song, [name]: value });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Song submitted:", song);
-        // Here you can add logic to save the song data
-    };
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            console.log("Song submitted:", song);
+            
+            try {
+              const response = await fetch('http://localhost:5000/deletesong', {
+                method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({name: song.name,
+                artist: song.artist}),
+            });
+    
+            const data = await response.json();
+                
+                if (response.ok) {
+                    alert("Song deleted successfully!");
+                    setSong({name: "", artist: userId}); // Reset form
+                } else {
+                    alert("Failed to delete song: " + data.message);
+                }
+            } catch (error) {
+                console.error("Error deleting song:", error);
+                alert("Error connecting to the server.");
+            }
+        };
+
 
     return (
         <section className="everything">

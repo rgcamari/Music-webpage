@@ -30,7 +30,8 @@ const map_route = {
     '/artistprofileinfo',
     '/artistprofilealbum',
     '/createsong',
-    '/editsong'],
+    '/editsong',
+    '/deletesong'],
     'PUT': [],
     'DELETE': [],
 };
