@@ -60,7 +60,7 @@ export const SongForm = ({userName, userId}) => {
             <input type="text" name="album" placeholder="Enter album name" value={song.album} onChange={handleChange} required />
 
             <label>Image Name</label>
-            <input type="text" name="image" placeholder="Enter image name" value={song.image} onChange={handleChange} required />
+            <input type="text" name="image" placeholder="Enter image name" value={song.image} onChange={handleChange}  />
 
             <label>Song URL</label>
             <input type="text" name="URL" placeholder="Enter song URL" value={song.URL} onChange={handleChange} required />
@@ -71,13 +71,13 @@ export const SongForm = ({userName, userId}) => {
     );
 }
 
-export const SongFormEdit = () => {
+export const SongFormEdit = ({userName,userId}) => {
     const [song, setSong] = useState({
+        prevName: "",
         name: "",
-        artist: "",
-        album: "",
+        artist: userId,
+        genre: "",
         image: "",
-        URL: ""
     });
 
     const handleChange = (e) => {
@@ -85,10 +85,29 @@ export const SongFormEdit = () => {
         setSong({ ...song, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Song submitted:", song);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/editsong', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(song),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Song edited successfully!");
+                setSong({ prevName: "", name: "", artist: userId,genre: "", image: ""}); // Reset form
+            } else {
+                alert("Failed to edit song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error editing song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -100,22 +119,16 @@ export const SongFormEdit = () => {
         </div>
         <form className="song-form" onSubmit={handleSubmit}>
             <label>Enter Song Name you wish to Edit</label>
-            <input type="text" name="name" placeholder="Enter song name" value={song.name} onChange={handleChange} required />
+            <input type="text" name="prevName" placeholder="Enter song name" value={song.prevName} onChange={handleChange} required />
             
             <label>Song Name</label>
-            <input type="text" name="name" placeholder="Enter song name" value={song.name} onChange={handleChange} required />
+            <input type="text" name="name" placeholder="Enter song name" value={song.name} onChange={handleChange} />
 
             <label>Genre Name</label>
-            <input type="text" name="genre" placeholder="Enter genre" value={song.genre} onChange={handleChange} required />
-
-            <label>Album Name</label>
-            <input type="text" name="album" placeholder="Enter album name" value={song.album} onChange={handleChange} required />
+            <input type="text" name="genre" placeholder="Enter genre" value={song.genre} onChange={handleChange} />
 
             <label>Image Name</label>
-            <input type="text" name="image" placeholder="Enter image name" value={song.image} onChange={handleChange} required />
-
-            <label>Song URL</label>
-            <input type="text" name="URL" placeholder="Enter song URL" value={song.URL} onChange={handleChange} required />
+            <input type="text" name="image" placeholder="Enter image name" value={song.image} onChange={handleChange} />
 
             <button type="submit">Edit</button>
         </form>

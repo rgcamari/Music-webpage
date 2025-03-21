@@ -97,7 +97,7 @@ function Signup() {
                     type="url" 
                     value={image} 
                     onChange={(e) => setImage(e.target.value)} 
-                    required
+                    
                     />
                     
 
