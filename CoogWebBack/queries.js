@@ -44,13 +44,13 @@ const insertSong = `
 */
 
 const insertAlbum = `INSERT INTO album (name, artist_id, image_url, created_at) values (?,?,?,?,?);`
-// VALUES (@username, @email, @genre_id, @image_url, SYSUTCDATETIME())
+// VALUES (@username, @email, @password_hash, @genre_id, @image_url, SYSUTCDATETIME())
 
 const insertArtist = `INSERT INTO artist (username, email, password, genre, image_url, created_at) values (?,?,?,?,?,?);`
-// VALUES (@username, @email, @genre_id, @image_url, SYSUTCDATETIME())
+// VALUES (@username, @email, @password_hash, @genre_id, @image_url, SYSUTCDATETIME())
 
 const insertUser = `INSERT INTO user (username, password, email, image_url, created_at) values (?,?,?,?,?);`
-// VALUES (@username, @email, @image_url, @role, SYSUTCDATETIME())
+// VALUES (@username, @password_hash, @email, @image_url, @role, SYSUTCDATETIME())
 
 const insertAdmin = `INSERT INTO admin (username, password, email, image_url, created_at) values (?,?,?,?,?);`
 
