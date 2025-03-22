@@ -34,7 +34,8 @@ const map_route = {
     '/deletesong',
     '/addalbum',
     '/editalbum',
-    '/deletealbum'],
+    '/deletealbum',
+    '/addingsongtoalbum'],
     'PUT': [],
     'DELETE': [],
 };
