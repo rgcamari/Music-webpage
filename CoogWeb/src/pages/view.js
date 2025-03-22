@@ -385,6 +385,61 @@ export const SongPlaylistListCard = ({ song }) => {
     );
 };
 
+export const SongViewPlaylistList = ({playlist = {}}) => {
+    const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+        useEffect(() => {
+            const fetchPlaylistSong = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/playlistsongs', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ playlist_name:playlist.playlist_name }), 
+                    })
+                    console.log('Backend response:', response); 
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        setSongs(data.songs);  
+                    } else {
+                        setError('Failed to fetch songs');
+                    }
+                } catch (err) {
+                    setError('Error fetching songs');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchPlaylistSong();
+        }, [playlist.playlist_name]);
+        if (loading) return <div>Loading songs...</div>;
+        if (error) return <div>{error}</div>;
+
+    return (
+        <div className="songView-list">
+            {songs.map((song, index) => (
+                <SongViewPlaylistCard key={index} song={song} />
+            ))}
+        </div>
+    );
+};
+
+export const SongViewPlaylistCard = ({ song }) => {
+    return (
+        <div className="songView-card">
+            <img src={song.image} alt={song.song_name} className="songView-image" />
+            <h3 className="songView-name">{song.song_name}</h3>
+            <h3 className="songView-album">{song.album_name}</h3>
+        </div>
+    );
+};
+
 export const PlaylistViewPage = ({ playlist, userName, userId, userImage}) => {
     const [stats, setStats] = useState({
         songCount: 0
@@ -439,10 +494,9 @@ export const PlaylistViewPage = ({ playlist, userName, userId, userImage}) => {
 
             <div className="songView-section">
                 <div className="songView-header">Songs: </div>
-                
+                <SongViewPlaylistList playlist={playlist} userName={userName}/>
             </div>
         </section>
     );
 };
 
-//<SongViewList playlist={playlist} /> {/* Pass album's songs list */}

@@ -41,7 +41,8 @@ const map_route = {
     '/playlistviewinfo',
     '/profileplaylist',
     '/playlistviewsong',
-    '/infoforprofile'],
+    '/infoforprofile',
+    '/playlistsongs'],
     'PUT': [],
     'DELETE': [],
 };
