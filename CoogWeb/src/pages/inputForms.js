@@ -541,18 +541,38 @@ export const PlaylistForm = ({userName, userId}) => {
 export const PlaylistFormAdd = ({userName, userId}) => {
     const [playlist, setplaylist] = useState({
         name: "",
-        image: "",
+        user: userId,
+        song_name: ""
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...playlist, [name]: value });
+        setplaylist({ ...playlist, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Playlist submitted:", playlist);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/addsongtoplaylist', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(playlist),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Song added successfully!");
+                setplaylist({ name: "", user: userId,song_name: ""}); // Reset form
+            } else {
+                alert("Failed to add song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error adding song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -567,7 +587,7 @@ export const PlaylistFormAdd = ({userName, userId}) => {
             <input type="text" name="name" placeholder="Enter playlist name" value={playlist.name} onChange={handleChange} required />
 
             <label>Enter Song Name you want to Add to the Playlist</label>
-            <input type="text" name="song" placeholder="Enter song name" value={playlist.song} onChange={handleChange} required />
+            <input type="text" name="song_name" placeholder="Enter song name" value={playlist.song_name} onChange={handleChange} required />
 
             <button type="submit">Add</button>
         </form>

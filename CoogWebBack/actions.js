@@ -1457,8 +1457,8 @@ const deletePlaylist = async (req, res) => {
         }
     });
 };
-/*
-const addAlbumSong = async (req, res) => {
+
+const addPlaylistSong = async (req, res) => {
     let body = '';
 
     req.on('data', (chunk) => {
@@ -1469,30 +1469,30 @@ const addAlbumSong = async (req, res) => {
         try {
             const parsedBody = JSON.parse(body);
             console.log('Parsed Body:', parsedBody);
-            const { name, artist, song_name } = parsedBody;
+            const { name, user, song_name } = parsedBody;
 
             // Validate required fields
-            if (!name || !artist || !song_name) {
+            if (!name || !user || !song_name) {
                 throw new Error('Missing required fields');
             }
 
             // Check if the album exists and belongs to the artist
-            const [albumExists] = await pool.promise().execute(
-                "SELECT album_id FROM album WHERE name = ? AND artist_id = ?",
-                [name, artist]
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = ?",
+                [name, user]
             );
 
-            if (albumExists.length === 0) {
+            if (playlistExists.length === 0) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, message: 'Album does not exist or does not belong to the artist' }));
+                return res.end(JSON.stringify({ success: false, message: 'Playlist does not exist or does not belong to the user' }));
             }
 
-            const albumId = albumExists[0].album_id;
+            const playlistId = playlistExists[0].playlist_id;
 
             // Check if the song exists
             const [songExists] = await pool.promise().execute(
-                "SELECT song_id, album_id FROM song WHERE name = ? AND artist_id = ?",
-                [song_name, artist]
+                "SELECT song_id FROM song WHERE name = ?",
+                [song_name]
             );
 
             if (songExists.length === 0) {
@@ -1501,20 +1501,12 @@ const addAlbumSong = async (req, res) => {
             }
 
             const songId = songExists[0].song_id;
-            const currentAlbumId = songExists[0].album_id;
 
-            // Prevent reassigning if the song is already in the album
-            if (currentAlbumId === albumId) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, message: 'Song is already in this album' }));
-            }
 
             // Assign the song to the album
             await pool.promise().execute(
-                `UPDATE song
-                SET album_id = ?
-                WHERE song_id = ?`,
-                [albumId, songId]
+                `INSERT song_in_playlist (song_id,playlist_id,added_at) VALUES (?,?,NOW())`,
+                [songId,playlistId]
             );
 
             res.writeHead(201, { "Content-Type": "application/json" });
@@ -1526,7 +1518,7 @@ const addAlbumSong = async (req, res) => {
         }
     });
 };
-
+/*
 const removeAlbumSong = async (req, res) => {
     let body = '';
 
@@ -1634,6 +1626,7 @@ module.exports = {
     getPlaylistSongs,
     createPlaylist,
     editPlaylist,
-    deletePlaylist
+    deletePlaylist,
+    addPlaylistSong
 };
 
