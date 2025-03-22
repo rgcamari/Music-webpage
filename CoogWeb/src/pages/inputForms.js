@@ -191,22 +191,42 @@ export const SongFormDelete = ({userName,userId}) => {
 }
 
 
-export const AlbumForm = () => {
+export const AlbumForm = ({userId, userName}) => {
     const [album, setAlbum] = useState({
         name: "",
+        artist: userId,
         genre: "",
         image: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/addalbum', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(album),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Album added successfully!");
+                setAlbum({ name: "", artist: userId,genre: "",image: ""}); // Reset form
+            } else {
+                alert("Failed to add album: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error adding album:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (

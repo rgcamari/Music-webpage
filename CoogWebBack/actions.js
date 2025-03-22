@@ -742,6 +742,51 @@ const deleteSong = async (req, res) => {
     });
 };
 
+const createAlbum = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { name, artist, genre, image} = parsedBody;
+
+            // Validate required fields
+            if (!name || !artist || !genre ||!image) {
+                throw new Error('Missing required fields');
+            }
+
+            // Check if the album exists and belongs to the artist
+            const [albumExists] = await pool.promise().execute(
+                "SELECT album_id, artist_id FROM album WHERE name = ?",
+                [name]
+            );
+
+            if (albumExists.length !== 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Album already exist' }));
+            }
+
+            // Insert the song
+            await pool.promise().query(
+                `INSERT INTO album (name, artist_id, genre, image_url,likes,created_at)
+                 VALUES (?, ?, ?, ?, 0, NOW())`,
+                [name, artist, genre, image]
+            );
+
+            res.writeHead(201, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Album added successfully' }));
+        } catch (err) {
+            console.error('Error adding song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to add album' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -764,6 +809,7 @@ module.exports = {
     getArtistProfileAlbum,
     createSong,
     editSong,
-    deleteSong
+    deleteSong,
+    createAlbum
 };
 
