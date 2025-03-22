@@ -81,6 +81,9 @@ function routes(req, res) {
     if (URL.startsWith('/addingsongtoalbum') && method === 'POST') {
         return actions.addAlbumSong(req, res);
     }
+    if (URL.startsWith('/removesongfromalbum') && method === 'POST') {
+        return actions.removeAlbumSong(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

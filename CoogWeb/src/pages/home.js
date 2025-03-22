@@ -187,7 +187,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'edit-album': return <AlbumFormEdit userName={userName} userId={userId}/>;
     case 'delete-album': return <AlbumFormDelete userName={userName} userId= {userId}/>;
     case 'add-song-album': return <AlbumFormAdd userName={userName} userId={userId}/>;
-    case 'remove-song-album': return <AlbumFormRemove userName={userName}/>;
+    case 'remove-song-album': return <AlbumFormRemove userName={userName} userId={userId}/>;
     case 'create-playlist': return <PlaylistForm userName={userName}/>;
     case 'edit-playlist': return <PlaylistFormEdit userName={userName}/>;
     case 'delete-playlist': return <PlaylistFormDelete userName={userName}/>;

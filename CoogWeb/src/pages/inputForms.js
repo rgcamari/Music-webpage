@@ -424,22 +424,41 @@ export const AlbumFormDelete = ({userName, userId}) => {
     );
 }
 
-export const AlbumFormRemove = () => {
+export const AlbumFormRemove = ({userName, userId}) => {
     const [album, setAlbum] = useState({
         name: "",
-        genre: "",
-        image: "",
+        artist: userId,
+        song_name: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/removesongfromalbum', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(album),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Song removed successfully!");
+                setAlbum({ name: "", artist: userId,song_name: ""}); // Reset form
+            } else {
+                alert("Failed to remove song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error removing song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -454,7 +473,7 @@ export const AlbumFormRemove = () => {
             <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
 
             <label>Enter Song Name you want to Remove</label>
-            <input type="text" name="name" placeholder="Enter album name" value={album.song} onChange={handleChange} required />
+            <input type="text" name="song_name" placeholder="Enter album name" value={album.song_name} onChange={handleChange} required />
 
             <button type="submit">Remove</button>
         </form>
