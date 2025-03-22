@@ -138,35 +138,57 @@ export const AlbumProfileCard = ({ album }) => {
     );
 };
 
-export const SongProfileList = () => {
-    const [songProfiles] = useState([
-        { id: 1, name: "Blinding Lights", photo: purple_image, album: "The Weeknd" },
-        { id: 2,name: "Shape of You", photo: purple_image, album: "Ed Sheeran" },
-        { id: 3,name: "Someone Like You", photo: purple_image, album: "Adele" },
-        { id: 4,name: "Uptown Funk", photo: purple_image, album: "Mark Ronson" },
-        { id: 5,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 6,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 7,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 8,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 9,name: "Levitating", photo: purple_image, album: "Dua Lipa" },
-        { id: 10,name: "Levitating", photo: purple_image, album: "Dua Lipa" }
-    ]);
+export const SongProfileList = ({userName}) => {
+    const [songs, setSongs] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+            useEffect(() => {
+                const fetchArtistProfileSong = async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/artistprofilesong', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userName: userName }), 
+                        })
+                        console.log('Backend response:', response); 
+    
+                        const data = await response.json();
+    
+                        if (data.success) {
+                            setSongs(data.songs);  
+                        } else {
+                            setError('Failed to fetch songs');
+                        }
+                    } catch (err) {
+                        setError('Error fetching songs');
+                    } finally {
+                        setLoading(false);  // Data is loaded or error occurred
+                    }
+                };
+        
+                fetchArtistProfileSong();
+            }, [userName]);
+            if (loading) return <div>Loading songs...</div>;
+            if (error) return <div>{error}</div>;
 
     return (
         <div className="songProfile-list">
-            {songProfiles.map((songProfile) => (
-                <SongProfileCard key={songProfile.id} songProfile={songProfile} />
+            {songs.map((song,index) => (
+                <SongProfileCard key={index} song={song} />
             ))}
         </div>
     );
 };
 
-export const SongProfileCard = ({ songProfile }) => {
+export const SongProfileCard = ({ song }) => {
     return (
         <div className="songProfile-card">
-            <img src={songProfile.photo} alt={songProfile.name} className="songProfile-image" />
-            <h3 className="songProfile-name">{songProfile.name}</h3>
-            <h3 className="songProfile-album">{songProfile.album}</h3>
+            <img src={song.song_image} alt={song.song_name} className="songProfile-image" />
+            <h3 className="songProfile-name">{song.song_name}</h3>
+            <h3 className="songProfile-album">{song.artist_name}</h3>
         </div>
     );
 };
@@ -280,7 +302,7 @@ export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
                         Delete Song
                     </button>
                 </div>
-            <SongProfileList />
+            <SongProfileList userName={userName}/>
             </div>
         
         </section>

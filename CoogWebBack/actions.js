@@ -1039,6 +1039,39 @@ const removeAlbumSong = async (req, res) => {
     });
 };
 
+const getArtistProfileSong = async (req, res) => {
+    let body = "";
+    
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userName } = parsedBody;
+
+            if (!userName) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            const [songs] = await pool.promise().query(`
+                SELECT song_id, song.name AS song_name, song.image_url AS song_image, artist.username AS artist_name 
+                FROM artist
+                JOIN song ON song.artist_id = artist.artist_id
+                WHERE artist.username = ?;`, [userName]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, songs }));
+        } catch (err) {
+            console.error('Error fetching albums:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+        }
+    });
+};
 
 
 
@@ -1069,6 +1102,7 @@ module.exports = {
     editAlbum,
     deleteAlbum,
     addAlbumSong,
-    removeAlbumSong
+    removeAlbumSong,
+    getArtistProfileSong
 };
 
