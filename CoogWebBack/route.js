@@ -69,7 +69,24 @@ function routes(req, res) {
     if (URL.startsWith('/deletesong') && method === 'POST') {
         return actions.deleteSong(req, res);
     }
-    
+    if (URL.startsWith('/addalbum') && method === 'POST') {
+        return actions.createAlbum(req, res);
+    }
+    if (URL.startsWith('/editalbum') && method === 'POST') {
+        return actions.editAlbum(req, res);
+    }
+    if (URL.startsWith('/deletealbum') && method === 'POST') {
+        return actions.deleteAlbum(req, res);
+    }
+    if (URL.startsWith('/addingsongtoalbum') && method === 'POST') {
+        return actions.addAlbumSong(req, res);
+    }
+    if (URL.startsWith('/removesongfromalbum') && method === 'POST') {
+        return actions.removeAlbumSong(req, res);
+    }
+    if (URL.startsWith('/artistprofilesong') && method === 'POST') {
+        return actions.getArtistProfileSong(req, res);
+    }
 
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route Not Found" }));

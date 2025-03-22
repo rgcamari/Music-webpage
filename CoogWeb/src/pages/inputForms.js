@@ -191,22 +191,42 @@ export const SongFormDelete = ({userName,userId}) => {
 }
 
 
-export const AlbumForm = () => {
+export const AlbumForm = ({userId, userName}) => {
     const [album, setAlbum] = useState({
         name: "",
+        artist: userId,
         genre: "",
         image: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/addalbum', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(album),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Album added successfully!");
+                setAlbum({ name: "", artist: userId,genre: "",image: ""}); // Reset form
+            } else {
+                alert("Failed to add album: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error adding album:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -232,22 +252,41 @@ export const AlbumForm = () => {
     );
 }
 
-export const AlbumFormAdd = () => {
+export const AlbumFormAdd = ({userName, userId}) => {
     const [album, setAlbum] = useState({
         name: "",
-        genre: "",
-        image: "",
+        artist: userId,
+        song_name: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/addingsongtoalbum', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(album),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Song added successfully!");
+                setAlbum({ name: "", artist: userId,song_name: ""}); // Reset form
+            } else {
+                alert("Failed to add song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error adding song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -262,7 +301,7 @@ export const AlbumFormAdd = () => {
             <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
 
             <label>Enter Song Name you want to Add to the Album</label>
-            <input type="text" name="song" placeholder="Enter song name" value={album.song} onChange={handleChange} required />
+            <input type="text" name="song_name" placeholder="Enter song name" value={album.song_name} onChange={handleChange} required />
 
             <button type="submit">Add</button>
         </form>
@@ -270,22 +309,42 @@ export const AlbumFormAdd = () => {
     );
 }
 
-export const AlbumFormEdit = () => {
+export const AlbumFormEdit = ({userName,userId}) => {
     const [album, setAlbum] = useState({
+        prevName: "",
         name: "",
+        artist: userId,
         genre: "",
         image: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/editalbum', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(album),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Album edited successfully!");
+                setAlbum({ prevName: "", name: "", artist: userId,genre: "", image: ""}); // Reset form
+            } else {
+                alert("Failed to edit song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error editing song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -297,16 +356,16 @@ export const AlbumFormEdit = () => {
         </div>
         <form className="song-form" onSubmit={handleSubmit}>
             <label>Enter Album Name you want to Edit</label>
-            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+            <input type="text" name="prevName" placeholder="Enter album name" value={album.prevName} onChange={handleChange} required />
 
             <label>Album Name</label>
-            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange}  />
 
             <label>Genre Name</label>
-            <input type="text" name="genre" placeholder="Enter genre" value={album.genre} onChange={handleChange} required />
+            <input type="text" name="genre" placeholder="Enter genre" value={album.genre} onChange={handleChange}  />
 
             <label>Image Name</label>
-            <input type="text" name="image" placeholder="Enter image name" value={album.image} onChange={handleChange} required />
+            <input type="text" name="image" placeholder="Enter image name" value={album.image} onChange={handleChange}  />
 
             <button type="submit">Edit</button>
         </form>
@@ -314,23 +373,39 @@ export const AlbumFormEdit = () => {
     );
 }
 
-export const AlbumFormDelete = () => {
+export const AlbumFormDelete = ({userName, userId}) => {
     const [album, setAlbum] = useState({
         name: "",
-        genre: "",
-        image: "",
+        artist: userId
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
-    };
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            
+            try {
+              const response = await fetch('http://localhost:5000/deletealbum', {
+                method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(album),
+            });
+    
+            const data = await response.json();
+                
+                if (response.ok) {
+                    alert("Album deleted successfully!");
+                    setAlbum({name: "", artist: userId}); // Reset form
+                } else {
+                    alert("Failed to delete album: " + data.message);
+                }
+            } catch (error) {
+                console.error("Error deleting album:", error);
+                alert("Error connecting to the server.");
+            }
+        };
 
     return (
         <section className="everything">
@@ -349,22 +424,41 @@ export const AlbumFormDelete = () => {
     );
 }
 
-export const AlbumFormRemove = () => {
+export const AlbumFormRemove = ({userName, userId}) => {
     const [album, setAlbum] = useState({
         name: "",
-        genre: "",
-        image: "",
+        artist: userId,
+        song_name: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/removesongfromalbum', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(album),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Song removed successfully!");
+                setAlbum({ name: "", artist: userId,song_name: ""}); // Reset form
+            } else {
+                alert("Failed to remove song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error removing song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -379,7 +473,7 @@ export const AlbumFormRemove = () => {
             <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
 
             <label>Enter Song Name you want to Remove</label>
-            <input type="text" name="name" placeholder="Enter album name" value={album.song} onChange={handleChange} required />
+            <input type="text" name="song_name" placeholder="Enter album name" value={album.song_name} onChange={handleChange} required />
 
             <button type="submit">Remove</button>
         </form>
