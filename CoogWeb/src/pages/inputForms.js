@@ -290,22 +290,42 @@ export const AlbumFormAdd = () => {
     );
 }
 
-export const AlbumFormEdit = () => {
+export const AlbumFormEdit = ({userName,userId}) => {
     const [album, setAlbum] = useState({
+        prevName: "",
         name: "",
+        artist: userId,
         genre: "",
         image: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/editalbum', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(album),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Album edited successfully!");
+                setAlbum({ prevName: "", name: "", artist: userId,genre: "", image: ""}); // Reset form
+            } else {
+                alert("Failed to edit song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error editing song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -317,16 +337,16 @@ export const AlbumFormEdit = () => {
         </div>
         <form className="song-form" onSubmit={handleSubmit}>
             <label>Enter Album Name you want to Edit</label>
-            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+            <input type="text" name="prevName" placeholder="Enter album name" value={album.prevName} onChange={handleChange} required />
 
             <label>Album Name</label>
-            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange} required />
+            <input type="text" name="name" placeholder="Enter album name" value={album.name} onChange={handleChange}  />
 
             <label>Genre Name</label>
-            <input type="text" name="genre" placeholder="Enter genre" value={album.genre} onChange={handleChange} required />
+            <input type="text" name="genre" placeholder="Enter genre" value={album.genre} onChange={handleChange}  />
 
             <label>Image Name</label>
-            <input type="text" name="image" placeholder="Enter image name" value={album.image} onChange={handleChange} required />
+            <input type="text" name="image" placeholder="Enter image name" value={album.image} onChange={handleChange}  />
 
             <button type="submit">Edit</button>
         </form>

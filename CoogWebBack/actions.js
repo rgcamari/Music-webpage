@@ -787,6 +787,75 @@ const createAlbum = async (req, res) => {
     });
 };
 
+const editAlbum = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            let { prevName, name, artist, genre, image } = parsedBody;
+
+            // Validate if at least one field is provided
+            if (!name && !artist && !genre && !image) {
+                throw new Error('Missing required fields to update');
+            }
+
+            // Check if the song exists with the previous name
+            const [albumExists] = await pool.promise().execute(
+                "SELECT album_id FROM album WHERE name = ?",
+                [prevName]
+            );
+
+            if (albumExists.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Album not found' }));
+            }
+
+            // Check for duplicates with the new name (within the same artist)
+            if (name) {
+                const [duplicateAlbum] = await pool.promise().execute(
+                    "SELECT album_id FROM album WHERE name = ? AND artist_id = (SELECT artist_id FROM album WHERE name = ?)",
+                    [name, prevName]
+                );
+
+                if (duplicateAlbum.length > 0) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ success: false, message: 'Duplicate album name for this artist' }));
+                }
+            }
+
+            // Handle undefined fields: if a field is undefined, convert to null
+            name = name || null;
+            artist = artist || null;
+            genre = genre || null;
+            image = image || null;
+
+            // Update the song with new data (only the fields that are provided)
+            await pool.promise().query(
+                `UPDATE album 
+                SET 
+                    name = COALESCE(?, name),
+                    artist_id = COALESCE(?, artist_id),
+                    genre = COALESCE(?, genre),
+                    image_url = COALESCE(?, image_url)
+                WHERE name = ?`,
+                [name, artist, genre, image, prevName]
+            );
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Album edited successfully' }));
+        } catch (err) {
+            console.error('Error editing song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to edit album' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -810,6 +879,7 @@ module.exports = {
     createSong,
     editSong,
     deleteSong,
-    createAlbum
+    createAlbum,
+    editAlbum
 };
 

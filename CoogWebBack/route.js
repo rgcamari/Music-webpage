@@ -72,6 +72,9 @@ function routes(req, res) {
     if (URL.startsWith('/addalbum') && method === 'POST') {
         return actions.createAlbum(req, res);
     }
+    if (URL.startsWith('/editalbum') && method === 'POST') {
+        return actions.editAlbum(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });
