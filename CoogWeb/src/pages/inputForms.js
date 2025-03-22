@@ -577,19 +577,39 @@ export const PlaylistFormAdd = ({userName, userId}) => {
 
 export const PlaylistFormEdit = ({userName, userId}) => {
     const [playlist, setPlaylist] = useState({
+        prevName: "",
         name: "",
+        user: userId,
         image: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...playlist, [name]: value });
+        setPlaylist({ ...playlist, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Playlist submitted:", playlist);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/editplaylist', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(playlist),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Playlist edited successfully!");
+                setPlaylist({ prevName: playlist.prevName, name: "", user: userId, image: ""}); // Reset form
+            } else {
+                alert("Failed to edit playlist: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error editing playlist:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -601,13 +621,13 @@ export const PlaylistFormEdit = ({userName, userId}) => {
         </div>
         <form className="song-form" onSubmit={handleSubmit}>
             <label>Enter Playlist Name you want to Edit</label>
-            <input type="text" name="name" placeholder="Enter playlist name" value={playlist.name} onChange={handleChange} required />
+            <input type="text" name="prevName" placeholder="Enter playlist name" value={playlist.prevName} onChange={handleChange} required />
 
             <label>Playlist Name</label>
-            <input type="text" name="name" placeholder="Enter album name" value={playlist.name} onChange={handleChange} required />
+            <input type="text" name="name" placeholder="Enter playlist name" value={playlist.name} onChange={handleChange}  />
 
             <label>Image Name</label>
-            <input type="text" name="image" placeholder="Enter image name" value={playlist.image} onChange={handleChange} required />
+            <input type="text" name="image" placeholder="Enter image name" value={playlist.image} onChange={handleChange}  />
 
             <button type="submit">Edit</button>
         </form>

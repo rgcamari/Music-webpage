@@ -1346,8 +1346,8 @@ const createPlaylist = async (req, res) => {
         }
     });
 };
-/*
-const editAlbum = async (req, res) => {
+
+const editPlaylist = async (req, res) => {
     let body = '';
 
     req.on('data', (chunk) => {
@@ -1357,65 +1357,63 @@ const editAlbum = async (req, res) => {
     req.on('end', async () => {
         try {
             const parsedBody = JSON.parse(body);
-            let { prevName, name, artist, genre, image } = parsedBody;
+            let { prevName, name, user, image } = parsedBody;
 
             // Validate if at least one field is provided
-            if (!name && !artist && !genre && !image) {
+            if (!name && !user && !prevName && !image) {
                 throw new Error('Missing required fields to update');
             }
 
             // Check if the song exists with the previous name
-            const [albumExists] = await pool.promise().execute(
-                "SELECT album_id FROM album WHERE name = ?",
-                [prevName]
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = ?",
+                [prevName, user]
             );
 
-            if (albumExists.length === 0) {
+            if (playlistExists.length === 0) {
                 res.writeHead(404, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, message: 'Album not found' }));
+                return res.end(JSON.stringify({ success: false, message: 'Playlist not found' }));
             }
 
             // Check for duplicates with the new name (within the same artist)
             if (name) {
-                const [duplicateAlbum] = await pool.promise().execute(
-                    "SELECT album_id FROM album WHERE name = ? AND artist_id = (SELECT artist_id FROM album WHERE name = ?)",
+                const [duplicatePlaylist] = await pool.promise().execute(
+                    "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = (SELECT user_id FROM playlist WHERE name = ?)",
                     [name, prevName]
                 );
 
-                if (duplicateAlbum.length > 0) {
+                if (duplicatePlaylist.length > 0) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({ success: false, message: 'Duplicate album name for this artist' }));
+                    return res.end(JSON.stringify({ success: false, message: 'Duplicate playlist name for this user' }));
                 }
             }
 
             // Handle undefined fields: if a field is undefined, convert to null
             name = name || null;
-            artist = artist || null;
-            genre = genre || null;
+            user = user || null;
             image = image || null;
 
             // Update the song with new data (only the fields that are provided)
             await pool.promise().query(
-                `UPDATE album 
+                `UPDATE playlist 
                 SET 
                     name = COALESCE(?, name),
-                    artist_id = COALESCE(?, artist_id),
-                    genre = COALESCE(?, genre),
+                    user_id = COALESCE(?, user_id),
                     image_url = COALESCE(?, image_url)
                 WHERE name = ?`,
-                [name, artist, genre, image, prevName]
+                [name, user, image, prevName]
             );
 
             res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: true, message: 'Album edited successfully' }));
+            res.end(JSON.stringify({ success: true, message: 'Playlist edited successfully' }));
         } catch (err) {
             console.error('Error editing song:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to edit album' }));
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to edit playlist' }));
         }
     });
 };
-
+/*
 const deleteAlbum = async (req, res) => {
     let body = '';
 
@@ -1634,6 +1632,7 @@ module.exports = {
     getPlaylistViewSong,
     getProfileInfo,
     getPlaylistSongs,
-    createPlaylist
+    createPlaylist,
+    editPlaylist
 };
 
