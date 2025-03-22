@@ -93,6 +93,12 @@ function routes(req, res) {
     if (URL.startsWith('/profileplaylist') && method === 'POST') {
         return actions.getProfilePlaylist(req, res);
     }
+    if (URL.startsWith('/playlistviewsong') && method === 'POST') {
+        return actions.getPlaylistViewSong(req, res);
+    }
+    if (URL.startsWith('/infoforprofile') && method === 'POST') {
+        return actions.getProfileInfo(req, res);
+    }
 
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route Not Found" }));

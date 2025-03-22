@@ -1144,6 +1144,123 @@ const getProfilePlaylist = async (req, res) => {
     });
 };
 
+const getPlaylistViewSong = async (req, res) => {
+    let body = "";
+
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { playlist_name } = parsedBody;
+
+            if (!playlist_name) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist name is required' }));
+            }
+
+            // SQL query with explicit JOINs
+            const [songList] = await pool.promise().query(`
+                SELECT song.song_id, song.name AS song_name, song.image_url AS song_image, artist.username AS artist_name 
+                FROM song
+                JOIN song_in_playlist ON song_in_playlist.song_id = song.song_id
+                JOIN playlist ON song_in_playlist.playlist_id = playlist.playlist_id
+                JOIN artist ON song.artist_id = artist.artist_id
+                WHERE playlist.name = ?;`, [playlist_name]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, songList }));
+        } catch (err) {
+            console.error('Error fetching songs:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+        }
+    });
+};
+
+const getProfileInfo = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userName } = parsedBody;
+
+            if (!userName) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            // Get the user_id from the userName
+            const [userResult] = await pool.promise().query(`
+                SELECT user_id FROM user WHERE username = ?;
+            `, [userName]);
+
+            if (!userResult.length) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'User not found' }));
+            }
+
+            const userId = userResult[0].user_id;
+
+            // Get the number of followers
+            const [followingResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS followers_count FROM following WHERE user_id = ?;
+            `, [userId]);
+
+            // Get the number of friends
+            const [friendResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS friend_count FROM friend WHERE (user_id_1 = ? OR user_id_2 = ?);
+            `, [userId, userId]);
+
+            // Get the number of streams
+            const [streamsResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS streams_count 
+                FROM history 
+                WHERE history.user_id = ?;
+            `, [userId]);
+
+            // Get the number of liked songs
+            const [likedSongsResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS liked_songs_count 
+                FROM liked_song, song 
+                WHERE song.song_id = liked_song.song_id AND user_id = ?;
+            `, [userId]);
+
+            // Get the number of liked albums
+            const [likedAlbumsResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS liked_albums_count 
+                FROM liked_album, album 
+                WHERE album.album_id = liked_album.album_id AND user_id = ?;
+            `, [userId]);
+
+            // Send the response
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                followers: followingResult[0].followers_count,
+                friends: friendResult[0].friend_count,
+                streams: streamsResult[0].streams_count,
+                likedSongs: likedSongsResult[0].liked_songs_count,
+                likedAlbums: likedAlbumsResult[0].liked_albums_count
+            }));
+
+        } catch (err) {
+            console.error('Error fetching user profile info:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch profile info' }));
+        }
+    });
+};
+
+
 
 module.exports = {
     getUsers,
@@ -1175,6 +1292,8 @@ module.exports = {
     removeAlbumSong,
     getArtistProfileSong,
     getPlaylistViewInfo,
-    getProfilePlaylist
+    getProfilePlaylist,
+    getPlaylistViewSong,
+    getProfileInfo
 };
 

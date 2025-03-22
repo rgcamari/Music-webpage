@@ -327,6 +327,61 @@ export const SongViewAlbumCard = ({ song }) => {
     );
 };
 
+export const SongPlaylistList = ({playlist = {}}) => {
+    const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+        useEffect(() => {
+            const fetchPlaylistSong = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/playlistviewsong', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ playlist_name: playlist.name }), 
+                    })
+                    console.log('Backend response:', response); 
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        setSongs(data.songs);  
+                    } else {
+                        setError('Failed to fetch songs');
+                    }
+                } catch (err) {
+                    setError('Error fetching songs');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchPlaylistSong();
+        }, [playlist.name]);
+        if (loading) return <div>Loading songs...</div>;
+        if (error) return <div>{error}</div>;
+
+    return (
+        <div className="songView-list">
+            {songs.map((song, index) => (
+                <SongViewCard key={index} song={song} />
+            ))}
+        </div>
+    );
+};
+
+export const SongPlaylistListCard = ({ song }) => {
+    return (
+        <div className="songView-card">
+            <img src={song.song_image} alt={song.song_name} className="songView-image" />
+            <h3 className="songView-name">{song.song_name}</h3>
+            <h3 className="songView-album">{song.artist_name}</h3>
+        </div>
+    );
+};
+
 export const PlaylistViewPage = ({ playlist = {}, userName, userId}) => {
 
     return (
@@ -343,7 +398,7 @@ export const PlaylistViewPage = ({ playlist = {}, userName, userId}) => {
 
             <div className="songView-section">
                 <div className="songView-header">Songs: </div>
-                <SongViewList songs={playlist.songs} /> {/* Pass album's songs list */}
+                <SongViewList playlist={playlist} /> {/* Pass album's songs list */}
             </div>
         </section>
     );

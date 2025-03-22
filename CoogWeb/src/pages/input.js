@@ -62,24 +62,72 @@ export const PlaylistCard = ({ playlist, onPlaylistClick, userName, userId }) =>
     );
 };
 
-export const Profile = ({ setActiveScreen, userName, userId}) => {
-    const [stats] = useState({
-        following: 120,  // Example count
-        friends: 85,     // Example count
-        likedSongs: 300, // Example count
+export const Profile = ({ onPlaylistClick, userName, userId, userImage}) => {
+    const [stats, setStats] = useState({
+        followers: 0,
+        friends: 0,
+        streams: 0,
+        likedSongs: 0,
+        likedAlbums: 0,
     });
+
+    const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+        
+            useEffect(() => {
+                const fetchUserInfo = async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/infoforprofile', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userName:userName}),
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                setStats({
+                                    followers: data.followers,
+                                    friends: data.friends,
+                                    streams: data.streams,
+                                    likedSongs: data.likedSongs,
+                                    likedAlbums: data.likedAlbums,
+                                });
+                            } else {
+                                setError('Failed to fetch user info');
+                            }
+                        } else {
+                            setError('Failed to fetch user info');
+                        }
+                        
+                    } catch (err) {
+                        setError('Error fetching user info');
+                    } finally {
+                        setLoading(false);  // Data is loaded or error occurred
+                    }
+                };
+        
+                fetchUserInfo();
+            }, [userName]);  
+    
+        
+            if (loading) return <div>Loading user...</div>;
+            if (error) return <div>{error}</div>;
 
     return (
         <section className="everything">
             <div className="profile-section">
                 <div className="profile-header">
-                    <img src={purple_image} alt="Profile" className="profile-image" />
-                    <h2 className="profile-username">Username</h2>
+                    <img src={userImage} alt="Profile" className="profile-image" />
+                    <h2 className="profile-username">{userName}</h2>
                 </div>
                 <div className="Basic-Stats">
-                    <p className="basic-stats-text"> Following: {stats.following}</p>
+                    <p className="basic-stats-text"> Following: {stats.followers}</p>
                     <p className="basic-stats-text"> Friends: {stats.friends}</p>
+                    <p className="basic-stats-text"> Streams: {stats.streams}</p>
                     <p className="basic-stats-text"> Liked Songs: {stats.likedSongs}</p>
+                    <p className="basic-stats-text"> Liked Albums: {stats.likedAlbums}</p>
                 </div>
             </div>
 
@@ -101,7 +149,7 @@ export const Profile = ({ setActiveScreen, userName, userId}) => {
                         Remove Song
                     </button>
                 </div>
-                <PlaylistList onPlaylistClick={setActiveScreen} userName={userName} userId={userId}/>
+                <PlaylistList setActiveScreen={onPlaylistClick} userName={userName} userId={userId}/>
             </div>
         </section>
     );
