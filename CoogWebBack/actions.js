@@ -1312,41 +1312,41 @@ const createPlaylist = async (req, res) => {
     req.on('end', async () => {
         try {
             const parsedBody = JSON.parse(body);
-            const { name, artist, genre, image} = parsedBody;
+            const { name, user, image} = parsedBody;
 
             // Validate required fields
-            if (!name || !artist || !genre ||!image) {
+            if (!name || !user ||!image) {
                 throw new Error('Missing required fields');
             }
 
             // Check if the album exists and belongs to the artist
-            const [albumExists] = await pool.promise().execute(
-                "SELECT album_id, artist_id FROM album WHERE name = ?",
-                [name]
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id, user_id FROM playlist WHERE name = ? AND user_id = ?",
+                [name, user]
             );
 
-            if (albumExists.length !== 0) {
+            if (playlistExists.length !== 0) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, message: 'Album already exist' }));
+                return res.end(JSON.stringify({ success: false, message: 'Playlist already exist' }));
             }
 
             // Insert the song
             await pool.promise().query(
-                `INSERT INTO album (name, artist_id, genre, image_url,likes,created_at)
-                 VALUES (?, ?, ?, ?, 0, NOW())`,
-                [name, artist, genre, image]
+                `INSERT INTO playlist (name, user_id, image_url,created_at)
+                 VALUES (?, ?, ?, NOW())`,
+                [name, user, image]
             );
 
             res.writeHead(201, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: true, message: 'Album added successfully' }));
+            res.end(JSON.stringify({ success: true, message: 'Playlist added successfully' }));
         } catch (err) {
             console.error('Error adding song:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to add album' }));
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to add playlist' }));
         }
     });
 };
-
+/*
 const editAlbum = async (req, res) => {
     let body = '';
 
@@ -1598,7 +1598,7 @@ const removeAlbumSong = async (req, res) => {
         }
     });
 };
-
+*/
 
 module.exports = {
     getUsers,
@@ -1633,6 +1633,7 @@ module.exports = {
     getProfilePlaylist,
     getPlaylistViewSong,
     getProfileInfo,
-    getPlaylistSongs
+    getPlaylistSongs,
+    createPlaylist
 };
 
