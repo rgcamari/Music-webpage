@@ -638,18 +638,36 @@ export const PlaylistFormEdit = ({userName, userId}) => {
 export const PlaylistFormDelete = ({userName, userId}) => {
     const [playlist, setPlaylist] = useState({
         name: "",
-        image: "",
+        user: userId,
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...playlist, [name]: value });
+        setPlaylist({ ...playlist, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Playlist submitted:", playlist);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/deleteplaylist', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(playlist),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Playlist deleted successfully!");
+                setPlaylist({name: "", user: userId}); // Reset form
+            } else {
+                alert("Failed to delete playlist: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error deleting playlist:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
