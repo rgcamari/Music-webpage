@@ -710,19 +710,38 @@ export const PlaylistFormDelete = ({userName, userId}) => {
 export const PlaylistFormRemove = ({userName, userId}) => {
     const [playlist, setPlaylist] = useState({
         name: "",
-        genre: "",
-        image: "",
+        user: userId,
+        song_name: "",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...playlist, [name]: value });
+        setPlaylist({ ...playlist, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Playlist submitted:", playlist);
-        // Here you can add logic to save the song data
+        
+        try {
+          const response = await fetch('http://localhost:5000/removeplaylistsong', {
+            method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(playlist),
+        });
+
+        const data = await response.json();
+            
+            if (response.ok) {
+                alert("Song removed successfully!");
+                setPlaylist({ name: "", user: userId,song_name: ""}); // Reset form
+            } else {
+                alert("Failed to remove song: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error removing song:", error);
+            alert("Error connecting to the server.");
+        }
     };
 
     return (
@@ -737,7 +756,7 @@ export const PlaylistFormRemove = ({userName, userId}) => {
             <input type="text" name="name" placeholder="Enter playlist name" value={playlist.name} onChange={handleChange} required />
 
             <label>Enter Song Name you want to Remove</label>
-            <input type="text" name="name" placeholder="Enter song name" value={playlist.song} onChange={handleChange} required />
+            <input type="text" name="song_name" placeholder="Enter song name" value={playlist.song_name} onChange={handleChange} required />
 
             <button type="submit">Remove</button>
         </form>

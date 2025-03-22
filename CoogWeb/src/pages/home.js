@@ -194,7 +194,7 @@ const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick
     case 'edit-playlist': return <PlaylistFormEdit userName={userName} userId={userId}/>;
     case 'delete-playlist': return <PlaylistFormDelete userName={userName} userId={userId}/>;
     case 'add-song-playlist': return <PlaylistFormAdd userName={userName} userId={userId}/>;
-    case 'remove-song-playlist': return <PlaylistFormRemove userName={userName}/>;
+    case 'remove-song-playlist': return <PlaylistFormRemove userName={userName} userId={userId}/>;
     case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName} userImage={userImage}/>;
     default: return <SongList />;
   }
