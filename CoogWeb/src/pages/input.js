@@ -65,7 +65,7 @@ export const PlaylistCard = ({ playlist, onPlaylistClick}) => {
     );
 };
 
-export const Profile = ({ onPlaylistClick,userName, userId, userImage}) => {
+export const Profile = ({ setActiveScreen, onPlaylistClick,userName, userId, userImage}) => {
     const [stats, setStats] = useState({
         followers: 0,
         friends: 0,

@@ -161,7 +161,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage, userId, selectedPlaylist)}
+          {renderScreen(activeScreen, setActiveScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage, userId, selectedPlaylist)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -170,12 +170,12 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum, userName, userImage, userId, selectedPlaylist) => {
+const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum, userName, userImage, userId, selectedPlaylist) => {
   switch (activeScreen) {
     case 'song-list': return <SongList accountType={accountType}/>;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
     case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} accountType={accountType}/>;
-    case 'profile': return <Profile onPlaylistClick={onPlaylistClick} userName={userName} userId={userId} userImage={userImage} />;
+    case 'profile': return <Profile setActiveScreen={setActiveScreen} onPlaylistClick={onPlaylistClick} userName={userName} userId={userId} userImage={userImage} />;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} userName={userName} userImage={userImage}/>;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
@@ -190,10 +190,10 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'delete-album': return <AlbumFormDelete userName={userName} userId= {userId}/>;
     case 'add-song-album': return <AlbumFormAdd userName={userName} userId={userId}/>;
     case 'remove-song-album': return <AlbumFormRemove userName={userName} userId={userId}/>;
-    case 'create-playlist': return <PlaylistForm userName={userName}/>;
-    case 'edit-playlist': return <PlaylistFormEdit userName={userName}/>;
-    case 'delete-playlist': return <PlaylistFormDelete userName={userName}/>;
-    case 'add-song-playlist': return <PlaylistFormAdd userName={userName}/>;
+    case 'create-playlist': return <PlaylistForm userName={userName} userId={userId}/>;
+    case 'edit-playlist': return <PlaylistFormEdit userName={userName} userId={userId}/>;
+    case 'delete-playlist': return <PlaylistFormDelete userName={userName} userId={userId}/>;
+    case 'add-song-playlist': return <PlaylistFormAdd userName={userName} userId={userId}/>;
     case 'remove-song-playlist': return <PlaylistFormRemove userName={userName}/>;
     case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName} userImage={userImage}/>;
     default: return <SongList />;

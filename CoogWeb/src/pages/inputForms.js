@@ -481,7 +481,7 @@ export const AlbumFormRemove = ({userName, userId}) => {
     );
 }
 
-export const PlaylistForm = () => {
+export const PlaylistForm = ({userName, userId}) => {
     const [playlist, setPlaylist] = useState({
         name: "",
         image: "",
@@ -518,7 +518,7 @@ export const PlaylistForm = () => {
     );
 }
 
-export const PlaylistFormAdd = () => {
+export const PlaylistFormAdd = ({userName, userId}) => {
     const [playlist, setplaylist] = useState({
         name: "",
         image: "",
@@ -555,7 +555,7 @@ export const PlaylistFormAdd = () => {
     );
 }
 
-export const PlaylistFormEdit = () => {
+export const PlaylistFormEdit = ({userName, userId}) => {
     const [playlist, setPlaylist] = useState({
         name: "",
         image: "",
@@ -595,7 +595,7 @@ export const PlaylistFormEdit = () => {
     );
 }
 
-export const PlaylistFormDelete = () => {
+export const PlaylistFormDelete = ({userName, userId}) => {
     const [playlist, setPlaylist] = useState({
         name: "",
         image: "",
@@ -629,7 +629,7 @@ export const PlaylistFormDelete = () => {
     );
 }
 
-export const PlaylistFormRemove = () => {
+export const PlaylistFormRemove = ({userName, userId}) => {
     const [playlist, setPlaylist] = useState({
         name: "",
         genre: "",
