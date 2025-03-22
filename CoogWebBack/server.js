@@ -37,7 +37,17 @@ const map_route = {
     '/deletealbum',
     '/addingsongtoalbum',
     '/removesongfromalbum',
-    '/artistprofilesong'],
+    '/artistprofilesong',
+    '/playlistviewinfo',
+    '/profileplaylist',
+    '/playlistviewsong',
+    '/infoforprofile',
+    '/playlistsongs',
+    '/createplaylist',
+    '/editplaylist',
+    '/deleteplaylist',
+    '/addsongtoplaylist',
+    '/removeplaylistsong'],
     'PUT': [],
     'DELETE': [],
 };
@@ -56,6 +66,7 @@ const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   const { pathname } = parsedUrl;
   const method = req.method;
+  console.log(`Requested Path: ${pathname}, Method: ${method}`);
 
   if (pathname === "/") {
       res.writeHead(200, { "Content-Type": "application/json" });

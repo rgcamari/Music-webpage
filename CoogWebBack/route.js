@@ -87,6 +87,36 @@ function routes(req, res) {
     if (URL.startsWith('/artistprofilesong') && method === 'POST') {
         return actions.getArtistProfileSong(req, res);
     }
+    if (URL.startsWith('/playlistviewinfo') && method === 'POST') {
+        return actions.getPlaylistViewInfo(req, res);
+    }
+    if (URL.startsWith('/profileplaylist') && method === 'POST') {
+        return actions.getProfilePlaylist(req, res);
+    }
+    if (URL.startsWith('/playlistviewsong') && method === 'POST') {
+        return actions.getPlaylistViewSong(req, res);
+    }
+    if (URL.startsWith('/infoforprofile') && method === 'POST') {
+        return actions.getProfileInfo(req, res);
+    }
+    if (URL.startsWith('/playlistsongs') && method === 'POST') {
+        return actions.getPlaylistSongs(req, res);
+    }
+    if (URL.startsWith('/createplaylist') && method === 'POST') {
+        return actions.createPlaylist(req, res);
+    }
+    if (URL.startsWith('/editplaylist') && method === 'POST') {
+        return actions.editPlaylist(req, res);
+    }
+    if (URL.startsWith('/deleteplaylist') && method === 'POST') {
+        return actions.deletePlaylist(req, res);
+    }
+    if (URL.startsWith('/addsongtoplaylist') && method === 'POST') {
+        return actions.addPlaylistSong(req, res);
+    }
+    if (URL.startsWith('/removeplaylistsong') && method === 'POST') {
+        return actions.removePlaylistSong(req, res);
+    }
 
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route Not Found" }));

@@ -327,25 +327,176 @@ export const SongViewAlbumCard = ({ song }) => {
     );
 };
 
-export const PlaylistViewPage = ({ playlist = {} }) => {
+export const PlaylistList = ({ onPlaylistClick, userName }) => {
+    const [playlists, setPlaylists] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+    
+    useEffect(() => {
+        console.log("useEffect triggered");  // This will log every time useEffect runs
+        const fetchProfilePlaylist = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/profileplaylist', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ userName }), 
+                });
+                console.log('Backend response:', response); 
+                const data = await response.json();
+    
+                if (data.success) {
+                    setPlaylists(data.playlists);  
+                } else {
+                    setError('Failed to fetch playlists');
+                }
+            } catch (err) {
+                setError('Error fetching playlists');
+            }
+            setLoading(false);  // Ensure loading is false after the fetch is complete
+        };
+    
+        fetchProfilePlaylist();
+    }, [userName]);
 
+    if (loading) return <div>Loading playlists...</div>;
+    if (error) return <div>{error}</div>;
+
+    console.log(playlists);
+
+    return (
+        <div className="playlist-list">
+            {playlists.map((playlist) => (
+                <PlaylistCard key={playlist.playlist_id} playlist={playlist} onPlaylistClick={onPlaylistClick} />
+            ))}
+        </div>
+    );
+};
+
+export const SongPlaylistListCard = ({ song }) => {
+    
+    return (
+        <div className="songView-card">
+            <img src={song.song_image} alt={song.song_name} className="songView-image" />
+            <h3 className="songView-name">{song.song_name}</h3>
+            <h3 className="songView-album">{song.artist_name}</h3>
+        </div>
+    );
+};
+
+export const SongViewPlaylistList = ({playlist = {}}) => {
+    const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+
+        useEffect(() => {
+            const fetchPlaylistSong = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/playlistsongs', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ playlist_name:playlist.playlist_name }), 
+                    })
+                    console.log('Backend response:', response); 
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        setSongs(data.songs);  
+                    } else {
+                        setError('Failed to fetch songs');
+                    }
+                } catch (err) {
+                    setError('Error fetching songs');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchPlaylistSong();
+        }, [playlist.playlist_name]);
+        if (loading) return <div>Loading songs...</div>;
+        if (error) return <div>{error}</div>;
+
+    return (
+        <div className="songView-list">
+            {songs.map((song, index) => (
+                <SongViewPlaylistCard key={index} song={song} />
+            ))}
+        </div>
+    );
+};
+
+export const SongViewPlaylistCard = ({ song }) => {
+    return (
+        <div className="songView-card">
+            <img src={song.image} alt={song.song_name} className="songView-image" />
+            <h3 className="songView-name">{song.song_name}</h3>
+            <h3 className="songView-album">{song.album_name}</h3>
+        </div>
+    );
+};
+
+export const PlaylistViewPage = ({ playlist, userName, userId, userImage}) => {
+    const [stats, setStats] = useState({
+        songCount: 0
+    });
+    const [loading, setLoading] = useState(true);  // To track loading state
+    const [error, setError] = useState(null);
+    
+        useEffect(() => {
+            console.log("Playlist object:", playlist);
+            const fetchPlaylistInfo = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/playlistviewinfo', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({username : userName, playlist_name : playlist.playlist_name}), 
+                    });
+                    const data = await response.json();
+
+    
+                    if (data.success) {
+                        setStats({
+                            songCount: data.songCount});  
+                    } else {
+                        setError('Failed to fetch playlist info');
+                    }
+                } catch (err) {
+                    setError('Error fetching playlist info');
+                } finally {
+                    setLoading(false);  // Data is loaded or error occurred
+                }
+            };
+    
+            fetchPlaylistInfo();
+        }, [userName, playlist.playlist_name]);  // Empty dependency array to run this only once when the component mounts
+
+    
+        if (loading) return <div>Loading playlist...</div>;
+        if (error) return <div>{error}</div>;
     return (
         <section className="everything">
             <div className="profile-section">
                 <div className="profile-header">
-                    <img src={playlist.photo || purple_image} alt="Playlist Cover" className="profile-image" />
-                    <h2 className="profile-username">Playlist Name</h2>
+                    <img src={userImage || purple_image} alt="Playlist Cover" className="profile-image" />
+                    <h2 className="profile-username">{playlist.playlist_name}</h2>
                 </div>
                 <div className="basic-stats">
-                    <p className="basic-stats-text">Songs: {playlist.songs || 0}</p>
-                    <p className="basic-stats-text">Streams: {playlist.streams || 0}</p>
+                    <p className="basic-stats-text">Songs: {stats.songCount || 0}</p>
                 </div>
             </div>
 
             <div className="songView-section">
                 <div className="songView-header">Songs: </div>
-                <SongViewList songs={playlist.songs} /> {/* Pass album's songs list */}
+                <SongViewPlaylistList playlist={playlist} userName={userName}/>
             </div>
         </section>
     );
 };
+

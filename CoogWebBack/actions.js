@@ -1073,6 +1073,530 @@ const getArtistProfileSong = async (req, res) => {
     });
 };
 
+const getPlaylistViewInfo = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { username, playlist_name } = parsedBody;
+
+            if (!username) {
+                return res.writeHead(400, { 'Content-Type': 'application/json' })
+                .end(JSON.stringify({ success: false, message: 'Name is required' }));
+            }
+
+            const [songCount] = await pool.promise().query(`
+                SELECT COUNT(*) AS song_count 
+                FROM song_in_playlist 
+                JOIN playlist ON song_in_playlist.playlist_id = playlist.playlist_id
+                JOIN user ON playlist.user_id = user.user_id
+                WHERE user.username = ? AND playlist.name = ?;
+            `, [username, playlist_name]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                songCount: songCount[0].song_count,
+            }));
+        } catch (err) {
+            console.error('Error fetching playlist info:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch Playlist Info' }));
+        }
+    });
+};
+
+const getProfilePlaylist = async (req, res) => {
+    let body = "";
+    
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userName } = parsedBody;
+
+            if (!userName) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            const [playlists] = await pool.promise().query(`
+                SELECT playlist_id, playlist.name AS playlist_name, playlist.image_url AS playlist_image, user.username AS user_username 
+                FROM playlist, user 
+                WHERE playlist.user_id = user.user_id AND user.username = ?;`, [userName]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, playlists }));
+        } catch (err) {
+            console.error('Error fetching albums:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch albums' }));
+        }
+    });
+};
+
+const getPlaylistViewSong = async (req, res) => {
+    let body = "";
+
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { playlist_name } = parsedBody;
+
+            if (!playlist_name) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist name is required' }));
+            }
+
+            // SQL query with explicit JOINs
+            const [songList] = await pool.promise().query(`
+                SELECT song.song_id, song.name AS song_name, song.image_url AS song_image, artist.username AS artist_name 
+                FROM song
+                JOIN song_in_playlist ON song_in_playlist.song_id = song.song_id
+                JOIN playlist ON song_in_playlist.playlist_id = playlist.playlist_id
+                JOIN artist ON song.artist_id = artist.artist_id
+                WHERE playlist.name = ?;`, [playlist_name]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, songList }));
+        } catch (err) {
+            console.error('Error fetching songs:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+        }
+    });
+};
+
+const getProfileInfo = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userName } = parsedBody;
+
+            if (!userName) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Username is required' }));
+            }
+
+            // Get the user_id from the userName
+            const [userResult] = await pool.promise().query(`
+                SELECT user_id FROM user WHERE username = ?;
+            `, [userName]);
+
+            if (!userResult.length) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'User not found' }));
+            }
+
+            const userId = userResult[0].user_id;
+
+            // Get the number of followers
+            const [followingResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS followers_count FROM following WHERE user_id = ?;
+            `, [userId]);
+
+            // Get the number of friends
+            const [friendResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS friend_count FROM friend WHERE (user_id_1 = ? OR user_id_2 = ?);
+            `, [userId, userId]);
+
+            // Get the number of streams
+            const [streamsResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS streams_count 
+                FROM history 
+                WHERE history.user_id = ?;
+            `, [userId]);
+
+            // Get the number of liked songs
+            const [likedSongsResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS liked_songs_count 
+                FROM liked_song, song 
+                WHERE song.song_id = liked_song.song_id AND user_id = ?;
+            `, [userId]);
+
+            // Get the number of liked albums
+            const [likedAlbumsResult] = await pool.promise().query(`
+                SELECT COUNT(*) AS liked_albums_count 
+                FROM liked_album, album 
+                WHERE album.album_id = liked_album.album_id AND user_id = ?;
+            `, [userId]);
+
+            // Send the response
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                followers: followingResult[0].followers_count,
+                friends: friendResult[0].friend_count,
+                streams: streamsResult[0].streams_count,
+                likedSongs: likedSongsResult[0].liked_songs_count,
+                likedAlbums: likedAlbumsResult[0].liked_albums_count
+            }));
+
+        } catch (err) {
+            console.error('Error fetching user profile info:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch profile info' }));
+        }
+    });
+};
+
+const getPlaylistSongs = async (req, res) => {
+    let body = "";
+    
+    // Listen for incoming data
+    req.on('data', chunk => {
+        body += chunk.toString(); // Append received chunks
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { playlist_name } = parsedBody;
+
+            if (!playlist_name) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist name is required' }));
+            }
+
+            // Correct the query to use playlist_name and fix the join condition
+            const [songs] = await pool.promise().query(`
+                SELECT 
+                    song.song_id, 
+                    song.name AS song_name, 
+                    song.image_url AS song_image, 
+                    artist.username AS artist_name 
+                FROM 
+                    artist 
+                JOIN song ON song.artist_id = artist.artist_id
+                JOIN song_in_playlist ON song_in_playlist.song_id = song.song_id
+                JOIN playlist ON playlist.playlist_id = song_in_playlist.playlist_id
+                WHERE playlist.name = ?`, [playlist_name]);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, songs }));
+        } catch (err) {
+            console.error('Error fetching songs:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+        }
+    });
+};
+
+const createPlaylist = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { name, user, image} = parsedBody;
+
+            // Validate required fields
+            if (!name || !user ||!image) {
+                throw new Error('Missing required fields');
+            }
+
+            // Check if the album exists and belongs to the artist
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id, user_id FROM playlist WHERE name = ? AND user_id = ?",
+                [name, user]
+            );
+
+            if (playlistExists.length !== 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist already exist' }));
+            }
+
+            // Insert the song
+            await pool.promise().query(
+                `INSERT INTO playlist (name, user_id, image_url,created_at)
+                 VALUES (?, ?, ?, NOW())`,
+                [name, user, image]
+            );
+
+            res.writeHead(201, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Playlist added successfully' }));
+        } catch (err) {
+            console.error('Error adding song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to add playlist' }));
+        }
+    });
+};
+
+const editPlaylist = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            let { prevName, name, user, image } = parsedBody;
+
+            // Validate if at least one field is provided
+            if (!name && !user && !prevName && !image) {
+                throw new Error('Missing required fields to update');
+            }
+
+            // Check if the song exists with the previous name
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = ?",
+                [prevName, user]
+            );
+
+            if (playlistExists.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist not found' }));
+            }
+
+            // Check for duplicates with the new name (within the same artist)
+            if (name) {
+                const [duplicatePlaylist] = await pool.promise().execute(
+                    "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = (SELECT user_id FROM playlist WHERE name = ?)",
+                    [name, prevName]
+                );
+
+                if (duplicatePlaylist.length > 0) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ success: false, message: 'Duplicate playlist name for this user' }));
+                }
+            }
+
+            // Handle undefined fields: if a field is undefined, convert to null
+            name = name || null;
+            user = user || null;
+            image = image || null;
+
+            // Update the song with new data (only the fields that are provided)
+            await pool.promise().query(
+                `UPDATE playlist 
+                SET 
+                    name = COALESCE(?, name),
+                    user_id = COALESCE(?, user_id),
+                    image_url = COALESCE(?, image_url)
+                WHERE name = ?`,
+                [name, user, image, prevName]
+            );
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Playlist edited successfully' }));
+        } catch (err) {
+            console.error('Error editing song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to edit playlist' }));
+        }
+    });
+};
+
+const deletePlaylist = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { name, user } = parsedBody;
+
+            // Validate required fields
+            if (!name || !user) {
+                throw new Error('Missing required fields to delete');
+            }
+
+            // Check if the song exists for the given artist
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = ?",
+                [name, user]
+            );
+
+            if (playlistExists.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist not found' }));
+            }
+
+            // Delete the song
+            await pool.promise().execute(
+                "DELETE FROM playlist WHERE playlist_id = ? AND user_id = ?",
+                [playlistExists[0].playlist_id,user]
+            );
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Playlist deleted successfully' }));
+        } catch (err) {
+            console.error('Error deleting song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to delete playlist' }));
+        }
+    });
+};
+
+const addPlaylistSong = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            console.log('Parsed Body:', parsedBody);
+            const { name, user, song_name } = parsedBody;
+
+            // Validate required fields
+            if (!name || !user || !song_name) {
+                throw new Error('Missing required fields');
+            }
+
+            // Check if the album exists and belongs to the artist
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = ?",
+                [name, user]
+            );
+
+            if (playlistExists.length === 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist does not exist or does not belong to the user' }));
+            }
+
+            const playlistId = playlistExists[0].playlist_id;
+
+            // Check if the song exists
+            const [songExists] = await pool.promise().execute(
+                "SELECT song_id FROM song WHERE name = ?",
+                [song_name]
+            );
+
+            if (songExists.length === 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Song does not exist' }));
+            }
+
+            const songId = songExists[0].song_id;
+
+
+            // Assign the song to the album
+            await pool.promise().execute(
+                `INSERT song_in_playlist (song_id,playlist_id,added_at) VALUES (?,?,NOW())`,
+                [songId,playlistId]
+            );
+
+            res.writeHead(201, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Song added to album successfully' }));
+        } catch (err) {
+            console.error('Error adding song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to add song' }));
+        }
+    });
+};
+
+const removePlaylistSong = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            console.log('Parsed Body:', parsedBody);
+            const { name, user, song_name } = parsedBody;
+
+            // Validate required fields
+            if (!name || !user || !song_name) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Missing required fields' }));
+            }
+
+            // Check if the playlist exists and belongs to the user
+            const [playlistExists] = await pool.promise().execute(
+                "SELECT playlist_id FROM playlist WHERE name = ? AND user_id = ?",
+                [name, user]
+            );
+
+            if (playlistExists.length === 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Playlist does not exist or does not belong to the user' }));
+            }
+
+            const playlistId = playlistExists[0].playlist_id;
+
+            // Check if the song exists
+            const [songExists] = await pool.promise().execute(
+                "SELECT song_id FROM song WHERE name = ?",
+                [song_name]
+            );
+
+            if (songExists.length === 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Song does not exist' }));
+            }
+
+            const songId = songExists[0].song_id;
+
+            // Check if the song is in the playlist
+            const [isInTable] = await pool.promise().execute(
+                `SELECT song_id FROM song_in_playlist WHERE playlist_id = ? AND song_id = ?`,
+                [playlistId, songId]
+            );
+
+            if (isInTable.length === 0) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Song is not in the playlist' }));
+            }
+
+            // Delete the song from the playlist
+            const [result] = await pool.promise().execute(
+                `DELETE FROM song_in_playlist WHERE song_id = ? AND playlist_id = ?`,
+                [songId, playlistId]
+            );
+
+            // Check if any rows were deleted
+            if (result.affectedRows === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Song not found or already removed from playlist' }));
+            }
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Song removed from playlist successfully' }));
+        } catch (err) {
+            console.error('Error removing song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to remove song' }));
+        }
+    });
+};
+
 
 
 module.exports = {
@@ -1103,6 +1627,16 @@ module.exports = {
     deleteAlbum,
     addAlbumSong,
     removeAlbumSong,
-    getArtistProfileSong
+    getArtistProfileSong,
+    getPlaylistViewInfo,
+    getProfilePlaylist,
+    getPlaylistViewSong,
+    getProfileInfo,
+    getPlaylistSongs,
+    createPlaylist,
+    editPlaylist,
+    deletePlaylist,
+    addPlaylistSong,
+    removePlaylistSong
 };
 
