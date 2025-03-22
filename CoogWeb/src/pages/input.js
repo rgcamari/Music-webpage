@@ -18,7 +18,7 @@ export const PlaylistList = ({ onPlaylistClick, userName, userId }) => {
                             headers: {
                                 "Content-Type": "application/json",
                             },
-                            body: JSON.stringify({ userName: userName }), 
+                            body: JSON.stringify({ userName }), 
                         })
                         console.log('Backend response:', response); 
     
@@ -40,29 +40,32 @@ export const PlaylistList = ({ onPlaylistClick, userName, userId }) => {
             }, [userName]);
             if (loading) return <div>Loading playlists...</div>;
             if (error) return <div>{error}</div>;
-
+            console.log(playlists);
     return (
         <div className="playlist-list">
             {playlists.map((playlist,index) => (
-                <PlaylistCard key={index} playlist={playlist} onPlaylistClick={onPlaylistClick} userName={userName} userId={userId}/>
+                <PlaylistCard key={index} playlist={playlist} onPlaylistClick={onPlaylistClick}/>
             ))}
         </div>
     );
 }
 
-export const PlaylistCard = ({ playlist, onPlaylistClick, userName, userId }) => {
+export const PlaylistCard = ({ playlist, onPlaylistClick}) => {
     return (
         <div className="playlist-card">
             <img src={playlist.playlist_image} alt={playlist.playlist_name} className="playlist-image" />
             <h3 className="playlist-name">{playlist.playlist_name}</h3>
-            <button className="forward-button" onClick={() => onPlaylistClick('playlist-view', playlist)}>
+            <button
+                className="forward-button"
+                onClick={() => onPlaylistClick('playlist-view', playlist)} // Pass the full playlist object
+            >
                 <img src={forward} alt="forward" className="forward-icon" />
             </button>
         </div>
     );
 };
 
-export const Profile = ({ onPlaylistClick, userName, userId, userImage}) => {
+export const Profile = ({ onPlaylistClick,userName, userId, userImage}) => {
     const [stats, setStats] = useState({
         followers: 0,
         friends: 0,
@@ -149,7 +152,7 @@ export const Profile = ({ onPlaylistClick, userName, userId, userImage}) => {
                         Remove Song
                     </button>
                 </div>
-                <PlaylistList setActiveScreen={onPlaylistClick} userName={userName} userId={userId}/>
+                <PlaylistList onPlaylistClick={onPlaylistClick} userName={userName} userId={userId}/>
             </div>
         </section>
     );

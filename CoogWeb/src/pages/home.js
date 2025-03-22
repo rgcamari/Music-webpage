@@ -151,8 +151,8 @@ const Home = () => {
 
   const handlePlaylistClick = (screen, playlist) => {
     setActiveScreen(screen);
-    setSelectedPlaylist(playlist)
-  };
+    setSelectedPlaylist(playlist);
+};
 
 
   return (
@@ -161,7 +161,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage, handlePlaylistClick, userId)}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage, userId, selectedPlaylist)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -175,7 +175,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'song-list': return <SongList accountType={accountType}/>;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
     case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} accountType={accountType}/>;
-    case 'profile': return <Profile setActiveScreen={onPlaylistClick} userName={userName} userId={userId} userImage={userImage} />;
+    case 'profile': return <Profile onPlaylistClick={onPlaylistClick} userName={userName} userId={userId} userImage={userImage} />;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} userName={userName} userImage={userImage}/>;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
@@ -195,7 +195,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'delete-playlist': return <PlaylistFormDelete userName={userName}/>;
     case 'add-song-playlist': return <PlaylistFormAdd userName={userName}/>;
     case 'remove-song-playlist': return <PlaylistFormRemove userName={userName}/>;
-    case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName}/>;
+    case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName} userImage={userImage}/>;
     default: return <SongList />;
   }
 };
