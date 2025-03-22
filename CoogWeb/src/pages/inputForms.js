@@ -354,23 +354,39 @@ export const AlbumFormEdit = ({userName,userId}) => {
     );
 }
 
-export const AlbumFormDelete = () => {
+export const AlbumFormDelete = ({userName, userId}) => {
     const [album, setAlbum] = useState({
         name: "",
-        genre: "",
-        image: "",
+        artist: userId
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...album, [name]: value });
+        setAlbum({ ...album, [name]: value });
     };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Album submitted:", album);
-        // Here you can add logic to save the song data
-    };
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            
+            try {
+              const response = await fetch('http://localhost:5000/deletealbum', {
+                method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(album),
+            });
+    
+            const data = await response.json();
+                
+                if (response.ok) {
+                    alert("Album deleted successfully!");
+                    setAlbum({name: "", artist: userId}); // Reset form
+                } else {
+                    alert("Failed to delete album: " + data.message);
+                }
+            } catch (error) {
+                console.error("Error deleting album:", error);
+                alert("Error connecting to the server.");
+            }
+        };
 
     return (
         <section className="everything">

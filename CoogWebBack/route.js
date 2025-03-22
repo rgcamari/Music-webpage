@@ -75,6 +75,9 @@ function routes(req, res) {
     if (URL.startsWith('/editalbum') && method === 'POST') {
         return actions.editAlbum(req, res);
     }
+    if (URL.startsWith('/deletealbum') && method === 'POST') {
+        return actions.deleteAlbum(req, res);
+    }
     
 
     res.writeHead(404, { "Content-Type": "application/json" });

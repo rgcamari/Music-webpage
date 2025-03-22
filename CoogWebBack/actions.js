@@ -856,6 +856,51 @@ const editAlbum = async (req, res) => {
     });
 };
 
+const deleteAlbum = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { name, artist } = parsedBody;
+
+            // Validate required fields
+            if (!name || !artist) {
+                throw new Error('Missing required fields to delete');
+            }
+
+            // Check if the song exists for the given artist
+            const [albumExists] = await pool.promise().execute(
+                "SELECT album_id FROM album WHERE name = ? AND artist_id = ?",
+                [name, artist]
+            );
+
+            if (albumExists.length === 0) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, message: 'Album not found' }));
+            }
+
+            // Delete the song
+            await pool.promise().execute(
+                "DELETE FROM album WHERE album_id = ?",
+                [albumExists[0].album_id]
+            );
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: 'Album deleted successfully' }));
+        } catch (err) {
+            console.error('Error deleting song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to delete album' }));
+        }
+    });
+};
+
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -880,6 +925,7 @@ module.exports = {
     editSong,
     deleteSong,
     createAlbum,
-    editAlbum
+    editAlbum,
+    deleteAlbum
 };
 
