@@ -327,7 +327,7 @@ export const SongViewAlbumCard = ({ song }) => {
     );
 };
 
-export const PlaylistViewPage = ({ playlist = {} }) => {
+export const PlaylistViewPage = ({ playlist = {}, userName, userId}) => {
 
     return (
         <section className="everything">
@@ -338,7 +338,6 @@ export const PlaylistViewPage = ({ playlist = {} }) => {
                 </div>
                 <div className="basic-stats">
                     <p className="basic-stats-text">Songs: {playlist.songs || 0}</p>
-                    <p className="basic-stats-text">Streams: {playlist.streams || 0}</p>
                 </div>
             </div>
 

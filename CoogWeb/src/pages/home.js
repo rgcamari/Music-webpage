@@ -136,6 +136,7 @@ const Home = () => {
   const [selectedArtist, setSelectedArtist] = useState({});
 
   const [selectedAlbum, setSelectedAlbum] = useState({});
+  const [selectedPlaylist, setSelectedPlaylist] = useState({});
 
   const handleArtistClick = (screen, artist) => {
     setActiveScreen(screen);
@@ -148,8 +149,9 @@ const Home = () => {
     setSelectedAlbum(album);
   };
 
-  const handlePlaylistClick = (screen) => {
+  const handlePlaylistClick = (screen, playlist) => {
     setActiveScreen(screen);
+    setSelectedPlaylist(playlist)
   };
 
 
@@ -159,7 +161,7 @@ const Home = () => {
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
-          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage, userId)}
+          {renderScreen(activeScreen, handleArtistClick, handleAlbumClick, handlePlaylistClick, accountType, selectedArtist,selectedAlbum, userName, userImage, handlePlaylistClick, userId)}
         </div>
       </div>
       <BottomBar currentSong={currentSong} />
@@ -168,12 +170,12 @@ const Home = () => {
 };
 
 // Separate function for rendering screens
-const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum, userName, userImage, userId) => {
+const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick, accountType, selectedArtist, selectedAlbum, userName, userImage, userId, selectedPlaylist) => {
   switch (activeScreen) {
     case 'song-list': return <SongList accountType={accountType}/>;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
     case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} accountType={accountType}/>;
-    case 'profile': return <Profile setActiveScreen={onPlaylistClick} />;
+    case 'profile': return <Profile setActiveScreen={onPlaylistClick} userName={userName} userId={userId} />;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} userName={userName} userImage={userImage}/>;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp />;
@@ -193,7 +195,7 @@ const renderScreen = (activeScreen, onArtistClick, onAlbumClick, onPlaylistClick
     case 'delete-playlist': return <PlaylistFormDelete userName={userName}/>;
     case 'add-song-playlist': return <PlaylistFormAdd userName={userName}/>;
     case 'remove-song-playlist': return <PlaylistFormRemove userName={userName}/>;
-    case 'playlist-view': return <PlaylistViewPage />;
+    case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName}/>;
     default: return <SongList />;
   }
 };

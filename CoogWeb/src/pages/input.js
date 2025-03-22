@@ -5,41 +5,64 @@ import {SongForm, SongFormDelete, SongFormEdit} from './inputForms.js';
 import {PlaylistViewPage} from './view.js';
 import forward from './forward.png';
 
-export const PlaylistList = ({ onPlaylistClick }) => {
-    const [playlists] = useState([
-        { id: 1, name: "Mayhem", photo: purple_image },
-        { id: 2, name: "Harlequin", photo: purple_image },
-        { id: 3, name: "Love for Sale", photo: purple_image },
-        { id: 4, name: "Dawn of Chromatica", photo: purple_image },
-        { id: 5, name: "Joanne", photo: purple_image },
-        { id: 6, name: "Cheek to Cheek", photo: purple_image },
-        { id: 7, name: "Born this way", photo: purple_image },
-        { id: 8, name: "The Fame", photo: purple_image },
-        { id: 9, name: "Abracadabra", photo: purple_image }
-    ]);
+export const PlaylistList = ({ onPlaylistClick, userName, userId }) => {
+    const [playlists, setPlaylists] = useState([]);
+        const [loading, setLoading] = useState(true);  // To track loading state
+        const [error, setError] = useState(null);
+    
+            useEffect(() => {
+                const fetchProfilePlaylist = async () => {
+                    try {
+                        const response = await fetch('http://localhost:5000/profileplaylist', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userName: userName }), 
+                        })
+                        console.log('Backend response:', response); 
+    
+                        const data = await response.json();
+    
+                        if (data.success) {
+                            setPlaylists(data.playlists);  
+                        } else {
+                            setError('Failed to fetch playlists');
+                        }
+                    } catch (err) {
+                        setError('Error fetching playlists');
+                    } finally {
+                        setLoading(false);  // Data is loaded or error occurred
+                    }
+                };
+        
+                fetchProfilePlaylist();
+            }, [userName]);
+            if (loading) return <div>Loading playlists...</div>;
+            if (error) return <div>{error}</div>;
 
     return (
         <div className="playlist-list">
-            {playlists.map((playlist) => (
-                <PlaylistCard key={playlist.id} playlist={playlist} onPlaylistClick={onPlaylistClick} />
+            {playlists.map((playlist,index) => (
+                <PlaylistCard key={index} playlist={playlist} onPlaylistClick={onPlaylistClick} userName={userName} userId={userId}/>
             ))}
         </div>
     );
 }
 
-export const PlaylistCard = ({ playlist, onPlaylistClick }) => {
+export const PlaylistCard = ({ playlist, onPlaylistClick, userName, userId }) => {
     return (
         <div className="playlist-card">
-            <img src={playlist.photo} alt={playlist.name} className="playlist-image" />
-            <h3 className="playlist-name">{playlist.name}</h3>
-            <button className="forward-button" onClick={() => onPlaylistClick('playlist-view', playlist.id)}>
+            <img src={playlist.playlist_image} alt={playlist.playlist_name} className="playlist-image" />
+            <h3 className="playlist-name">{playlist.playlist_name}</h3>
+            <button className="forward-button" onClick={() => onPlaylistClick('playlist-view', playlist)}>
                 <img src={forward} alt="forward" className="forward-icon" />
             </button>
         </div>
     );
 };
 
-export const Profile = ({ setActiveScreen }) => {
+export const Profile = ({ setActiveScreen, userName, userId}) => {
     const [stats] = useState({
         following: 120,  // Example count
         friends: 85,     // Example count
@@ -78,7 +101,7 @@ export const Profile = ({ setActiveScreen }) => {
                         Remove Song
                     </button>
                 </div>
-                <PlaylistList onPlaylistClick={setActiveScreen} />
+                <PlaylistList onPlaylistClick={setActiveScreen} userName={userName} userId={userId}/>
             </div>
         </section>
     );
