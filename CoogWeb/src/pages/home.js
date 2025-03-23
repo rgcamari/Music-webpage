@@ -13,7 +13,7 @@ import { useLocation } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 
 
-const TopBar = ({ username, userimage }) => {
+const TopBar = ({accountType, username, userimage, userId, userImage }) => {
   const navigate = useNavigate();
   console.log('TopBar props:', { username, userimage });
 
@@ -24,7 +24,7 @@ const TopBar = ({ username, userimage }) => {
         <span className="username">{username}</span>
       </div>
       <div className="top-bar-buttons">
-        <button className="settings-button" onClick={() => navigate('/settings')}>Settings</button>
+        <button className="settings-button" onClick={() => navigate('/settings', {state: { userId, username, accountType, userImage }})}>Settings</button>
         <button className="main-menu-button" onClick={() => navigate('/')}>Main Menu</button>
       </div>
       <div className="project-name">
@@ -123,7 +123,7 @@ export const BottomBar = ({ currentSong }) => {
 const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userId, userName, accountType, userImage } = location.state || {};
+  const { userId, userName, password, accountType, userImage } = location.state || {};
   
 
   const [currentSong, setCurrentSong] = useState({
@@ -157,7 +157,7 @@ const Home = () => {
 
   return (
     <div className="Home">
-      <TopBar username={userName} userImage={userImage}/>
+      <TopBar username={userName} userImage={userImage} accountType={accountType} userId={userId}/>
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">

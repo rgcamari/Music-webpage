@@ -117,6 +117,9 @@ function routes(req, res) {
     if (URL.startsWith('/removeplaylistsong') && method === 'POST') {
         return actions.removePlaylistSong(req, res);
     }
+    if (URL.startsWith('/editinfo') && method === 'POST') {
+        return actions.editInfo(req, res);
+    }
 
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route Not Found" }));

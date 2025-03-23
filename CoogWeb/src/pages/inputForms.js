@@ -8,14 +8,52 @@ export const SongForm = ({userName, userId}) => {
         artist: userId,
         genre: "",
         album: "",
-        image: "",
-        URL: ""
+        image: null,
+        URL: null
     });
+
+    const [previewImage, setPreviewImage] = useState(null);
+    const [previewAudio, setPreviewAudio] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...song, [name]: value });
+        setSong((prev) => ({ ...prev, [name]: value }));
     };
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Check if the uploaded file is a JPEG
+            if (file.type === "image/png") {
+                const reader = new FileReader();
+                reader.readAsDataURL(file); // Convert to Base64
+                reader.onloadend = () => {
+                    setSong({ ...song, image: reader.result }); // Store as Base64 string
+                };
+            } else {
+                alert("Only JPEG images are allowed!");
+            }
+        }
+    };
+    
+    
+    const handleSongUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Check if the uploaded file is an MP3
+            if (file.type === "audio/mp3") {
+                const reader = new FileReader();
+                reader.readAsDataURL(file); // Convert to Base64
+                reader.onloadend = () => {
+                    setSong({ ...song, URL: reader.result }); // Store as Base64 string
+                };
+            } else {
+                alert("Only MP3 audio files are allowed!");
+            }
+        }
+    };
+    
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -60,10 +98,10 @@ export const SongForm = ({userName, userId}) => {
             <input type="text" name="album" placeholder="Enter album name" value={song.album} onChange={handleChange} required />
 
             <label>Image Name</label>
-            <input type="text" name="image" placeholder="Enter image name" value={song.image} onChange={handleChange}  />
+            <input type="file" name="image" placeholder="Enter image name" accept="image/png" onChange={handleImageUpload}  />
 
             <label>Song URL</label>
-            <input type="text" name="URL" placeholder="Enter song URL" value={song.URL} onChange={handleChange} required />
+            <input type="file" name="URL" placeholder="Enter song URL" accept="audio/mp3" onChange={handleSongUpload} required />
 
             <button type="submit">Create</button>
         </form>
