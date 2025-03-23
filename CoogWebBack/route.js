@@ -120,6 +120,9 @@ function routes(req, res) {
     if (URL.startsWith('/editinfo') && method === 'POST') {
         return actions.editInfo(req, res);
     }
+    if (URL.startsWith('/deleteaccount') && method === 'POST') {
+        return actions.deleteAccount(req, res);
+    }
 
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route Not Found" }));

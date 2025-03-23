@@ -1648,7 +1648,7 @@ const editInfo = async (req, res) => {
                         `UPDATE artist
                         SET password = COALESCE(?, password),
                             image_url = COALESCE(?, image_url)
-                        WHERE username = ?`, [newPassword, image, username]
+                        WHERE username = ?`, [username]
                     );
                     isWorking = true;
                 }
@@ -1661,7 +1661,7 @@ const editInfo = async (req, res) => {
                         `UPDATE admin
                         SET password = COALESCE(?, password),
                             image_url = COALESCE(?, image_url)
-                        WHERE username = ?`, [newPassword, image, username]
+                        WHERE username = ?`, [username]
                     );
                     isWorking = true;
                 }
@@ -1679,6 +1679,80 @@ const editInfo = async (req, res) => {
             console.error('Error during editInfo:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: false, message: err.message || 'Edit Failed' }));
+        }
+    });
+};
+
+const deleteAccount = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { accountType, username } = parsedBody;
+            console.log(accountType, username); 
+            let isWorking = false;
+
+            if (!accountType || !username) {
+                console.log(accountType, username);
+                throw new Error('Missing required fields');
+            }
+
+            const validAccountTypes = ['user', 'artist', 'admin'];
+            if (!validAccountTypes.includes(accountType)) {
+                throw new Error('Invalid account type');
+            }
+
+            let result;
+            if (accountType === 'user') {
+                const [user_check] = await pool.promise().query(
+                    `SELECT user_id, username FROM user WHERE username = ?`, [username]
+                );
+                if (user_check.length > 0) {
+                    result = await pool.promise().query(
+                        `DELETE FROM user WHERE username = ?`, [username]
+                    );
+                    isWorking = true;
+                }
+            } else if (accountType === 'artist') {
+                const [artist_check] = await pool.promise().query(
+                    `SELECT artist_id, username FROM artist WHERE username = ?`, [username]
+                );
+                if (artist_check.length > 0) {
+                    result = await pool.promise().query(
+                        `DELETE FROM artist WHERE username = ?`, [newPassword, image, username]
+                    );
+                    isWorking = true;
+                }
+            } else if (accountType === 'admin') {
+                const [admin_check] = await pool.promise().query(
+                    `SELECT admin_id, username FROM admin WHERE username = ?`, [username]
+                );
+                if (admin_check.length > 0) {
+                    result = await pool.promise().query(
+                        `DELETE FROM admin
+                        WHERE username = ?`, [username]
+                    );
+                    isWorking = true;
+                }
+            }
+
+            if (isWorking) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, message: "Account Deleted"}));
+            } else {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: false, message: "Failed to Delete Account." }));
+            }
+
+        } catch (err) {
+            console.error('Error during editInfo:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to delete account' }));
         }
     });
 };
@@ -1724,6 +1798,7 @@ module.exports = {
     deletePlaylist,
     addPlaylistSong,
     removePlaylistSong,
-    editInfo
+    editInfo,
+    deleteAccount
 };
 
