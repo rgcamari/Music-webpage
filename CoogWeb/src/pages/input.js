@@ -382,3 +382,68 @@ export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
         </section>
     );
 };
+
+
+export const DataReport = ({userName}) => {
+    return (
+        <section className = "everything">
+        <div className="profile-section">
+            <div className="profile-header">
+                <h2 className="profile-username">Coog Music Data Reports</h2>
+            </div>
+        </div>
+        <div className="albumProfile-section">
+                <div className="albumProfile-header">Your Albums: 
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('create-album')}>
+                        Create Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('edit-album')}>
+                        Edit Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('delete-album')}>
+                        Delete Album
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('add-song-album')}>
+                        Add Song
+                    </button>
+                <button
+                        className="create-album-button"
+                        onClick={() => setActiveScreen('remove-song-album')}>
+                        Remove Song
+                    </button>
+                </div>
+            <AlbumProfileList userName={userName}/>
+            </div>
+
+            <div className="songProfile-section">
+                <div className="songProfile-header">Your Songs: 
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('create-song')}>
+                        Create Song
+                    </button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('edit-song')}>
+                        Edit Song
+                    </button>
+                <button
+                        className="create-song-button"
+                        onClick={() => setActiveScreen('delete-song')}>
+                        Delete Song
+                    </button>
+                </div>
+            <SongProfileList userName={userName}/>
+            </div>
+        
+        </section>
+    );
+};

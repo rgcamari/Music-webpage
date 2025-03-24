@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
 import { SongList, ArtistList, AlbumList, UserList } from './sections';
-import { Profile, ArtistProfile } from './input';
+import { Profile, ArtistProfile, DataReport } from './input';
 import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
@@ -49,12 +49,15 @@ const SideBar = ({ onButtonClick, accountType }) => {
       {accountType !== 'artist' && (
         <button className="side-bar-button" onClick={() => onButtonClick('profile')}>Profile</button>
       )}
-      {accountType !== 'user' && (
+      {accountType !== 'user' && accountType !== 'admin' && (
         <button className="side-bar-button" onClick={() => onButtonClick('artist-profile')}>Artist Profile</button>
       )}
       <button className="side-bar-button" onClick={() => onButtonClick('top-trending')}>Top Trending</button>
-      {accountType !== 'artist' && accountType !== 'Admin' && (
+      {accountType !== 'artist' && accountType !== 'admin' && (
       <button className="side-bar-button" onClick={() => onButtonClick('cougar-wrap-up')}>Cougar Wrap-Up</button>
+      )}
+      {accountType !== 'artist' && accountType !== 'user' && (
+      <button className="side-bar-button" onClick={() => onButtonClick('data-report')}>Data Report</button>
       )}
     </div>
   );
@@ -196,6 +199,7 @@ const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick
     case 'add-song-playlist': return <PlaylistFormAdd userName={userName} userId={userId}/>;
     case 'remove-song-playlist': return <PlaylistFormRemove userName={userName} userId={userId}/>;
     case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName} userImage={userImage}/>;
+    case 'data-report': return <DataReport userName={userName}/>
     default: return <SongList />;
   }
 };
