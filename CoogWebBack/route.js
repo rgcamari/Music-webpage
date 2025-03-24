@@ -168,6 +168,9 @@ function routes(req, res) {
     if (URL.startsWith('/checkfollowstatus') && method === 'POST') {
         return actions.checkFollowStatus(req, res);
     }
+    if (URL.startsWith('/follow') && method === 'POST') {
+        return actions.followArtist(req, res);
+    }
 
 
     res.writeHead(404, { "Content-Type": "application/json" });
