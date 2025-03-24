@@ -113,7 +113,98 @@ export const SongViewCard = ({ song }) => {
     );
 };
 
-export const ArtistView = ({ artist = {}, accountType }) => {
+export const ArtistView = ({ artist = {}, accountType, userId}) => {
+    const [isFollowing, setIsFollowing] = useState(false);
+
+    const fetchFollowStatus = async () => {
+        setLoading(true);
+        setError(null); // Reset error state
+
+        try {
+            const response = await fetch(`http://localhost:5000/checkfollowstatus`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: userId,
+                    artist_id: artist.artist_id,
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setIsFollowing(data.isFollowing); // Set initial follow status based on backend response
+            } else {
+                const data = await response.json();
+                setError(data.message || 'Failed to check follow status');
+            }
+        } catch (error) {
+            setError('Error fetching follow status');
+        } finally {
+            setLoading(false); // Set loading to false after request is done
+        }
+    };
+
+    // Function to handle the "Follow" action
+    const handleFollowClick = async () => {
+        setLoading(true);
+        setError(null); // Reset error state
+
+        try {
+            const response = await fetch("http://localhost:5000/follow", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: userId,
+                    artist_id: artist.artist_id,
+                }),
+            });
+
+            if (response.ok) {
+                setIsFollowing(true); // Mark as followed after successful API response
+            } else {
+                const data = await response.json();
+                setError(data.message || 'Failed to follow user');
+            }
+        } catch (error) {
+            setError('Error following user');
+        } finally {
+            setLoading(false); // Set loading to false after request is done
+        }
+    };
+
+    // Function to handle the "Unfollow" action
+    const handleUnfollowClick = async () => {
+        setLoading(true);
+        setError(null); // Reset error state
+
+        try {
+            const response = await fetch("http://localhost:5000/unfollow", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: userId,
+                    artist_id: artist.artist_id,
+                }),
+            });
+
+            if (response.ok) {
+                setIsFollowing(false); // Mark as unfollowed after successful API response
+            } else {
+                const data = await response.json();
+                setError(data.message || 'Failed to unfollow user');
+            }
+        } catch (error) {
+            setError('Error unfollowing user');
+        } finally {
+            setLoading(false); // Set loading to false after request is done
+        }
+    };
+
+    useEffect(() => {
+        fetchFollowStatus(); // Fetch follow status when the component mounts
+    }, [userId, artist.artist_id]);
+
+
     const [info, setInfo] = useState({
         followers: 0,
         streams: 0,
@@ -169,8 +260,13 @@ export const ArtistView = ({ artist = {}, accountType }) => {
             <p className="basic-stats-text">Streams: {info.streams}</p>
             <p className="basic-stats-text">Liked Songs: {info.likedSongs}</p>
             <p className="basic-stats-text">Liked Albums: {info.likedAlbums}</p>
-            {accountType !== 'artist' && (
-            <button className="follow-button">Follow</button>
+            {accountType !== 'artist' && accountType !== 'admin' && (
+            <button 
+            className="follow-button" 
+            onClick={isFollowing ? handleUnfollowClick : handleFollowClick}
+            >
+                {isFollowing ? 'Unfollow' : 'Follow'}
+            </button>
             )}
           </div>
         </div>

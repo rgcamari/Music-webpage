@@ -2358,6 +2358,47 @@ const albumUnlikeSong = async (req, res) => {
     });
 };
 
+const checkFollowStatus = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, artist_id } = parsedBody;
+            
+            if (!userId || !artist_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Artist ID are required' }));
+                return;
+            }
+
+            // Query to check if the song is liked by the user
+            const [rows] = await pool.promise().query(
+                `SELECT COUNT(*) AS count FROM following WHERE user_id = ? AND artist_id = ?;`,
+                [userId, artist_id]
+            );
+
+            const isFollowing = rows[0].count > 0;  // if count is greater than 0, the song is liked by the user
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                isFollowing: isFollowing 
+            }));
+
+        } catch (err) {
+            console.error('Error fetching initial follow:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch initial follow' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2412,6 +2453,7 @@ module.exports = {
     unlikeSong,
     checkAlbumInitialLike,
     albumLikeSong,
-    albumUnlikeSong
+    albumUnlikeSong,
+    checkFollowStatus
 };
 

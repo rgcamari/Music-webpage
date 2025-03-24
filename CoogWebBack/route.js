@@ -165,6 +165,9 @@ function routes(req, res) {
     if (URL.startsWith('/albumunlikesong') && method === 'POST') {
         return actions.albumUnlikeSong(req, res);
     }
+    if (URL.startsWith('/checkfollowstatus') && method === 'POST') {
+        return actions.checkFollowStatus(req, res);
+    }
 
 
     res.writeHead(404, { "Content-Type": "application/json" });
