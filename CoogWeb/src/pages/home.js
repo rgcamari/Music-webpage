@@ -46,7 +46,7 @@ const SideBar = ({ onButtonClick, accountType }) => {
       {accountType !== 'artist' && (
         <button className="side-bar-button" onClick={() => onButtonClick('user-lists')}>User List</button>
       )}
-      {accountType !== 'artist' && (
+      {accountType !== 'artist' && accountType !== 'admin' && (
         <button className="side-bar-button" onClick={() => onButtonClick('profile')}>Profile</button>
       )}
       {accountType !== 'user' && accountType !== 'admin' && (
@@ -181,7 +181,7 @@ const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick
     case 'profile': return <Profile setActiveScreen={setActiveScreen} onPlaylistClick={onPlaylistClick} userName={userName} userId={userId} userImage={userImage} />;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} userName={userName} userImage={userImage}/>;
     case 'top-trending': return <TopTrending />;
-    case 'cougar-wrap-up': return <CougarWrapUp />;
+    case 'cougar-wrap-up': return <CougarWrapUp userName={userName} userId={userId} userImage={userImage}/>;
     case 'user-lists': return <UserList />;
     case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType}/>;
     case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType}/>;

@@ -132,6 +132,10 @@ function routes(req, res) {
     if (URL.startsWith('/userreport') && method === 'GET') {
         return actions.getUserReport(req, res);
     }
+    if (URL.startsWith('/topusersongs') && method === 'POST') {
+        return actions.getTopUserSongs(req, res);
+    }
+
 
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route Not Found" }));
