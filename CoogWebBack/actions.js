@@ -2200,6 +2200,45 @@ const likeSong = async (req, res) => {
     });
 };
 
+const unlikeSong = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, song_id } = parsedBody;
+            
+            if (!userId || !song_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Song ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `DELETE FROM liked_song WHERE user_id = ? AND song_id = ?;`,
+                [userId, song_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "song unliked successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error unliking song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to unlike song' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2251,6 +2290,6 @@ module.exports = {
     getTopUserOther,
     checkInitialLike,
     likeSong,
-    //unlikeSong
+    unlikeSong
 };
 

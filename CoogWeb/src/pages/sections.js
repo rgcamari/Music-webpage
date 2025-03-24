@@ -87,7 +87,7 @@ const handleHeartClick = async () => {
     if (isLiked) {
         // Unlike the song
         try {
-            const response = await fetch(`http://localhost:5000/unlikeSong`, {
+            const response = await fetch(`http://localhost:5000/unlikesong`, {
                 method: 'POST',
                 headers: {
                 "Content-Type": "application/json",
