@@ -475,8 +475,12 @@ export const DataReport = () => {
                                     <td>{song.unique_listeners}</td>
                                     <td>{song.like_count}</td>
                                     <td>{song.users_who_did_not_like}</td>
-                                    <td>{song.like_percentage}%</td>
-                                    <td>{song.like_ratio}</td>
+                                    <td className={song.like_percentage >= 50 ? "green-text" : "red-text"}>
+                                        {song.like_percentage}%
+                                    </td>
+                                    <td className={song.like_ratio >= 1 ? "green-text" : "red-text"}>
+                                        {song.like_ratio}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -508,8 +512,12 @@ export const DataReport = () => {
                                     <td>{artist.unique_listeners}</td>
                                     <td>{artist.followers}</td>
                                     <td>{artist.not_streaming_but_following}</td>
-                                    <td>{artist.following_percentage}%</td>
-                                    <td>{artist.following_ratio}</td>
+                                    <td className={artist.following_percentage >= 50 ? "green-text" : "red-text"}>
+                                        {artist.following_percentage}%
+                                    </td>
+                                    <td className={artist.following_ratio >= 1 ? "green-text" : "red-text"}>
+                                        {artist.following_ratio}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -543,8 +551,12 @@ export const DataReport = () => {
                                     <td>{user.total_likes}</td>
                                     <td>{user.unique_artists_followed}</td>
                                     <td>{user.songs_played_but_not_liked}</td>
-                                    <td>{user.following_percentage}%</td>
-                                    <td>{user.like_to_play_ratio}</td>
+                                    <td className={user.following_percentage >= 50 ? "green-text" : "red-text"}>
+                                        {user.following_percentage}%
+                                    </td>
+                                    <td className={user.like_to_play_ratio >= 1 ? "green-text" : "red-text"}>
+                                        {user.like_to_play_ratio}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
