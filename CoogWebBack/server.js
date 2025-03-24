@@ -52,7 +52,12 @@ const map_route = {
     '/addsongtoplaylist',
     '/removeplaylistsong',
     '/editinfo',
-    '/deleteaccount'],
+    '/deleteaccount',
+    '/topusersongs',
+    '/topuserartists',
+    '/topuseralbums',
+    '/topusergenres',
+    '/topuserothers'],
     'PUT': [],
     'DELETE': [],
 };
