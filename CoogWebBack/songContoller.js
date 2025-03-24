@@ -154,6 +154,27 @@ const addSongWithFile = async (req, res) => {
   }
 };
 
+// Like a song
+const likeSong = async (req, res) => {
+  try {
+    const { song_id, user_id } = req.body;
+
+    if (!song_id || !user_id) {
+      return res.status(400).send('Song ID and User ID are required!');
+    }
+
+    const pool = await poolPromise;
+    await pool.request()
+      .input('song_id', song_id)
+      .input('user_id', user_id)
+      .query(queries.likeSong);
+
+    res.status(200).send('Song liked successfully!');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
 
 module.exports = {
   getSongs,
@@ -163,4 +184,5 @@ module.exports = {
   filterSongs,
   getSortedPaginatedSongs,
   addSongWithFile,
+  likeSong
 };
