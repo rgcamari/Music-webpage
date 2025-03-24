@@ -508,3 +508,16 @@ box-shadow: 0 0 15px #B200FF;
 }
 
 
+.green-text {
+  color: green !important;
+  font-weight: bold;
+  font-size: 20px;
+  font-family: 'Montserrat';
+}
+
+.red-text {
+  color: red !important; 
+  font-weight: bold;
+  font-size: 20px;
+  font-family: 'Montserrat';
+}

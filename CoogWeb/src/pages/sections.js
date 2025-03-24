@@ -7,7 +7,7 @@ import forward from './forward.png';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 
 
-export const SongList = ({accountType}) => {
+export const SongList = ({accountType, userId}) => {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);  // To track loading state
     const [error, setError] = useState(null);
@@ -41,25 +41,84 @@ export const SongList = ({accountType}) => {
     return (
         <div className="song-list">
             {songs.map((song, index) => (
-                <SongCard key={index} song={song} accountType={accountType} />
+                <SongCard key={index} song={song} accountType={accountType} userId={userId} />
             ))}
         </div>
     );
 };
 
-export const SongCard = ({ song, accountType }) => {
+export const SongCard = ({ song, accountType, userId }) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
     const [imageBase64, setImageBase64] = useState(null); // State to hold the base64 image
-
-    const handleHeartClick = () => {
-        setIsLiked(!isLiked); // Toggle the liked state
-    };
 
     useEffect(() => {
         if (song.image) {
             setImageBase64(song.image); // Directly set the base64 string
         }
     }, [song.image]);
+
+    if (accountType == 'user') {
+    useEffect(() => {
+        const fetchInitialLike = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/initiallike', {
+                    method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ userId:userId, song_id:song.song_id }), 
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setIsLiked(data.isLiked);  // Assuming the backend returns an array of artists
+                } else {
+                    setError('Failed to fetch like status');
+                }
+            } catch (err) {
+                setError('Error fetching like status');
+            } 
+        };
+
+        fetchInitialLike();
+    }, [userId]);  
+}
+const handleHeartClick = async () => {
+    if (isLiked) {
+        // Unlike the song
+        try {
+            const response = await fetch(`http://localhost:5000/unlikesong`, {
+                method: 'POST',
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId:userId, song_id:song.song_id }), 
+            });
+            if (response.ok) {
+                setIsLiked(false);
+            }
+        } catch (error) {
+            console.error("Error unliking the song:", error);
+        }
+    } else {
+        // Like the song
+        try {
+            const response = await fetch("http://localhost:5000/likesong", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: userId,
+                    song_id: song.song_id,
+                }),
+            });
+            if (response.ok) {
+                setIsLiked(true);
+            }
+        } catch (error) {
+            console.error("Error liking the song:", error);
+        }
+    }
+};
 
     return (
         <div className="song-card">
