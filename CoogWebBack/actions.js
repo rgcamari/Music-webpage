@@ -2438,6 +2438,45 @@ const followArtist = async (req, res) => {
     });
 };
 
+const unfollowArtist = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, artist_id } = parsedBody;
+            
+            if (!userId || !artist_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Artist ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `DELETE FROM following WHERE user_id = ? AND artist_id = ?;`,
+                [userId, artist_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "artist unfollowed successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error unfollowing artist:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to unfollow artist' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2494,6 +2533,7 @@ module.exports = {
     albumLikeSong,
     albumUnlikeSong,
     checkFollowStatus,
-    followArtist
+    followArtist,
+    unfollowArtist
 };
 
