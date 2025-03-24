@@ -96,17 +96,25 @@ const getSortedPaginatedSongs = async (req, res) => {
   try {
     const { sort_by = 'name', order = 'asc', page = 1, limit = 10 } = req.query;
 
-    // Validate order
-    const validOrder = order.toLowerCase() === 'desc' ? 'desc' : 'asc';
+    // Validate and sanitize sort_by to prevent SQL injection
+    const validSortColumns = ['name', 'artist', 'album', 'genre', 'streams'];
+    const sortBy = validSortColumns.includes(sort_by.toLowerCase()) ? sort_by : 'name';
+
+    // Validate order to be either 'asc' or 'desc'
+    const validOrder = order.toLowerCase() === 'desc' ? 'DESC' : 'ASC';
+
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const pool = await poolPromise;
     const result = await pool.request()
-      .input('sort_by', sort_by)
-      .input('order', validOrder)
       .input('offset', offset)
       .input('limit', parseInt(limit))
-      .query(queries.getSortedPaginatedSongs);
+      .query(`
+        SELECT * FROM songs
+        ORDER BY ${sortBy} ${validOrder}
+        OFFSET @offset ROWS
+        FETCH NEXT @limit ROWS ONLY
+      `);
 
     // Get total songs count for pagination
     const countResult = await pool.request().query(queries.getTotalSongsCount);
@@ -175,6 +183,55 @@ const likeSong = async (req, res) => {
   }
 };
 
+// Play song and stream to history
+const streamSong = async (req, res) => {
+  try {
+    const { song_id, user_id } = req.body;
+
+    if (!song_id || !user_id) {
+      return res.status(400).send('Song ID and User ID are required!');
+    }
+
+    const pool = await poolPromise;
+
+    // Check if the same song is already streaming
+    const existingStream = await pool.request()
+      .input('song_id', song_id)
+      .input('user_id', user_id)
+      .query(queries.checkExistingStream);
+
+    if (existingStream.recordset.length > 0) {
+      // Song is already logged, no need to re-insert
+      return res.status(200).json({
+        message: 'Song already streaming.',
+        song_url: existingStream.recordset[0].song_url,
+      });
+    }
+
+    // Get song details
+    const songResult = await pool.request()
+      .input('song_id', song_id)
+      .query(queries.getSongById);
+
+    if (songResult.recordset.length === 0) {
+      return res.status(404).send('Song not found!');
+    }
+
+    // Insert stream history when a new song is played
+    await pool.request()
+      .input('song_id', song_id)
+      .input('user_id', user_id)
+      .query(queries.streamSong);
+
+    res.status(200).json({
+      message: 'Song streamed and logged successfully!',
+      song_url: songResult.recordset[0].song_url,
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
 
 module.exports = {
   getSongs,
@@ -184,5 +241,6 @@ module.exports = {
   filterSongs,
   getSortedPaginatedSongs,
   addSongWithFile,
-  likeSong
+  likeSong,
+  streamSong
 };
