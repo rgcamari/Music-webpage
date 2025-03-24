@@ -2239,6 +2239,47 @@ const unlikeSong = async (req, res) => {
     });
 };
 
+const checkAlbumInitialLike = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, album_id } = parsedBody;
+            
+            if (!userId || !album_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Album ID are required' }));
+                return;
+            }
+
+            // Query to check if the song is liked by the user
+            const [rows] = await pool.promise().query(
+                `SELECT COUNT(*) AS count FROM liked_album WHERE user_id = ? AND album_id = ?;`,
+                [userId, album_id]
+            );
+
+            const isLiked = rows[0].count > 0;  // if count is greater than 0, the song is liked by the user
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                isLiked: isLiked 
+            }));
+
+        } catch (err) {
+            console.error('Error fetching initial like:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch initial like' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2290,6 +2331,7 @@ module.exports = {
     getTopUserOther,
     checkInitialLike,
     likeSong,
-    unlikeSong
+    unlikeSong,
+    checkAlbumInitialLike
 };
 
