@@ -49,24 +49,49 @@ export const SongList = ({accountType}) => {
 
 export const SongCard = ({ song, accountType }) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
+    const [imageBase64, setImageBase64] = useState(null); // State to hold the base64 image
 
     const handleHeartClick = () => {
         setIsLiked(!isLiked); // Toggle the liked state
     };
 
+    useEffect(() => {
+        if (song.image) {
+            setImageBase64(song.image); // Directly set the base64 string
+        }
+    }, [song.image]);
+
     return (
         <div className="song-card">
-            <img src={song.image_url} alt={song.name} className="song-image" />
+            {/* Render Base64 Image */}
+            {imageBase64 && (
+                <img
+                    src={`data:image/png;base64,${imageBase64}`} 
+                    alt={song.name} 
+                    className="song-image"
+                />
+            )}
+
             <h3 className="song-name">{song.name}</h3>
             <h3 className="song-artist">{song.artist_name}</h3>
+
+            {/* Render Audio Player for Song */}
+            {song.song_url && (
+                <audio controls>
+                    <source src={`data:audio/mp3;base64,${song.song_url}`} type="audio/mp3" />
+                    Your browser does not support the audio element.
+                </audio>
+            )}
+
             <div className="bottom-section">
-            {accountType !== 'artist' && accountType !== 'admin'  && (
-                <img
-                    src={heart} // Use the same heart image
-                    alt="heart"
-                    className={`heart-image ${isLiked ? "liked" : ""}`} // Add class if liked
-                    onClick={handleHeartClick} // Handle click event
-                />)}
+                {accountType !== 'artist' && accountType !== 'admin' && (
+                    <img
+                        src={heart}
+                        alt="heart"
+                        className={`heart-image ${isLiked ? "liked" : ""}`}
+                        onClick={handleHeartClick}
+                    />
+                )}
                 <img src={play_button} alt="play" className="play-button" />
             </div>
         </div>

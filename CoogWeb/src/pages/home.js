@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
 import { SongList, ArtistList, AlbumList, UserList } from './sections';
-import { Profile, ArtistProfile } from './input';
+import { Profile, ArtistProfile, DataReport } from './input';
 import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
@@ -13,18 +13,18 @@ import { useLocation } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 
 
-const TopBar = ({ username, userimage }) => {
+const TopBar = ({accountType, username, userId, userImage }) => {
   const navigate = useNavigate();
-  console.log('TopBar props:', { username, userimage });
+  console.log('TopBar props:', { username, userImage });
 
   return (
     <div className="top-bar">
       <div className="user-infos">
-        <img src={userimage} className="user-images" />
+        <img src={userImage} className="user-images" />
         <span className="username">{username}</span>
       </div>
       <div className="top-bar-buttons">
-        <button className="settings-button" onClick={() => navigate('/settings')}>Settings</button>
+        <button className="settings-button" onClick={() => navigate('/settings', {state: { userId, username, accountType, userImage }})}>Settings</button>
         <button className="main-menu-button" onClick={() => navigate('/')}>Main Menu</button>
       </div>
       <div className="project-name">
@@ -49,12 +49,15 @@ const SideBar = ({ onButtonClick, accountType }) => {
       {accountType !== 'artist' && (
         <button className="side-bar-button" onClick={() => onButtonClick('profile')}>Profile</button>
       )}
-      {accountType !== 'user' && (
+      {accountType !== 'user' && accountType !== 'admin' && (
         <button className="side-bar-button" onClick={() => onButtonClick('artist-profile')}>Artist Profile</button>
       )}
       <button className="side-bar-button" onClick={() => onButtonClick('top-trending')}>Top Trending</button>
-      {accountType !== 'artist' && accountType !== 'Admin' && (
+      {accountType !== 'artist' && accountType !== 'admin' && (
       <button className="side-bar-button" onClick={() => onButtonClick('cougar-wrap-up')}>Cougar Wrap-Up</button>
+      )}
+      {accountType !== 'artist' && accountType !== 'user' && (
+      <button className="side-bar-button" onClick={() => onButtonClick('data-report')}>Data Report</button>
       )}
     </div>
   );
@@ -157,7 +160,7 @@ const Home = () => {
 
   return (
     <div className="Home">
-      <TopBar username={userName} userImage={userImage}/>
+      <TopBar username={userName} userImage={userImage} accountType={accountType} userId={userId}/>
       <div className="content">
         <SideBar onButtonClick={setActiveScreen} accountType={accountType} />
         <div className="main-content">
@@ -196,6 +199,7 @@ const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick
     case 'add-song-playlist': return <PlaylistFormAdd userName={userName} userId={userId}/>;
     case 'remove-song-playlist': return <PlaylistFormRemove userName={userName} userId={userId}/>;
     case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName} userImage={userImage}/>;
+    case 'data-report': return <DataReport userName={userName}/>
     default: return <SongList />;
   }
 };

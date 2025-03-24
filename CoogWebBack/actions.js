@@ -66,14 +66,15 @@ const handleLogin = async (req, res) => {
     req.on('end', async () => {
         try {
             const parsedBody = JSON.parse(body);
-            const { username, password} = parsedBody;
+            const { username, password } = parsedBody;
 
             if (!username || !password) {
                 throw new Error('Missing required fields');
             }
 
+            // Check in 'user' table
             const [user_check] = await pool.promise().query(
-                `SELECT user_id, username, image_url FROM user WHERE username = ? AND password = ?`, [username,password]
+                `SELECT user_id, username, image_url FROM user WHERE username = ? AND password = ?`, [username, password]
             );
             console.log('User Check:', user_check);
 
@@ -81,15 +82,16 @@ const handleLogin = async (req, res) => {
                 res.writeHead(201, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({
                     success: true,
-                    userId: user_check[0].user_id, // Correct the access to user_id
+                    userId: user_check[0].user_id,
                     userName: user_check[0].username,
                     userImage: user_check[0].image_url,
-                    accountType: 'user', // Returning the account type
+                    accountType: 'user',
                     message: "User Account"
                 }));
                 return;
             }
 
+            // Check in 'artist' table
             const [artist_check] = await pool.promise().query(
                 `SELECT artist_id, username, image_url FROM artist WHERE username = ? AND password = ?`, [username, password]
             );
@@ -97,15 +99,16 @@ const handleLogin = async (req, res) => {
                 res.writeHead(201, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({
                     success: true,
-                    userId: artist_check[0].artist_id, // Correct the access to user_id
+                    userId: artist_check[0].artist_id,
                     userName: artist_check[0].username,
                     userImage: artist_check[0].image_url,
-                    accountType: 'artist', // Returning the account type
+                    accountType: 'artist',
                     message: "Artist Account"
                 }));
                 return;
             }
 
+            // Check in 'admin' table
             const [admin_check] = await pool.promise().query(
                 `SELECT admin_id, username, image_url FROM admin WHERE username = ? AND password = ?`, [username, password]
             );
@@ -113,22 +116,28 @@ const handleLogin = async (req, res) => {
                 res.writeHead(201, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({
                     success: true,
-                    userId: admin_check[0].admin_id, // Correct the access to user_id
+                    userId: admin_check[0].admin_id,
                     userName: admin_check[0].username,
-                    userImage: admin_check[0].image_url, 
-                    accountType: 'admin', // Returning the account type
+                    userImage: admin_check[0].image_url,
+                    accountType: 'admin',
                     message: "Admin Account"
                 }));
                 return;
             }
+
+            // If the user is not found in any of the tables
+            res.writeHead(404, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({
+                success: false,
+                message: "Account not found"
+            }));
         }
         catch (err) {
-            console.error('Error during signup:', err);
+            console.error('Error during login:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: false, message: err.message || 'Login Failed' }));
         }
     });
-
 };
 
 const getArtistList = async (req, res) => {
@@ -172,7 +181,7 @@ const getUserList = async (req, res) => {
 
 const getSongList = async (req, res) => {
     try {
-        const [songs] = await pool.promise().query(`SELECT song_id, name, song.image_url, artist.username AS artist_username FROM artist, song WHERE song.artist_id = artist.artist_id`);
+        const [songs] = await pool.promise().query(`SELECT song_id, name, song.image_url AS image, artist.username AS artist_username FROM artist, song WHERE song.artist_id = artist.artist_id`);
         
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, songs}));  // Ensure response is sent
@@ -585,11 +594,15 @@ const createSong = async (req, res) => {
         try {
             const parsedBody = JSON.parse(body);
             const { name, artist, genre, album, image, URL } = parsedBody;
+            console.log(name,image,URL);
 
             // Validate required fields
             if (!name || !artist || !genre || !album || !image || !URL) {
                 throw new Error('Missing required fields');
             }
+
+            image = image || null;  // Use null if empty
+            URL = URL || null;
 
             // Check if the album exists and belongs to the artist
             const [albumExists] = await pool.promise().execute(
@@ -1597,7 +1610,271 @@ const removePlaylistSong = async (req, res) => {
     });
 };
 
+const editInfo = async (req, res) => {
+    let body = '';
 
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { accountType, username, newPassword, image } = parsedBody;
+            console.log(accountType, username, newPassword, image); 
+            let isWorking = false;
+
+            if (!accountType || !username || (!image && !newPassword)) {
+                console.log(accountType, username, newPassword, image);
+                throw new Error('Missing required fields');
+            }
+
+            const validAccountTypes = ['user', 'artist', 'admin'];
+            if (!validAccountTypes.includes(accountType)) {
+                throw new Error('Invalid account type');
+            }
+
+            let result;
+            if (accountType === 'user') {
+                const [user_check] = await pool.promise().query(
+                    `SELECT user_id, username, image_url FROM user WHERE username = ?`, [username]
+                );
+                if (user_check.length > 0) {
+                    result = await pool.promise().query(
+                        `UPDATE user
+                        SET password = COALESCE(?, password),
+                            image_url = COALESCE(?, image_url)
+                        WHERE username = ?`, [newPassword, image, username]
+                    );
+                    isWorking = true;
+                }
+            } else if (accountType === 'artist') {
+                const [artist_check] = await pool.promise().query(
+                    `SELECT artist_id, username, image_url FROM artist WHERE username = ?`, [username]
+                );
+                if (artist_check.length > 0) {
+                    result = await pool.promise().query(
+                        `UPDATE artist
+                        SET password = COALESCE(?, password),
+                            image_url = COALESCE(?, image_url)
+                        WHERE username = ?`, [username]
+                    );
+                    isWorking = true;
+                }
+            } else if (accountType === 'admin') {
+                const [admin_check] = await pool.promise().query(
+                    `SELECT admin_id, username, image_url FROM admin WHERE username = ?`, [username]
+                );
+                if (admin_check.length > 0) {
+                    result = await pool.promise().query(
+                        `UPDATE admin
+                        SET password = COALESCE(?, password),
+                            image_url = COALESCE(?, image_url)
+                        WHERE username = ?`, [username]
+                    );
+                    isWorking = true;
+                }
+            }
+
+            if (isWorking) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true }));
+            } else {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: false, message: "No changes were made." }));
+            }
+
+        } catch (err) {
+            console.error('Error during editInfo:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Edit Failed' }));
+        }
+    });
+};
+
+const deleteAccount = async (req, res) => {
+    let body = '';
+
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { accountType, username } = parsedBody;
+            console.log(accountType, username); 
+            let isWorking = false;
+
+            if (!accountType || !username) {
+                console.log(accountType, username);
+                throw new Error('Missing required fields');
+            }
+
+            const validAccountTypes = ['user', 'artist', 'admin'];
+            if (!validAccountTypes.includes(accountType)) {
+                throw new Error('Invalid account type');
+            }
+
+            let result;
+            if (accountType === 'user') {
+                const [user_check] = await pool.promise().query(
+                    `SELECT user_id, username FROM user WHERE username = ?`, [username]
+                );
+                if (user_check.length > 0) {
+                    result = await pool.promise().query(
+                        `DELETE FROM user WHERE username = ?`, [username]
+                    );
+                    isWorking = true;
+                }
+            } else if (accountType === 'artist') {
+                const [artist_check] = await pool.promise().query(
+                    `SELECT artist_id, username FROM artist WHERE username = ?`, [username]
+                );
+                if (artist_check.length > 0) {
+                    result = await pool.promise().query(
+                        `DELETE FROM artist WHERE username = ?`, [newPassword, image, username]
+                    );
+                    isWorking = true;
+                }
+            } else if (accountType === 'admin') {
+                const [admin_check] = await pool.promise().query(
+                    `SELECT admin_id, username FROM admin WHERE username = ?`, [username]
+                );
+                if (admin_check.length > 0) {
+                    result = await pool.promise().query(
+                        `DELETE FROM admin
+                        WHERE username = ?`, [username]
+                    );
+                    isWorking = true;
+                }
+            }
+
+            if (isWorking) {
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: true, message: "Account Deleted"}));
+            } else {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ success: false, message: "Failed to Delete Account." }));
+            }
+
+        } catch (err) {
+            console.error('Error during editInfo:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: err.message || 'Failed to delete account' }));
+        }
+    });
+};
+
+const getSongReport = async (req, res) => {
+    try {
+        const [songs] = await pool.promise().query(`SELECT 
+    s.song_id, 
+    s.name AS song_name,
+    -- Unique listeners for each song
+    COUNT(DISTINCT h.user_id) AS unique_listeners,
+    -- Like count for each song
+    COUNT(DISTINCT ls.user_id) AS like_count,
+    -- Users who did not like the song (unique listeners - like count)
+    COUNT(DISTINCT h.user_id) - COUNT(DISTINCT ls.user_id) AS users_who_did_not_like,
+    -- Like percentage (rounded to 2 decimal places)
+    ROUND((COUNT(DISTINCT ls.user_id) / NULLIF(COUNT(DISTINCT h.user_id), 0)) * 100, 2) AS like_percentage,
+    -- Like ratio (rounded to 2 decimal places)
+    ROUND(COUNT(DISTINCT ls.user_id) / NULLIF(COUNT(DISTINCT h.user_id) - COUNT(DISTINCT ls.user_id), 0), 2) AS like_ratio
+    FROM 
+        song s
+    LEFT JOIN 
+        history h ON s.song_id = h.song_id
+    LEFT JOIN 
+        liked_song ls ON s.song_id = ls.song_id
+    GROUP BY 
+        s.song_id, s.name;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, songs}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch songs' }));
+    }
+};
+
+const getArtistReport = async (req, res) => {
+    try {
+        const [artists] = await pool.promise().query(`SELECT 
+        a.artist_id, 
+        a.username AS artist_name,
+        
+        COUNT(DISTINCT h.user_id) AS unique_listeners,
+        COUNT(DISTINCT f.user_id) AS followers,
+        ABS(COUNT(DISTINCT f.user_id) - COUNT(DISTINCT h.user_id)) AS not_streaming_but_following,
+        ROUND((COUNT(DISTINCT f.user_id) / NULLIF(COUNT(DISTINCT h.user_id), 0)) * 100, 2) AS following_percentage,
+        ABS(ROUND(COUNT(DISTINCT f.user_id) / NULLIF(COUNT(DISTINCT h.user_id) - COUNT(DISTINCT f.user_id), 0), 2)) AS following_ratio
+
+        FROM 
+            artist a
+        LEFT JOIN 
+            song s ON a.artist_id = s.artist_id
+        LEFT JOIN 
+            history h ON s.song_id = h.song_id
+        LEFT JOIN 
+            following f ON a.artist_id = f.artist_id
+        GROUP BY 
+            a.artist_id, a.username;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, artists}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch artists' }));
+    }
+};
+
+const getUserReport = async (req, res) => {
+    try {
+        const [users] = await pool.promise().query(`SELECT 
+    u.user_id, 
+    u.username AS user_name,
+    
+    -- Total plays per user (history table)
+    COUNT(DISTINCT h.song_id) AS total_plays,
+    
+    -- Total likes per user (liked_song table)
+    COUNT(DISTINCT ls.song_id) AS total_likes,
+    
+    -- Unique artists followed by the user
+    COUNT(DISTINCT f.artist_id) AS unique_artists_followed,
+    
+    -- Songs played but not liked by the user
+    COUNT(DISTINCT h.song_id) - COUNT(DISTINCT ls.song_id) AS songs_played_but_not_liked,
+    
+    -- Following percentage (percentage of songs liked out of total plays)
+    ROUND((COUNT(DISTINCT ls.song_id) / NULLIF(COUNT(DISTINCT h.song_id), 0)) * 100, 2) AS following_percentage,
+    
+    -- Like-to-play ratio (ratio of liked songs to total plays)
+    ROUND(COUNT(DISTINCT ls.song_id) / NULLIF(COUNT(DISTINCT h.song_id), 0), 2) AS like_to_play_ratio
+
+    FROM 
+        user u
+    LEFT JOIN 
+        history h ON u.user_id = h.user_id
+    LEFT JOIN 
+        liked_song ls ON u.user_id = ls.user_id
+    LEFT JOIN 
+        following f ON u.user_id = f.user_id
+
+    GROUP BY 
+        u.user_id, u.username;`);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, users}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch users' }));
+    }
+}
 
 module.exports = {
     getUsers,
@@ -1637,6 +1914,11 @@ module.exports = {
     editPlaylist,
     deletePlaylist,
     addPlaylistSong,
-    removePlaylistSong
+    removePlaylistSong,
+    editInfo,
+    deleteAccount,
+    getSongReport,
+    getArtistReport,
+    getUserReport
 };
 

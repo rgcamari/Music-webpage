@@ -382,3 +382,176 @@ export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
         </section>
     );
 };
+
+
+export const DataReport = () => {
+    const [songReport, setSongReport] = useState(null);
+    const [artistReport, setArtistReport] = useState(null);
+    const [userReport, setUserReport] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        // Fetch Song Report
+        const fetchSongReport = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/songreport");
+                const data = await response.json();
+                if (data.success) {
+                    setSongReport(data.songs);
+                } else {
+                    setError("Failed to fetch song report");
+                }
+            } catch (err) {
+                setError("Failed to fetch song report");
+            }
+        };
+
+        // Fetch Artist Report
+        const fetchArtistReport = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/artistreport");
+                const data = await response.json();
+                if (data.success) {
+                    setArtistReport(data.artists);
+                } else {
+                    setError("Failed to fetch artist report");
+                }
+            } catch (err) {
+                setError("Failed to fetch artist report");
+            }
+        };
+
+        // Fetch User Report
+        const fetchUserReport = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/userreport");
+                const data = await response.json();
+                if (data.success) {
+                    setUserReport(data.users);
+                } else {
+                    setError("Failed to fetch user report");
+                }
+            } catch (err) {
+                setError("Failed to fetch user report");
+            }
+        };
+
+        // Call the fetch functions
+        fetchSongReport();
+        fetchArtistReport();
+        fetchUserReport();
+    }, []);
+
+    return (
+        <section className="everything">
+            <div className="profile-section">
+            <div className="profile-header">
+                <h2 className="profile-username">Coog Music Data Report</h2>
+            </div>
+            </div>
+
+            {error && <p className="error-message">{error}</p>}
+
+            {/* Song Report */}
+            {songReport && (
+                <div className="albumProfile-section">
+                    <div className="albumProfile-header">Song Report: </div>
+                    <div className="report-table-container">
+                    <table className="report-table">
+                        <thead>
+                            <tr>
+                                <th>Song Name</th>
+                                <th>Unique Listeners</th>
+                                <th>Like Count</th>
+                                <th>Users Who Didn't Like</th>
+                                <th>Like Percentage</th>
+                                <th>Like Ratio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {songReport.map((song) => (
+                                <tr key={song.song_id}>
+                                    <td>{song.song_name}</td>
+                                    <td>{song.unique_listeners}</td>
+                                    <td>{song.like_count}</td>
+                                    <td>{song.users_who_did_not_like}</td>
+                                    <td>{song.like_percentage}%</td>
+                                    <td>{song.like_ratio}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            )}
+
+            {/* Artist Report */}
+            {artistReport && (
+                <div className="albumProfile-section">
+                    <div className="albumProfile-header">Artist Report: </div>
+                    <div className="report-table-container">
+                    <table className="report-table">
+                        <thead>
+                            <tr>
+                                <th>Artist Name</th>
+                                <th>Unique Listeners</th>
+                                <th>Followers</th>
+                                <th>Not Streaming But Following</th>
+                                <th>Following Percentage</th>
+                                <th>Following Ratio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {artistReport.map((artist) => (
+                                <tr key={artist.artist_id}>
+                                    <td>{artist.artist_name}</td>
+                                    <td>{artist.unique_listeners}</td>
+                                    <td>{artist.followers}</td>
+                                    <td>{artist.not_streaming_but_following}</td>
+                                    <td>{artist.following_percentage}%</td>
+                                    <td>{artist.following_ratio}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            )}
+
+            {/* User Report */}
+            {userReport && (
+                <div className="albumProfile-section">
+                    <div className="albumProfile-header">User Report: </div>
+                    <div className="report-table-container">
+                    <table className="report-table">
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Total Plays</th>
+                                <th>Total Likes</th>
+                                <th>Unique Artists Followed</th>
+                                <th>Songs Played But Not Liked</th>
+                                <th>Following Percentage</th>
+                                <th>Like-to-Play Ratio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {userReport.map((user) => (
+                                <tr key={user.user_id}>
+                                    <td>{user.user_name}</td>
+                                    <td>{user.total_plays}</td>
+                                    <td>{user.total_likes}</td>
+                                    <td>{user.unique_artists_followed}</td>
+                                    <td>{user.songs_played_but_not_liked}</td>
+                                    <td>{user.following_percentage}%</td>
+                                    <td>{user.like_to_play_ratio}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            )}
+        </section>
+    );
+};

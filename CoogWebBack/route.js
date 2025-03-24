@@ -9,7 +9,7 @@ function routes(req, res) {
     if (URL.startsWith('/signup') && method === 'POST') {
         return actions.handleSignup(req, res);
     } 
-    if (URL.startsWith('/login') && method === 'POST') {
+    if (URL.startsWith('/loginsection') && method === 'POST') {
         return actions.handleLogin(req, res);
     }
     if (URL.startsWith('/artistlist') && method === 'GET') {
@@ -116,6 +116,21 @@ function routes(req, res) {
     }
     if (URL.startsWith('/removeplaylistsong') && method === 'POST') {
         return actions.removePlaylistSong(req, res);
+    }
+    if (URL.startsWith('/editinfo') && method === 'POST') {
+        return actions.editInfo(req, res);
+    }
+    if (URL.startsWith('/deleteaccount') && method === 'POST') {
+        return actions.deleteAccount(req, res);
+    }
+    if (URL.startsWith('/songreport') && method === 'GET') {
+        return actions.getSongReport(req, res);
+    }
+    if (URL.startsWith('/artistreport') && method === 'GET') {
+        return actions.getArtistReport(req, res);
+    }
+    if (URL.startsWith('/userreport') && method === 'GET') {
+        return actions.getUserReport(req, res);
     }
 
     res.writeHead(404, { "Content-Type": "application/json" });
