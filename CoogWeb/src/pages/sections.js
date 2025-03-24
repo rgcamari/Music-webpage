@@ -51,10 +51,6 @@ export const SongCard = ({ song, accountType, userId }) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
     const [imageBase64, setImageBase64] = useState(null); // State to hold the base64 image
 
-    const handleHeartClick = () => {
-        setIsLiked(!isLiked); // Toggle the liked state
-    };
-
     useEffect(() => {
         if (song.image) {
             setImageBase64(song.image); // Directly set the base64 string
@@ -81,14 +77,48 @@ export const SongCard = ({ song, accountType, userId }) => {
                 }
             } catch (err) {
                 setError('Error fetching like status');
-            } finally {
-                setLoading(false);  // Data is loaded or error occurred
-            }
+            } 
         };
 
         fetchInitialLike();
     }, [userId]);  
 }
+const handleHeartClick = async () => {
+    if (isLiked) {
+        // Unlike the song
+        try {
+            const response = await fetch(`http://localhost:5000/unlikeSong`, {
+                method: 'POST',
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId:userId, song_id:song.song_id }), 
+            });
+            if (response.ok) {
+                setIsLiked(false);
+            }
+        } catch (error) {
+            console.error("Error unliking the song:", error);
+        }
+    } else {
+        // Like the song
+        try {
+            const response = await fetch("http://localhost:5000/likesong", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: userId,
+                    song_id: song.song_id,
+                }),
+            });
+            if (response.ok) {
+                setIsLiked(true);
+            }
+        } catch (error) {
+            console.error("Error liking the song:", error);
+        }
+    }
+};
 
     return (
         <div className="song-card">

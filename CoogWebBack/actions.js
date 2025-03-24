@@ -2154,9 +2154,48 @@ const checkInitialLike = async (req, res) => {
             }));
 
         } catch (err) {
-            console.error('Error fetching user stats:', err);
+            console.error('Error fetching initial like:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: false, message: 'Failed to fetch user statistics' }));
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch initial like' }));
+        }
+    });
+};
+
+const likeSong = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, song_id } = parsedBody;
+            
+            if (!userId || !song_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Song ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `INSERT INTO liked_song (user_id, song_id, liked_at) VALUES (?, ?, NOW());`,
+                [userId, song_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "song liked successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error liking song:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to like song' }));
         }
     });
 };
@@ -2210,6 +2249,8 @@ module.exports = {
     getTopUserAlbums,
     getTopUserGenres,
     getTopUserOther,
-    checkInitialLike
+    checkInitialLike,
+    likeSong,
+    //unlikeSong
 };
 

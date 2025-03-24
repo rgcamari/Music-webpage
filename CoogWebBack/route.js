@@ -150,6 +150,12 @@ function routes(req, res) {
     if (URL.startsWith('/initiallike') && method === 'POST') {
         return actions.checkInitialLike(req, res);
     }
+    if (URL.startsWith('/unlikesong') && method === 'POST') {
+        return actions.unlikeSong(req, res);
+    }
+    if (URL.startsWith('/likesong') && method === 'POST') {
+        return actions.likeSong(req, res);
+    }
 
 
     res.writeHead(404, { "Content-Type": "application/json" });
