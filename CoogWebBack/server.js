@@ -57,7 +57,8 @@ const map_route = {
     '/topuserartists',
     '/topuseralbums',
     '/topusergenres',
-    '/topuserothers'],
+    '/topuserothers',
+    '/initiallike'],
     'PUT': [],
     'DELETE': [],
 };

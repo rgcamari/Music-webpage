@@ -147,6 +147,9 @@ function routes(req, res) {
     if (URL.startsWith('/topusergenres') && method === 'POST') {
         return actions.getTopUserGenres(req, res);
     }
+    if (URL.startsWith('/initiallike') && method === 'POST') {
+        return actions.checkInitialLike(req, res);
+    }
 
 
     res.writeHead(404, { "Content-Type": "application/json" });
