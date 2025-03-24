@@ -269,7 +269,7 @@ export const SongProfileCard = ({ song }) => {
 
 export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
     const [stats, setStats] = useState({
-        followers: 0,
+        follow: 0,
         streams: 0,
         likedSongs: 0,
         likedAlbums: 0,
@@ -289,10 +289,11 @@ export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
                             body: JSON.stringify({ userName }), 
                         });
                         const data = await response.json();
+                        console.log(data);
         
                         if (data.success) {
                             setStats({
-                                followers: data.followers,
+                                follow: data.follow,
                                 streams: data.streams,
                                 likedSongs: data.likedSongs,
                                 likedAlbums: data.likedAlbums});  
@@ -321,7 +322,7 @@ export const ArtistProfile = ({setActiveScreen, userName, userImage}) => {
                 <h2 className="profile-username">{userName}</h2>
             </div>
             <div className="Basic-Stats">
-                <p className="basic-stats-text"> Followers: {stats.followers}</p>
+                <p className="basic-stats-text"> Followers: {stats.follow}</p>
                 <p className="basic-stats-text"> Streams: {stats.streams}</p>
                 <p className="basic-stats-text"> Liked Songs: {stats.likedSongs}</p>
                 <p className="basic-stats-text"> Liked Songs: {stats.likedAlbums}</p>

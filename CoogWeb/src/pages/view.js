@@ -206,7 +206,7 @@ export const ArtistView = ({ artist = {}, accountType, userId}) => {
 
 
     const [info, setInfo] = useState({
-        followers: 0,
+        follow: 0,
         streams: 0,
         likedSongs: 0,
         likedAlbums: 0,
@@ -228,7 +228,7 @@ export const ArtistView = ({ artist = {}, accountType, userId}) => {
     
                     if (data.success) {
                         setInfo({
-                            followers: data.followers,
+                            follow: data.follow,
                             streams: data.streams,
                             likedSongs: data.likedSongs,
                             likedAlbums: data.likedAlbums});  
@@ -256,7 +256,7 @@ export const ArtistView = ({ artist = {}, accountType, userId}) => {
             <h2 className="profile-username">{artist.username}</h2>
           </div>
           <div className="basic-stats">
-            <p className="basic-stats-text">Followers: {info.followers}</p>
+            <p className="basic-stats-text">Followers: {info.follow}</p>
             <p className="basic-stats-text">Streams: {info.streams}</p>
             <p className="basic-stats-text">Liked Songs: {info.likedSongs}</p>
             <p className="basic-stats-text">Liked Albums: {info.likedAlbums}</p>

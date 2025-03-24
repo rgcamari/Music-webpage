@@ -210,7 +210,7 @@ const getArtistViewInfo = async (req, res) => {
 
 
         const [followersResult] = await pool.promise().query(`
-            SELECT followers FROM artist WHERE artist.username = ?;`, [username]);
+            SELECT COUNT(*) AS follow FROM artist, following WHERE following.artist_id = artist.artist_id AND artist.username = ?;`, [username]);
 
         const [streamsResult] = await pool.promise().query(`SELECT COUNT(*) AS streams_count 
             FROM history, song, artist 
@@ -227,7 +227,7 @@ const getArtistViewInfo = async (req, res) => {
             
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, 
-            followers: followersResult[0].followers, 
+            follow: followersResult[0].follow, 
             streams: streamsResult[0].streams_count, 
             likedSongs: likedSongsResult[0].liked_songs_count, 
             likedAlbums: likedAlbumsResult[0].liked_albums_count 
@@ -517,10 +517,8 @@ const getArtistInfo = async (req, res) => {
         if (!userName) {
             return res.status(400).json({ success: false, message: 'Username is required' });
         }
-
-
         const [followersResult] = await pool.promise().query(`
-            SELECT followers FROM artist WHERE artist.username = ?;`, [userName]);
+            SELECT COUNT(*) AS follow FROM following, artist WHERE artist.artist_id = following.artist_id AND artist.username = ?;`, [userName]);
 
         const [streamsResult] = await pool.promise().query(`SELECT COUNT(*) AS streams_count 
             FROM history, song, artist 
@@ -537,7 +535,7 @@ const getArtistInfo = async (req, res) => {
             
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, 
-            followers: followersResult[0].followers, 
+            follow: followersResult[0].follow, 
             streams: streamsResult[0].streams_count, 
             likedSongs: likedSongsResult[0].liked_songs_count, 
             likedAlbums: likedAlbumsResult[0].liked_albums_count 
