@@ -189,12 +189,71 @@ export const ArtistView = ({ artist = {}, accountType }) => {
     );
   };
 
-  export const AlbumViewPage = ({ album = {}, accountType}) => {
+  export const AlbumViewPage = ({ album = {}, accountType, userId}) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
+    if (accountType == 'user') {
+        useEffect(() => {
+            const fetchInitialLike = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/albuminitiallike', {
+                        method: 'POST',
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ userId:userId, album_id:album.album_id }), 
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setIsLiked(data.isLiked);  // Assuming the backend returns an array of artists
+                    } else {
+                        setError('Failed to fetch like status');
+                    }
+                } catch (err) {
+                    setError('Error fetching like status');
+                } 
+            };
+    
+            fetchInitialLike();
+        }, [userId]);  
+    }
 
-    const handleHeartClick = () => {
-        setIsLiked(!isLiked); // Toggle the liked state
-    };
+const handleHeartClick = async () => {
+    if (isLiked) {
+        // Unlike the song
+        try {
+            const response = await fetch(`http://localhost:5000/albumunlikesong`, {
+                method: 'POST',
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId:userId, album_id:album.album_id }), 
+            });
+            if (response.ok) {
+                setIsLiked(false);
+            }
+        } catch (error) {
+            console.error("Error unliking the album:", error);
+        }
+    } else {
+        // Like the song
+        try {
+            const response = await fetch("http://localhost:5000/albumlikesong", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: userId,
+                    album_id: album.album_id,
+                }),
+            });
+            if (response.ok) {
+                setIsLiked(true);
+            }
+        } catch (error) {
+            console.error("Error liking the album:", error);
+        }
+    }
+};
 
     const [info, setInfo] = useState({
         songCount: 0,

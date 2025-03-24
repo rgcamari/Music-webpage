@@ -184,7 +184,7 @@ const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick
     case 'cougar-wrap-up': return <CougarWrapUp userName={userName} userId={userId} userImage={userImage}/>;
     case 'user-lists': return <UserList />;
     case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType}/>;
-    case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType}/>;
+    case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType} userId={userId}/>;
     case 'create-song': return <SongForm userName={userName} userId={userId}/>;
     case 'edit-song': return <SongFormEdit userName={userName} userId={userId}/>;
     case 'delete-song': return <SongFormDelete userName={userName} userId={userId}/>;
