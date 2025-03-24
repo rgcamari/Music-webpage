@@ -25,8 +25,8 @@ const SongCard = ({ song, userId }) => {
       <img src={song.image_url || '/assets/default-cover.jpg'} alt={song.name} />
       <h3>{song.name}</h3>
       <p>Artist: {song.artist_name}</p>
-      <button onClick={handlePlay}>▶️ Play</button>
-      <button onClick={handleLike}>❤️ Like</button>
+      <button onClick={handlePlay}> Play</button>
+      <button onClick={handleLike}> Like</button>
     </div>
   );
 };

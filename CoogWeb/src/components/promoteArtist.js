@@ -12,7 +12,7 @@ const PromoteArtist = () => {
 
   return (
     <div className="container">
-      <h2>🚀 Promote Artist</h2>
+      <h2> Promote Artist</h2>
       <input
         type="text"
         value={artistId}

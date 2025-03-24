@@ -14,7 +14,7 @@ const TopTrending = () => {
 
   return (
     <div className="container">
-      <h2>🎵 Top 50 Songs</h2>
+      <h2> Top 50 Songs</h2>
       <ul>
         {topSongs.map((song, index) => (
           <li key={song._id}>

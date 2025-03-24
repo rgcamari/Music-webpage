@@ -28,7 +28,7 @@ const CougarWrapUp = () => {
       </section>
 
       <section>
-        <h3>📀 Top Albums</h3>
+        <h3> Top Albums</h3>
         <ul>
           {wrapUp.topAlbums.map((album) => (
             <li key={album._id}>
@@ -39,7 +39,7 @@ const CougarWrapUp = () => {
       </section>
 
       <section>
-        <h3>🎧 Top Songs</h3>
+        <h3> Top Songs</h3>
         <ul>
           {wrapUp.topSongs.map((song) => (
             <li key={song._id}>{song.title}</li>
