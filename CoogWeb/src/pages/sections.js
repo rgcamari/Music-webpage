@@ -280,7 +280,7 @@ export const AlbumCard = ({ album, onAlbumClick, accountType,userId }) => {
         }, [userId]);  
     }
     const handleHeartClick = async () => {
-        /*if (isLiked) {
+        if (isLiked) {
             // Unlike the song
             try {
                 const response = await fetch(`http://localhost:5000/unlikesong`, {
@@ -299,12 +299,12 @@ export const AlbumCard = ({ album, onAlbumClick, accountType,userId }) => {
         } else {
             // Like the song
             try {
-                const response = await fetch("http://localhost:5000/likesong", {
+                const response = await fetch("http://localhost:5000/albumlikesong", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         userId: userId,
-                        song_id: song.song_id,
+                        album_id: album.album_id,
                     }),
                 });
                 if (response.ok) {
@@ -313,7 +313,7 @@ export const AlbumCard = ({ album, onAlbumClick, accountType,userId }) => {
             } catch (error) {
                 console.error("Error liking the song:", error);
             }
-        }*/
+        }
     };
   
     return (

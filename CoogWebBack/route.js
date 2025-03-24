@@ -159,6 +159,9 @@ function routes(req, res) {
     if (URL.startsWith('/albuminitiallike') && method === 'POST') {
         return actions.checkAlbumInitialLike(req, res);
     }
+    if (URL.startsWith('/albumlikesong') && method === 'POST') {
+        return actions.albumLikeSong(req, res);
+    }
 
 
     res.writeHead(404, { "Content-Type": "application/json" });

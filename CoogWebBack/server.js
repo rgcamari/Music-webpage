@@ -61,7 +61,8 @@ const map_route = {
     '/initiallike',
     '/likesong',
     '/unlikesong',
-    '/albuminitiallike'],
+    '/albuminitiallike',
+    '/albumlikesong'],
     'PUT': [],
     'DELETE': [],
 };

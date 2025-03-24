@@ -2280,6 +2280,45 @@ const checkAlbumInitialLike = async (req, res) => {
     });
 };
 
+const albumLikeSong = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, album_id } = parsedBody;
+            
+            if (!userId || !album_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Album ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `INSERT INTO liked_album (user_id, album_id, liked_at) VALUES (?, ?, NOW());`,
+                [userId, album_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "album liked successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error liking album:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to like album' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2332,6 +2371,7 @@ module.exports = {
     checkInitialLike,
     likeSong,
     unlikeSong,
-    checkAlbumInitialLike
+    checkAlbumInitialLike,
+    albumLikeSong
 };
 
