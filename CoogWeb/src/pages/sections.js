@@ -5,9 +5,23 @@ import './sections.css';
 import play_button from './play.png';
 import forward from './forward.png';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
+import { BottomBar } from './home';
 
+const MusicPlayer = () => {
+    const [currentSong, setCurrentSong] = useState(null);
+  
+    return (
+      <div>
+        {/* Render SongCard and pass setCurrentSong */}
+        <SongList setCurrentSong={setCurrentSong} />
+  
+        {/* Pass currentSong to BottomBar */}
+        <BottomBar currentSong={currentSong} />
+      </div>
+    );
+  };
 
-export const SongList = ({accountType, userId}) => {
+export const SongList = ({accountType, userId, setCurrentSong}) => {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);  // To track loading state
     const [error, setError] = useState(null);
@@ -41,13 +55,13 @@ export const SongList = ({accountType, userId}) => {
     return (
         <div className="song-list">
             {songs.map((song, index) => (
-                <SongCard key={index} song={song} accountType={accountType} userId={userId} />
+                <SongCard key={index} song={song} accountType={accountType} userId={userId} setCurrentSong={setCurrentSong} />
             ))}
         </div>
     );
 };
 
-export const SongCard = ({ song, accountType, userId }) => {
+export const SongCard = ({ song, accountType, userId , setCurrentSong}) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
     const [imageBase64, setImageBase64] = useState(null); // State to hold the base64 image
 
@@ -151,7 +165,9 @@ const handleHeartClick = async () => {
                         onClick={handleHeartClick}
                     />
                 )}
-                <img src={play_button} alt="play" className="play-button" />
+                <button onClick={() => setCurrentSong(song)} className="play-button">
+                <img src={play_button} alt="Play" className="play"/>
+                </button>
             </div>
         </div>
     );
