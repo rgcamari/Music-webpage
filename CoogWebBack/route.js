@@ -9,7 +9,7 @@ function routes(req, res) {
     if (URL.startsWith('/signup') && method === 'POST') {
         return actions.handleSignup(req, res);
     } 
-    if (URL.startsWith('/login') && method === 'POST') {
+    if (URL.startsWith('/loginsection') && method === 'POST') {
         return actions.handleLogin(req, res);
     }
     if (URL.startsWith('/artistlist') && method === 'GET') {
@@ -122,6 +122,9 @@ function routes(req, res) {
     }
     if (URL.startsWith('/deleteaccount') && method === 'POST') {
         return actions.deleteAccount(req, res);
+    }
+    if (URL.startsWith('/songreport') && method === 'GET') {
+        return actions.getSongReport(req, res);
     }
 
     res.writeHead(404, { "Content-Type": "application/json" });

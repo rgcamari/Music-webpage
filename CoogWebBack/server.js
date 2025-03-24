@@ -18,10 +18,11 @@ const map_route = {
     '/topartists',
     '/topalbums',
     '/topgenres',
-    '/topother'],
+    '/topother',
+    '/songreport'],
 
     'POST': ['/signup',
-    '/login',
+    '/loginsection',
     '/artistview',
     '/artistalbum',
     '/artistsong',

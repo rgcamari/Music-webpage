@@ -13,14 +13,14 @@ import { useLocation } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 
 
-const TopBar = ({accountType, username, userimage, userId, userImage }) => {
+const TopBar = ({accountType, username, userId, userImage }) => {
   const navigate = useNavigate();
-  console.log('TopBar props:', { username, userimage });
+  console.log('TopBar props:', { username, userImage });
 
   return (
     <div className="top-bar">
       <div className="user-infos">
-        <img src={userimage} className="user-images" />
+        <img src={userImage} className="user-images" />
         <span className="username">{username}</span>
       </div>
       <div className="top-bar-buttons">
@@ -123,7 +123,7 @@ export const BottomBar = ({ currentSong }) => {
 const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userId, userName, password, accountType, userImage } = location.state || {};
+  const { userId, userName, accountType, userImage } = location.state || {};
   
 
   const [currentSong, setCurrentSong] = useState({

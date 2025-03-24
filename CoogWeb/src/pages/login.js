@@ -13,7 +13,7 @@ function Login () {
         event.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:5000/login", {  // Ensure the URL is correct
+            const response = await fetch("http://localhost:5000/loginsection", {  // Ensure the URL is correct
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
