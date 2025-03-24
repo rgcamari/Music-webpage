@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import purple_image from './purple_image.png';
 import './userWrap.css';
 
-export const TopArtist = () => {
+export const TopUserArtist = ({userId}) => {
     const [artists, setArtists] = useState([]);
         const [loading, setLoading] = useState(true);  // To track loading state
         const [error, setError] = useState(null);
@@ -10,8 +10,12 @@ export const TopArtist = () => {
         useEffect(() => {
             const fetchTopArtists = async () => {
                 try {
-                    const response = await fetch('http://localhost:5000/topartists', {
-                        method: 'GET',
+                    const response = await fetch('http://localhost:5000/topuserartists', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ userId: userId }), 
                     });
                     const data = await response.json();
     
@@ -36,17 +40,17 @@ export const TopArtist = () => {
     return (
         <div className="top-artist-list">
             {artists.map((artist, index) => (
-                <TopArtistCard key={index} artist={artist} />
+                <TopUserArtistCard key={index} artist={artist} />
             ))}
         </div>
     );
 }
 
-export const TopArtistCard = ({ artist }) => {
+export const TopUserArtistCard = ({ artist }) => {
     return (
         <div className="top-artist-card">
-            <img src={artist.image_url} alt={artist.username} className="top-artist-image" />
-            <h3 className="top-artist-name">{artist.username}</h3>
+            <img src={artist.image_url} alt={artist.artist_name} className="top-artist-image" />
+            <h3 className="top-artist-name">{artist.artist_name}</h3>
         </div>
     );
 };
@@ -274,7 +278,7 @@ export const CougarWrapUp = ({userName, userId, userImage}) => {
         <div className="top-artists-section">
                         <div className="top-artists-header">Top 3 Artists of the Week! 
                         </div>
-                        <TopArtist />
+                        <TopUserArtist userId={userId}/>
                     </div>
             
                     <div className="top-songs-section">
@@ -286,19 +290,19 @@ export const CougarWrapUp = ({userName, userId, userImage}) => {
                     <div className="top-albums-section">
                         <div className="top-albums-header">Top 3 Albums of the Week! 
                         </div>
-                        <TopAlbum />
+                        <TopAlbum userId={userId}/>
                     </div>
             
                     <div className="top-genres-section">
                         <div className="top-genres-header">Top 3 Genres of the Week! 
                         </div>
-                        <TopGenre />
+                        <TopGenre userId={userId}/>
                     </div>
             
                     <div className="Other-Sections">
                         <div className = "other-header"> Miscellaneous Information
                         </div>
-                        <Other />
+                        <Other userId={userId}/>
                     </div>
         </section>
     );
