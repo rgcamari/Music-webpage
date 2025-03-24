@@ -156,6 +156,24 @@ function routes(req, res) {
     if (URL.startsWith('/likesong') && method === 'POST') {
         return actions.likeSong(req, res);
     }
+    if (URL.startsWith('/albuminitiallike') && method === 'POST') {
+        return actions.checkAlbumInitialLike(req, res);
+    }
+    if (URL.startsWith('/albumlikesong') && method === 'POST') {
+        return actions.albumLikeSong(req, res);
+    }
+    if (URL.startsWith('/albumunlikesong') && method === 'POST') {
+        return actions.albumUnlikeSong(req, res);
+    }
+    if (URL.startsWith('/checkfollowstatus') && method === 'POST') {
+        return actions.checkFollowStatus(req, res);
+    }
+    if (URL.startsWith('/follow') && method === 'POST') {
+        return actions.followArtist(req, res);
+    }
+    if (URL.startsWith('/unfollow') && method === 'POST') {
+        return actions.unfollowArtist(req, res);
+    }
 
 
     res.writeHead(404, { "Content-Type": "application/json" });

@@ -210,7 +210,7 @@ const getArtistViewInfo = async (req, res) => {
 
 
         const [followersResult] = await pool.promise().query(`
-            SELECT followers FROM artist WHERE artist.username = ?;`, [username]);
+            SELECT COUNT(*) AS follow FROM artist, following WHERE following.artist_id = artist.artist_id AND artist.username = ?;`, [username]);
 
         const [streamsResult] = await pool.promise().query(`SELECT COUNT(*) AS streams_count 
             FROM history, song, artist 
@@ -227,7 +227,7 @@ const getArtistViewInfo = async (req, res) => {
             
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, 
-            followers: followersResult[0].followers, 
+            follow: followersResult[0].follow, 
             streams: streamsResult[0].streams_count, 
             likedSongs: likedSongsResult[0].liked_songs_count, 
             likedAlbums: likedAlbumsResult[0].liked_albums_count 
@@ -517,10 +517,8 @@ const getArtistInfo = async (req, res) => {
         if (!userName) {
             return res.status(400).json({ success: false, message: 'Username is required' });
         }
-
-
         const [followersResult] = await pool.promise().query(`
-            SELECT followers FROM artist WHERE artist.username = ?;`, [userName]);
+            SELECT COUNT(*) AS follow FROM following, artist WHERE artist.artist_id = following.artist_id AND artist.username = ?;`, [userName]);
 
         const [streamsResult] = await pool.promise().query(`SELECT COUNT(*) AS streams_count 
             FROM history, song, artist 
@@ -537,7 +535,7 @@ const getArtistInfo = async (req, res) => {
             
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, 
-            followers: followersResult[0].followers, 
+            follow: followersResult[0].follow, 
             streams: streamsResult[0].streams_count, 
             likedSongs: likedSongsResult[0].liked_songs_count, 
             likedAlbums: likedAlbumsResult[0].liked_albums_count 
@@ -2239,6 +2237,244 @@ const unlikeSong = async (req, res) => {
     });
 };
 
+const checkAlbumInitialLike = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, album_id } = parsedBody;
+            
+            if (!userId || !album_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Album ID are required' }));
+                return;
+            }
+
+            // Query to check if the song is liked by the user
+            const [rows] = await pool.promise().query(
+                `SELECT COUNT(*) AS count FROM liked_album WHERE user_id = ? AND album_id = ?;`,
+                [userId, album_id]
+            );
+
+            const isLiked = rows[0].count > 0;  // if count is greater than 0, the song is liked by the user
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                isLiked: isLiked 
+            }));
+
+        } catch (err) {
+            console.error('Error fetching initial like:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch initial like' }));
+        }
+    });
+};
+
+const albumLikeSong = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, album_id } = parsedBody;
+            
+            if (!userId || !album_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Album ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `INSERT INTO liked_album (user_id, album_id, liked_at) VALUES (?, ?, NOW());`,
+                [userId, album_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "album liked successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error liking album:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to like album' }));
+        }
+    });
+};
+
+const albumUnlikeSong = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, album_id } = parsedBody;
+            
+            if (!userId || !album_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Album ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `DELETE FROM liked_album WHERE user_id = ? AND album_id = ?;`,
+                [userId, album_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "album unliked successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error unliking album:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to unlike album' }));
+        }
+    });
+};
+
+const checkFollowStatus = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, artist_id } = parsedBody;
+            
+            if (!userId || !artist_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Artist ID are required' }));
+                return;
+            }
+
+            // Query to check if the song is liked by the user
+            const [rows] = await pool.promise().query(
+                `SELECT COUNT(*) AS count FROM following WHERE user_id = ? AND artist_id = ?;`,
+                [userId, artist_id]
+            );
+
+            const isFollowing = rows[0].count > 0;  // if count is greater than 0, the song is liked by the user
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                isFollowing: isFollowing 
+            }));
+
+        } catch (err) {
+            console.error('Error fetching initial follow:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch initial follow' }));
+        }
+    });
+};
+
+const followArtist = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, artist_id } = parsedBody;
+            
+            if (!userId || !artist_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Artist ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `INSERT INTO following (user_id, artist_id, followed_at) VALUES (?, ?, NOW());`,
+                [userId, artist_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "artist followed successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error following artist:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to follow artist' }));
+        }
+    });
+};
+
+const unfollowArtist = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, artist_id } = parsedBody;
+            
+            if (!userId || !artist_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Artist ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `DELETE FROM following WHERE user_id = ? AND artist_id = ?;`,
+                [userId, artist_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "artist unfollowed successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error unfollowing artist:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to unfollow artist' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2290,6 +2526,12 @@ module.exports = {
     getTopUserOther,
     checkInitialLike,
     likeSong,
-    unlikeSong
+    unlikeSong,
+    checkAlbumInitialLike,
+    albumLikeSong,
+    albumUnlikeSong,
+    checkFollowStatus,
+    followArtist,
+    unfollowArtist
 };
 

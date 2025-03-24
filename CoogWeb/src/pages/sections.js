@@ -209,7 +209,7 @@ export const ArtistCard = ({ artist, onArtistClick }) => {
     );
 };
 
-  export const AlbumList = ({ onAlbumClick, accountType }) => {
+  export const AlbumList = ({ onAlbumClick, accountType, userId}) => {
     const [albums, setAlbums] = useState([]);
     const [loading, setLoading] = useState(true);  // To track loading state
     const [error, setError] = useState(null);
@@ -243,18 +243,77 @@ export const ArtistCard = ({ artist, onArtistClick }) => {
     return (
         <div className="album-list">
             {albums.map((album, index) => (
-                <AlbumCard key={index} album={album} onAlbumClick={onAlbumClick} accountType={accountType} />
+                <AlbumCard key={index} album={album} onAlbumClick={onAlbumClick} accountType={accountType} userId={userId}/>
             ))}
         </div>
     );
 };
 
 
-export const AlbumCard = ({ album, onAlbumClick, accountType }) => {
+export const AlbumCard = ({ album, onAlbumClick, accountType,userId }) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
   
-    const handleHeartClick = () => {
-      setIsLiked(!isLiked); // Toggle the liked state
+    if (accountType == 'user') {
+        useEffect(() => {
+            const fetchInitialLike = async () => {
+                try {
+                    const response = await fetch('http://localhost:5000/albuminitiallike', {
+                        method: 'POST',
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ userId:userId, album_id:album.album_id }), 
+                    });
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        setIsLiked(data.isLiked);  // Assuming the backend returns an array of artists
+                    } else {
+                        setError('Failed to fetch like status');
+                    }
+                } catch (err) {
+                    setError('Error fetching like status');
+                } 
+            };
+    
+            fetchInitialLike();
+        }, [userId]);  
+    }
+    const handleHeartClick = async () => {
+        if (isLiked) {
+            // Unlike the song
+            try {
+                const response = await fetch(`http://localhost:5000/albumunlikesong`, {
+                    method: 'POST',
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ userId:userId, album_id:album.album_id }), 
+                });
+                if (response.ok) {
+                    setIsLiked(false);
+                }
+            } catch (error) {
+                console.error("Error unliking the album:", error);
+            }
+        } else {
+            // Like the song
+            try {
+                const response = await fetch("http://localhost:5000/albumlikesong", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userId: userId,
+                        album_id: album.album_id,
+                    }),
+                });
+                if (response.ok) {
+                    setIsLiked(true);
+                }
+            } catch (error) {
+                console.error("Error liking the album:", error);
+            }
+        }
     };
   
     return (

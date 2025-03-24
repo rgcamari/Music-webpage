@@ -177,14 +177,14 @@ const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick
   switch (activeScreen) {
     case 'song-list': return <SongList accountType={accountType} userId={userId}/>;
     case 'artist-list': return <ArtistList onArtistClick={onArtistClick} />;
-    case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} accountType={accountType}/>;
+    case 'album-list': return <AlbumList onAlbumClick={onAlbumClick} accountType={accountType} userId={userId}/>;
     case 'profile': return <Profile setActiveScreen={setActiveScreen} onPlaylistClick={onPlaylistClick} userName={userName} userId={userId} userImage={userImage} />;
     case 'artist-profile': return <ArtistProfile setActiveScreen={onArtistClick} userName={userName} userImage={userImage}/>;
     case 'top-trending': return <TopTrending />;
     case 'cougar-wrap-up': return <CougarWrapUp userName={userName} userId={userId} userImage={userImage}/>;
     case 'user-lists': return <UserList />;
-    case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType}/>;
-    case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType}/>;
+    case 'artist-view': return <ArtistView artist={selectedArtist} accountType={accountType} userId={userId}/>;
+    case 'album-view-page': return <AlbumViewPage album={selectedAlbum} accountType={accountType} userId={userId}/>;
     case 'create-song': return <SongForm userName={userName} userId={userId}/>;
     case 'edit-song': return <SongFormEdit userName={userName} userId={userId}/>;
     case 'delete-song': return <SongFormDelete userName={userName} userId={userId}/>;
