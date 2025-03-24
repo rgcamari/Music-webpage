@@ -162,6 +162,9 @@ function routes(req, res) {
     if (URL.startsWith('/albumlikesong') && method === 'POST') {
         return actions.albumLikeSong(req, res);
     }
+    if (URL.startsWith('/albumunlikesong') && method === 'POST') {
+        return actions.albumUnlikeSong(req, res);
+    }
 
 
     res.writeHead(404, { "Content-Type": "application/json" });

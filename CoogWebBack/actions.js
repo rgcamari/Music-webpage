@@ -2319,6 +2319,45 @@ const albumLikeSong = async (req, res) => {
     });
 };
 
+const albumUnlikeSong = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId, album_id } = parsedBody;
+            
+            if (!userId || !album_id) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'User ID and Album ID are required' }));
+                return;
+            }
+
+            await pool.promise().query(
+                `DELETE FROM liked_album WHERE user_id = ? AND album_id = ?;`,
+                [userId, album_id]
+            );
+
+
+            // Send response with the correct status
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: "album unliked successfully" 
+            }));
+
+        } catch (err) {
+            console.error('Error unliking album:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to unlike album' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2372,6 +2411,7 @@ module.exports = {
     likeSong,
     unlikeSong,
     checkAlbumInitialLike,
-    albumLikeSong
+    albumLikeSong,
+    albumUnlikeSong
 };
 
