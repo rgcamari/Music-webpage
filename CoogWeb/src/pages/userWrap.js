@@ -110,7 +110,7 @@ export const TopUserSongCard = ({ song }) => {
     );
 };
 
-export const TopAlbum = () => {
+export const TopUserAlbum = ({userId}) => {
     const [albums, setAlbums] = useState([]);
         const [loading, setLoading] = useState(true);  // To track loading state
         const [error, setError] = useState(null);
@@ -118,18 +118,22 @@ export const TopAlbum = () => {
         useEffect(() => {
             const fetchTopAlbums = async () => {
                 try {
-                    const response = await fetch('http://localhost:5000/topalbums', {
-                        method: 'GET',
+                    const response = await fetch('http://localhost:5000/topuseralbums', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ userId: userId }), 
                     });
                     const data = await response.json();
     
                     if (data.success) {
                         setAlbums(data.topAlbums);  // Assuming the backend returns an array of artists
                     } else {
-                        setError('Failed to fetch artists');
+                        setError('Failed to fetch albums');
                     }
                 } catch (err) {
-                    setError('Error fetching artists');
+                    setError('Error fetching albums');
                 } finally {
                     setLoading(false);  // Data is loaded or error occurred
                 }
@@ -144,23 +148,23 @@ export const TopAlbum = () => {
     return (
         <div className="top-album-list">
             {albums.map((album, index) => (
-                <TopAlbumCard key={index} album={album} />
+                <TopUserAlbumCard key={index} album={album} />
             ))}
         </div>
     );
 }
 
-export const TopAlbumCard = ({ album }) => {
+export const TopUserAlbumCard = ({ album }) => {
     return (
         <div className="top-album-card">
-            <img src={album.image_url} alt={album.name} className="top-album-image" />
-            <h3 className="top-album-name">{album.name}</h3>
+            <img src={album.image_url} alt={album.album_name} className="top-album-image" />
+            <h3 className="top-album-name">{album.album_name}</h3>
             <p className="top-album-artist">{album.artist_name}</p>
         </div>
     );
 };
 
-export const TopGenre = () => {
+export const TopUserGenre = ({userId}) => {
     const [genres, setGenres] = useState([]);
         const [loading, setLoading] = useState(true);  // To track loading state
         const [error, setError] = useState(null);
@@ -168,8 +172,12 @@ export const TopGenre = () => {
         useEffect(() => {
             const fetchTopGenres = async () => {
                 try {
-                    const response = await fetch('http://localhost:5000/topgenres', {
-                        method: 'GET',
+                    const response = await fetch('http://localhost:5000/topusergenres', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ userId: userId }), 
                     });
                     const data = await response.json();
     
@@ -208,7 +216,7 @@ export const TopGenreCard = ({ genre }) => {
     );
 };
 
-export const Other = () => {
+export const Other = ({userId}) => {
     const [others, setOthers] = useState([]);
         const [loading, setLoading] = useState(true);  // To track loading state
         const [error, setError] = useState(null);
@@ -216,8 +224,12 @@ export const Other = () => {
         useEffect(() => {
             const fetchTopOthers = async () => {
                 try {
-                    const response = await fetch('http://localhost:5000/topothers', {
-                        method: 'GET',
+                    const response = await fetch('http://localhost:5000/topuserothers', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ userId: userId }), 
                     });
                     const data = await response.json();
     
@@ -290,13 +302,12 @@ export const CougarWrapUp = ({userName, userId, userImage}) => {
                     <div className="top-albums-section">
                         <div className="top-albums-header">Top 3 Albums of the Week! 
                         </div>
-                        <TopAlbum userId={userId}/>
+                        <TopUserAlbum userId={userId}/>
                     </div>
             
                     <div className="top-genres-section">
                         <div className="top-genres-header">Top 3 Genres of the Week! 
                         </div>
-                        <TopGenre userId={userId}/>
                     </div>
             
                     <div className="Other-Sections">

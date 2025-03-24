@@ -1958,6 +1958,48 @@ const getTopUserArtists = async (req, res) => {
 
 };
 
+const getTopUserAlbums = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+
+    try {
+        const parsedBody = JSON.parse(body);
+        const { userId} = parsedBody;
+        if (!userId) {
+            return res.status(400).json({ success: false, message: 'Username is required' });
+        }
+
+        const [topAlbums] = await pool.promise().query(`SELECT 
+        ROW_NUMBER() OVER (ORDER BY COUNT(history.song_id) DESC) AS ranks,
+        album.album_id,
+        album.name AS album_name,
+        album.image_url,
+        artist.username AS artist_name,
+        COUNT(history.song_id) AS play_count
+        FROM album
+        JOIN song ON song.album_id = album.album_id
+        JOIN artist ON artist.artist_id = album.artist_id
+        JOIN history ON song.song_id = history.song_id
+        WHERE history.user_id = 1  -- Filter based on the specific user ID
+        GROUP BY album.album_id, album.name, album.image_url
+        ORDER BY play_count DESC
+        LIMIT 3;`,[userId]);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, topAlbums}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch artists' }));
+    }
+    });
+
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2003,6 +2045,7 @@ module.exports = {
     getArtistReport,
     getUserReport,
     getTopUserSongs,
-    getTopUserArtists
+    getTopUserArtists,
+    getTopUserAlbums
 };
 
