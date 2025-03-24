@@ -1799,6 +1799,38 @@ const getSongReport = async (req, res) => {
     }
 };
 
+const getArtistReport = async (req, res) => {
+    try {
+        const [artists] = await pool.promise().query(`SELECT 
+        a.artist_id, 
+        a.username AS artist_name,
+        
+        COUNT(DISTINCT h.user_id) AS unique_listeners,
+        COUNT(DISTINCT f.user_id) AS followers,
+        ABS(COUNT(DISTINCT f.user_id) - COUNT(DISTINCT h.user_id)) AS not_streaming_but_following,
+        ROUND((COUNT(DISTINCT f.user_id) / NULLIF(COUNT(DISTINCT h.user_id), 0)) * 100, 2) AS following_percentage,
+        ABS(ROUND(COUNT(DISTINCT f.user_id) / NULLIF(COUNT(DISTINCT h.user_id) - COUNT(DISTINCT f.user_id), 0), 2)) AS following_ratio
+
+        FROM 
+            artist a
+        LEFT JOIN 
+            song s ON a.artist_id = s.artist_id
+        LEFT JOIN 
+            history h ON s.song_id = h.song_id
+        LEFT JOIN 
+            following f ON a.artist_id = f.artist_id
+        GROUP BY 
+            a.artist_id, a.username;`);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, artists}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch artists' }));
+    }
+};
+
 
 module.exports = {
     getUsers,
@@ -1841,6 +1873,7 @@ module.exports = {
     removePlaylistSong,
     editInfo,
     deleteAccount,
-    getSongReport
+    getSongReport,
+    getArtistReport
 };
 

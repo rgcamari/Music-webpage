@@ -126,6 +126,9 @@ function routes(req, res) {
     if (URL.startsWith('/songreport') && method === 'GET') {
         return actions.getSongReport(req, res);
     }
+    if (URL.startsWith('/artistreport') && method === 'GET') {
+        return actions.getArtistReport(req, res);
+    }
 
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Route Not Found" }));
