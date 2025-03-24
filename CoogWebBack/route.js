@@ -145,7 +145,7 @@ function routes(req, res) {
         return actions.getTopUserSongs(req, res);
     }
     if (URL.startsWith('/topusergenres') && method === 'POST') {
-        return actions.getTopUserSongs(req, res);
+        return actions.getTopUserGenres(req, res);
     }
 
 

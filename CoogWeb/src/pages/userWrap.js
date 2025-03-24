@@ -184,10 +184,10 @@ export const TopUserGenre = ({userId}) => {
                     if (data.success) {
                         setGenres(data.topGenres);  // Assuming the backend returns an array of artists
                     } else {
-                        setError('Failed to fetch artists');
+                        setError('Failed to fetch genres');
                     }
                 } catch (err) {
-                    setError('Error fetching artists');
+                    setError('Error fetching genres');
                 } finally {
                     setLoading(false);  // Data is loaded or error occurred
                 }
@@ -196,19 +196,19 @@ export const TopUserGenre = ({userId}) => {
             fetchTopGenres();
         }, []);  // Empty dependency array to run this only once when the component mounts
     
-        if (loading) return <div>Loading albums...</div>;
+        if (loading) return <div>Loading genres...</div>;
         if (error) return <div>{error}</div>;
 
     return (
         <div className="top-genre-list">
             {genres.map((genre, index) => (
-                <TopGenreCard key={index} genre={genre} />
+                <TopUserGenreCard key={index} genre={genre} />
             ))}
         </div>
     );
 };
 
-export const TopGenreCard = ({ genre }) => {
+export const TopUserGenreCard = ({ genre }) => {
     return (
         <div className="top-genre-card"> 
             <h3 className="top-genre-name">{genre.genre_name}</h3>
@@ -308,6 +308,7 @@ export const CougarWrapUp = ({userName, userId, userImage}) => {
                     <div className="top-genres-section">
                         <div className="top-genres-header">Top 3 Genres of the Week! 
                         </div>
+                        <TopUserGenre userId={userId}/>
                     </div>
             
                     <div className="Other-Sections">
