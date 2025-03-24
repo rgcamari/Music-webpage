@@ -1831,6 +1831,50 @@ const getArtistReport = async (req, res) => {
     }
 };
 
+const getUserReport = async (req, res) => {
+    try {
+        const [users] = await pool.promise().query(`SELECT 
+    u.user_id, 
+    u.username AS user_name,
+    
+    -- Total plays per user (history table)
+    COUNT(DISTINCT h.song_id) AS total_plays,
+    
+    -- Total likes per user (liked_song table)
+    COUNT(DISTINCT ls.song_id) AS total_likes,
+    
+    -- Unique artists followed by the user
+    COUNT(DISTINCT f.artist_id) AS unique_artists_followed,
+    
+    -- Songs played but not liked by the user
+    COUNT(DISTINCT h.song_id) - COUNT(DISTINCT ls.song_id) AS songs_played_but_not_liked,
+    
+    -- Following percentage (percentage of songs liked out of total plays)
+    ROUND((COUNT(DISTINCT ls.song_id) / NULLIF(COUNT(DISTINCT h.song_id), 0)) * 100, 2) AS following_percentage,
+    
+    -- Like-to-play ratio (ratio of liked songs to total plays)
+    ROUND(COUNT(DISTINCT ls.song_id) / NULLIF(COUNT(DISTINCT h.song_id), 0), 2) AS like_to_play_ratio
+
+    FROM 
+        user u
+    LEFT JOIN 
+        history h ON u.user_id = h.user_id
+    LEFT JOIN 
+        liked_song ls ON u.user_id = ls.user_id
+    LEFT JOIN 
+        following f ON u.user_id = f.user_id
+
+    GROUP BY 
+        u.user_id, u.username;`);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, users}));  // Ensure response is sent
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Failed to fetch users' }));
+    }
+}
 
 module.exports = {
     getUsers,
@@ -1874,6 +1918,7 @@ module.exports = {
     editInfo,
     deleteAccount,
     getSongReport,
-    getArtistReport
+    getArtistReport,
+    getUserReport
 };
 

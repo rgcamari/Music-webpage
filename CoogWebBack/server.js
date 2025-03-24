@@ -20,7 +20,8 @@ const map_route = {
     '/topgenres',
     '/topother',
     '/songreport',
-    '/artistreport'],
+    '/artistreport',
+    '/userreport'],
 
     'POST': ['/signup',
     '/loginsection',
