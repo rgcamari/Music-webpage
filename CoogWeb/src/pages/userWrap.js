@@ -216,7 +216,7 @@ export const TopUserGenreCard = ({ genre }) => {
     );
 };
 
-export const Other = ({userId}) => {
+export const TopUserOther = ({userId}) => {
     const [others, setOthers] = useState([]);
         const [loading, setLoading] = useState(true);  // To track loading state
         const [error, setError] = useState(null);
@@ -248,7 +248,7 @@ export const Other = ({userId}) => {
             fetchTopOthers();
         }, []);  // Empty dependency array to run this only once when the component mounts
     
-        if (loading) return <div>Loading albums...</div>;
+        if (loading) return <div>Loading others...</div>;
         if (error) return <div>{error}</div>;
 
     // Convert the `others` object into an array of key-value pairs
@@ -256,13 +256,13 @@ export const Other = ({userId}) => {
     return (
         <div className="other-list">
             {others.map(([label, value], index) => (
-                <OtherCard key={index} label={label} other={value} />
+                <UserOtherCard key={index} label={label} other={value} />
             ))}
         </div>
     );
 };
 
-export const OtherCard = ({ label, other }) => {
+export const UserOtherCard = ({ label, other }) => {
     // Format the label to be more readable (e.g., "totalstreams" -> "Total Streams")
     const formattedLabel = label
         .replace(/([A-Z])/g, ' $1') // Add space before capital letters
@@ -314,7 +314,7 @@ export const CougarWrapUp = ({userName, userId, userImage}) => {
                     <div className="Other-Sections">
                         <div className = "other-header"> Miscellaneous Information
                         </div>
-                        <Other userId={userId}/>
+                        <TopUserOther userId={userId}/>
                     </div>
         </section>
     );

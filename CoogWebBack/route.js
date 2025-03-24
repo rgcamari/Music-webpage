@@ -142,7 +142,7 @@ function routes(req, res) {
         return actions.getTopUserAlbums(req, res);
     }
     if (URL.startsWith('/topuserothers') && method === 'POST') {
-        return actions.getTopUserSongs(req, res);
+        return actions.getTopUserOther(req, res);
     }
     if (URL.startsWith('/topusergenres') && method === 'POST') {
         return actions.getTopUserGenres(req, res);

@@ -2037,6 +2037,89 @@ const getTopUserGenres = async (req, res) => {
 
 };
 
+const getTopUserOther = async (req, res) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { userId } = parsedBody;
+            
+            if (!userId) {
+                return res.status(400).json({ success: false, message: 'User ID is required' });
+            }
+
+            const [streamCount] = await pool.promise().query(
+                `SELECT COUNT(*) AS count FROM history WHERE user_id = ?;`,
+                [userId]
+            );
+
+            const [followingCount] = await pool.promise().query(
+                `SELECT COUNT(*) AS count FROM following WHERE user_id = ?;`,
+                [userId]
+            );
+
+            const [artistCount] = await pool.promise().query(
+                `SELECT COUNT(DISTINCT song.artist_id) AS count 
+                FROM song
+                JOIN history ON song.song_id = history.song_id
+                WHERE history.user_id = ?;`,
+                [userId]
+            );
+
+            const [albumCount] = await pool.promise().query(
+                `SELECT COUNT(DISTINCT song.album_id) AS count 
+                FROM song
+                JOIN history ON song.song_id = history.song_id
+                WHERE history.user_id = ?;`,
+                [userId]
+            );
+
+            const [genreCount] = await pool.promise().query(
+                `SELECT COUNT(DISTINCT song.genre) AS count 
+                FROM song
+                JOIN history ON song.song_id = history.song_id
+                WHERE history.user_id = ?;`,
+                [userId]
+            );
+
+            const [playlistCount] = await pool.promise().query(
+                `SELECT COUNT(*) AS count FROM playlist WHERE playlist.user_id = ?;`,
+                [userId]
+            );
+
+            const [likeCount] = await pool.promise().query(
+                `SELECT 
+                    (SELECT COUNT(*) FROM liked_album WHERE user_id = ?) + 
+                    (SELECT COUNT(*) FROM liked_song WHERE user_id = ?) AS counter;`, 
+                [userId, userId]
+            );
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+                success: true, 
+                topOthers: {
+                    streamCount: streamCount[0].count,
+                    followingCount: followingCount[0].count,
+                    artistCount: artistCount[0].count,
+                    albumCount: albumCount[0].count,
+                    genreCount: genreCount[0].count,
+                    playlistCount: playlistCount[0].count,
+                    likeCount: likeCount[0].counter
+                }
+            }));
+        } catch (err) {
+            console.error('Error fetching user stats:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Failed to fetch user statistics' }));
+        }
+    });
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2084,6 +2167,7 @@ module.exports = {
     getTopUserSongs,
     getTopUserArtists,
     getTopUserAlbums,
-    getTopUserGenres
+    getTopUserGenres,
+    getTopUserOther
 };
 
