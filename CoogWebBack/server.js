@@ -107,6 +107,20 @@ server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
+/*
+//basically allows for uploaded files to be accessible via URL
+const express = require('express');
+const path = require('path');
+const app = express();
+
+// Serve uploads as static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Routes
+const songRoutes = require('./routes/songRoutes');
+app.use('/api/songs', songRoutes);
+
+*/
 
 /*
 const express = require('express');
