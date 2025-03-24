@@ -57,9 +57,36 @@ const filterAlbums = async (req, res) => {
   };
   
 
+// Upload Artist Profile Image
+const updateArtistProfile = async (req, res) => {
+  try {
+    const { artist_id } = req.body;
+
+    if (!artist_id || !req.file) {
+      return res.status(400).send('Artist ID and image file are required!');
+    }
+
+    const imageUrl = `/uploads/images/${req.file.filename}`;
+    const pool = await poolPromise;
+
+    await pool.request()
+      .input('artist_id', artist_id)
+      .input('image_url', imageUrl)
+      .query(queries.updateArtistProfile);
+
+    res.status(200).send({
+      message: 'Profile image updated successfully!',
+      imageUrl,
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+  
 module.exports = {
   getArtists,
   getArtistListOutput,
   searchArtists,
-  filterAlbums  
+  filterAlbums,  
+  updateArtistProfile,
 };
