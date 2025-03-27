@@ -4,6 +4,7 @@ import heart from './heart.png';
 import './sections.css';
 import play_button from './play.png';
 import forward from './forward.png';
+import cover from './blank_cover.png';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 
 
@@ -19,6 +20,7 @@ export const SongList = ({accountType}) => {
                     method: 'GET',
                 });
                 const data = await response.json();
+                console.log('Fetched songs:', data); // Log the API response
 
                 if (data.success) {
                     setSongs(data.songs);  // Assuming the backend returns an array of artists
@@ -54,9 +56,32 @@ export const SongCard = ({ song, accountType }) => {
         setIsLiked(!isLiked); // Toggle the liked state
     };
 
+    // Safely handle `image_url`
+    let imageUrl = cover; // Default image
+    if (song.image_url) {
+        if (song.image_url.data) {
+            // Decode if `image_url` is a Buffer
+            try {
+                imageUrl = String.fromCharCode(...song.image_url.data);
+            } catch (error) {
+                console.error('Error decoding image_url:', error);
+            }
+        } else if (typeof song.image_url === 'string') {
+            // Use directly if it's a string
+            imageUrl = song.image_url;
+        }
+    }
+
     return (
         <div className="song-card">
-            <img src={song.image_url} alt={song.name} className="song-image" />
+            <img
+                src={imageUrl}
+                className="song-image"
+                onError={(e) => {
+                    console.error('Image failed to load:', e.target.src);
+                    e.target.src = cover; // Fallback to default image
+                }}
+            />
             <h3 className="song-name">{song.name}</h3>
             <h3 className="song-artist">{song.artist_name}</h3>
             <div className="bottom-section">
