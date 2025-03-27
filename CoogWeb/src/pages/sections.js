@@ -4,6 +4,7 @@ import heart from './heart.png';
 import './sections.css';
 import play_button from './play.png';
 import forward from './forward.png';
+import cover from './cover.png';
 import { ArtistView, AlbumViewPage, PlaylistViewPage } from './view';
 import { BottomBar } from './home';
 
@@ -63,13 +64,27 @@ export const SongList = ({accountType, userId, setCurrentSong}) => {
 
 export const SongCard = ({ song, accountType, userId , setCurrentSong}) => {
     const [isLiked, setIsLiked] = useState(false); // State to track if the heart is "liked"
-    const [imageBase64, setImageBase64] = useState(null); // State to hold the base64 image
+    /*const [imageBase64, setImageBase64] = useState(null); // State to hold the base64 image
 
     useEffect(() => {
         if (song.image) {
             setImageBase64(song.image); // Directly set the base64 string
         }
     }, [song.image]);
+    */
+    let imageUrl = cover; //default song cover image
+    if (song.image){
+        if(song.image.data) {
+            try {
+                imageUrl = String.fromCharCode(...song.image.data);//convert to string
+            } catch (error){
+                console.error("error decoding image_url:", error);
+            }
+        } else if (typeof song.image === 'string'){
+            imageUrl = song.image;
+        }
+    }
+
 
     if (accountType == 'user') {
     useEffect(() => {
@@ -136,14 +151,21 @@ const handleHeartClick = async () => {
 
     return (
         <div className="song-card">
-            {/* Render Base64 Image */}
-            {imageBase64 && (
+            {/* Render Base64 Image {imageBase64 && (
                 <img
                     src={`data:image/png;base64,${imageBase64}`} 
                     alt={song.name} 
                     className="song-image"
                 />
-            )}
+            )}*/}
+            <img
+                src = {imageUrl}
+                className="song-image"
+                onError={(e) => {
+                    console.error('Image failed to load:', e.target.src);
+                    e.target.src = cover; //default image
+                }}
+            />
 
             <h3 className="song-name">{song.name}</h3>
             <h3 className="song-artist">{song.artist_name}</h3>
