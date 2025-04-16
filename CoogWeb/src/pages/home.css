@@ -233,3 +233,48 @@ side-bar::-webkit-scrollbar {
 .side-bar {
   scrollbar-color: #B200FF #2D1E33; 
 }
+
+.search-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  background-color: #2D1E33;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #B200FF;
+  border-radius: 5px;
+  outline: none;
+}
+
+.search-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: 'Montserrat';
+  font-weight: bold;
+  color: white;
+  background-color: #B200FF;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #8207b7;
+}

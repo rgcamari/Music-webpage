@@ -21,7 +21,8 @@ const map_route = {
     '/topother',
     '/songreport',
     '/artistreport',
-    '/userreport'],
+    '/userreport',
+    '/search'],
 
     'POST': ['/signup',
     '/loginsection',

@@ -2475,6 +2475,36 @@ const unfollowArtist = async (req, res) => {
     });
 };
 
+const searchDatabase = async (req, res) => {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const term = url.searchParams.get('term');
+
+    if (!term) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ success: false, message: "Search term is required" }));
+    }
+
+    try {
+        const [songs] = await pool.promise().query(
+            `SELECT name, artist_id, album_id, image_url
+             FROM song 
+             WHERE name LIKE ?`, [`%${term}%`]
+        );
+
+        if (songs.length > 0) {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, songs }));
+        } else {
+            res.writeHead(404, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: false, message: "No results found" }));
+        }
+    } catch (err) {
+        console.error("Error executing search query:", err);
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ success: false, message: "Error executing search query" }));
+    }
+};
+
 module.exports = {
     getUsers,
     handleSignup,
@@ -2532,6 +2562,7 @@ module.exports = {
     albumUnlikeSong,
     checkFollowStatus,
     followArtist,
-    unfollowArtist
+    unfollowArtist,
+    searchDatabase
 };
 
