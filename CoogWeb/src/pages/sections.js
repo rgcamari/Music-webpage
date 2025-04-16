@@ -432,6 +432,37 @@ export const SearchSection = ({ accountType, userId, setCurrentSong }) => {
     }
   };
 
+  return (
+    <div className="search-section">
+      <form className="search-form" onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search for a song..."
+          className="search-input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button type="submit" className="search-button">Search</button>
+      </form>
+
+      {loading && <div>Loading...</div>}
+      {error && <div>{error}</div>}
+
+      <div className="search-results">
+        {results.map((song, index) => (
+          <SongCard
+            key={index}
+            song={song}
+            accountType={accountType}
+            userId={userId}
+            setCurrentSong={setCurrentSong}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 /*
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -479,33 +510,4 @@ const SongCard = ({ song }) => {
 };
 
 export default SongList;
-*/  return (
-    <div className="search-section">
-      <form className="search-form" onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="Search for a song..."
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button type="submit" className="search-button">Search</button>
-      </form>
-
-      {loading && <div>Loading...</div>}
-      {error && <div>{error}</div>}
-
-      <div className="search-results">
-        {results.map((song, index) => (
-          <SongCard
-            key={index}
-            song={song}
-            accountType={accountType}
-            userId={userId}
-            setCurrentSong={setCurrentSong}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
+*/  
