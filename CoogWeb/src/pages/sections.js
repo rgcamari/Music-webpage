@@ -403,6 +403,34 @@ export const UserCard = ({ user }) => {
     );
 };
 
+export const SearchSection = ({ accountType, userId, setCurrentSong }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`http://localhost:5000/search?term=${encodeURIComponent(searchTerm)}`, {
+        method: 'GET',
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setResults(data.songs);
+      } else {
+        setError(data.message || 'No results found.');
+      }
+    } catch (err) {
+      setError('Error fetching search results.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
 /*
 import React, { useEffect, useState } from 'react';
@@ -451,4 +479,33 @@ const SongCard = ({ song }) => {
 };
 
 export default SongList;
-*/
+*/  return (
+    <div className="search-section">
+      <form className="search-form" onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search for a song..."
+          className="search-input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button type="submit" className="search-button">Search</button>
+      </form>
+
+      {loading && <div>Loading...</div>}
+      {error && <div>{error}</div>}
+
+      <div className="search-results">
+        {results.map((song, index) => (
+          <SongCard
+            key={index}
+            song={song}
+            accountType={accountType}
+            userId={userId}
+            setCurrentSong={setCurrentSong}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};

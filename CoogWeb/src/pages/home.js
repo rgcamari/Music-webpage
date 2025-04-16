@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, } from 'react';
 import purple_image from './purple_image.png';
 import './home.css';
-import { SongList, ArtistList, AlbumList, UserList } from './sections';
+import { SongList, ArtistList, AlbumList, UserList, SearchSection } from './sections';
 import { Profile, ArtistProfile, DataReport } from './input';
 import { TopTrending } from './wrap';
 import { CougarWrapUp } from './userWrap';
@@ -59,6 +59,7 @@ const SideBar = ({ onButtonClick, accountType }) => {
       {accountType !== 'artist' && accountType !== 'user' && (
       <button className="side-bar-button" onClick={() => onButtonClick('data-report')}>Data Report</button>
       )}
+      <button className="side-bar-button" onClick={() => onButtonClick('search')}>Search</button>
     </div>
   );
 };
@@ -199,7 +200,8 @@ const renderScreen = (activeScreen, setActiveScreen, onArtistClick, onAlbumClick
     case 'add-song-playlist': return <PlaylistFormAdd userName={userName} userId={userId}/>;
     case 'remove-song-playlist': return <PlaylistFormRemove userName={userName} userId={userId}/>;
     case 'playlist-view': return <PlaylistViewPage playlist={selectedPlaylist} userId={userId} userName={userName} userImage={userImage}/>;
-    case 'data-report': return <DataReport userName={userName}/>
+    case 'data-report': return <DataReport userName={userName}/>;
+    case 'search': return <SearchSection accountType={accountType} userId={userId} setCurrentSong={setCurrentSong} />;
     default: return <SongList />;
   }
 };
